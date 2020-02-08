@@ -1,78 +1,86 @@
-<p align="center"><img src="https://res.cloudinary.com/dtfbvvkyp/image/upload/v1566331377/laravel-logolockup-cmyk-red.svg" width="400"></p>
+# d42-DmitrijsTkačuks-EnterpriseControl
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+## Projekta apraksts
 
-## About Laravel
+Sistēma, kas palīdz kontrolēt un pārvaldīt uzņēmumu tīklu. Šajā sistēmā ietilpst katra uzņēmuma noliktavu vadība un uzraudzība. Darbinieku un nodaļu vadība. Piedāvā kopējos ieņēmumus un katra uzņēmuma peļņas statistiku.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Izmantotās tehnoloģijas
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+* Laravel
+* Vue
+* Axios
+* PHP
+* JavaScript
+* Bootstrap
+* CSS
+* MySQL
+* Composer
+* NodeJS
+* NPM
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## Learning Laravel
+## Izmantotie avoti
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+[Bootstrap Docs](https://getbootstrap.com/docs/4.0/getting-started/introduction/) - Tika izmantota dokumentācijā, lai noformēt lapu ar Bootstrap CSS framework.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+[js Docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript) - Tika izmantots, lai iepazīsties ar JacaScript strukturu un funkcijām.
 
-## Laravel Sponsors
+[Vue Docs](https://vuejs.org/v2/guide/) - Tika izmantota dokumentācijā, lai iepazīsties un izstrādāt lapas Frontend daļu uz Vue.js.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+[Laravel Docs](https://laravel.com)- Tika izmantota dokumentācijā, lai iepazīsties un izstrādāt lapas BackEnd daļu uz Laravel.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- [UserInsights](https://userinsights.com)
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
-- [Invoice Ninja](https://www.invoiceninja.com)
-- [iMi digital](https://www.imi-digital.de/)
-- [Earthlink](https://www.earthlink.ro/)
-- [Steadfast Collective](https://steadfastcollective.com/)
-- [We Are The Robots Inc.](https://watr.mx/)
-- [Understand.io](https://www.understand.io/)
-- [Abdel Elrafa](https://abdelelrafa.com)
-- [Hyper Host](https://hyper.host)
-- [Appoly](https://www.appoly.co.uk)
-- [OP.GG](https://op.gg)
+[Laravel Tutorial](https://www.youtube.com/watch?v=eD4yMI-IR8g&list=PLpzy7FIRqpGC8Jk6gyWdSVdxCVXZAsenQ) - Tika izmantoti video materiāli lai ātrāk iemācīties stradat ar Laravel Framework.
 
-## Contributing
+[Vue Tutorial](https://www.youtube.com/watch?v=5LYrN_cAJoA&list=PL4cUxeGkcC9gQcYgjhBoeQH7wiAyZNrYa) - Tika izmantoti video materiāli lai ātrāk iemācīties stradat ar Vue Framework.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+[SPA Tutorial](https://www.youtube.com/watch?v=AFyzK8qohdE&list=PLpzy7FIRqpGBBKr4FVpEs1fA7uCibdCZ9) - Tika izmantoti video materiāli lai iepazīsties ar SPA tehnoloģiju kura tiek veidota no Vue & Laravel.
 
-## Code of Conduct
+[w3School](https://www.w3schools.com) - Tika izmantos, lai atrast vajadzīgas komponentes, elementus un atribūtus.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Uzstādīšanas instrukcijas
 
-## Security Vulnerabilities
+1. Lai izmantot šo sistēmu vajadzēs uzinstalēt sekojošu programmatūru:
+    1. Lai lietotu git lejupielādējam [Git for windows](https://git-scm.com/download/win) un instalējam git.
+    2. Lai lietotu XAMPP lejupielādējam [XAMPP](https://www.apachefriends.org/index.html) for windows un instalējam to.
+    3. Lai lietotu [Composer](https://getcomposer.org/download/) lejupielādējam to un  instalējam.
+    4. Lai lietotu NPM vajadzēs uzinstalēt [NodeJS](https://nodejs.org/en/), (labāk  LTS).
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+2. Dodamies uz XAMPP atrašanās vietu parasti “C:\xampp\htdocs” un izdzēšam tā saturu.
 
-## License
+3. Veicam labo klikšķi un izvēlamies opciju "git bash here" un izpildam zemāk raksīto komandu.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```
+git clone https://github.com/rvtprog-kvalifikacija-20/d42-DmitrijsTkačuks-EnterpriseControl.git
+```
+
+4. Tagad vajag nokonfigurēt XAMPP, dodamies uz “\xampp\apache\conf\extra” un meklējam failu ar nosaukumu “httpd-vhosts.conf” un atveram to.
+
+5. Faila pievienojam sekojošas rindas:
+
+   1. DocumentRoot ceļš var būt aizvietots uz to direktorijas ceļu kura tika noklonētā repozitorijā, bet obligāti uz repozitorijās public direktoriju, piemēram D:/xampp/htdocs/**myDirectory**/public
+
+```
+<VirtualHost *:80>
+    ServerName localhost
+    
+    DocumentRoot "C:/xampp/htdocs/d42-DmitrijsTkačuks-EnterpriseControl/public"
+</VirtualHost>
+```
+
+
+6. Palaidiet  XAMPP un ieslēdziet Apache un MySQL
+
+7. Dodamies uz [http://localhost/phpmyadmin/](http://localhost/phpmyadmin/) un izveidojam datubāzi ar nosaukumu “enterprisecontrol”
+
+8. Izsaucam konsoli tajā direktorija kura tika noklonētā repozitorijā no Git un izpildām sekojošas komandas:
+```
+composer install
+
+npm i
+
+php artisan cache:clear
+
+php artisan migrate
+```
+
+9. Dodamies uz [http://localhost](http://localhost), lai pārbaudīt sistēmu
