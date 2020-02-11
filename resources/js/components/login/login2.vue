@@ -1,11 +1,27 @@
 <template>
-    <div class="login-bg d-flex">
-        <div class="login-block p-5">
-            <div class="left">
-                kek
+    <div class="login-bg">
+        <div class="login-block row">
+            <div class="left col mb-4">
+
+                <login-input type="text" icon="user" placeholder="Username"/>
+                <login-input type="password" icon="key" placeholder="Password"/>
+
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <em> Forgot Password? </em> 
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input">
+                        <label class="form-check-label">Remember me</label>
+                    </div>
+                </div>
+
             </div>
-            <div class="right">
-                Login
+            
+            <div class="right col-4 text-center text-light">
+                <div class="my-auto">
+                    LOGIN
+                </div>
             </div>
         </div>
         
@@ -13,8 +29,13 @@
 </template>
 
 <script>
+import loginInput from "./elements/login-input";
 export default {
     name: "login2",
+
+    components: {
+        "login-input": loginInput,
+    },
 }
 </script>
 
@@ -25,14 +46,15 @@ export default {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 567px;
+        width: 640px;
         background-color: white;
         /* border-radius: 5.5px; */
         overflow: hidden;
     }
 
     .login-block .right {
-        background-color: black;
+        /* background-color: black; */
+        background: linear-gradient(to bottom, #2c3437 0%,#232b2e 50%,#2c3437 50%,#232b2e 100%);
     }
 
     .login-bg {
