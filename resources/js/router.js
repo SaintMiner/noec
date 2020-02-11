@@ -1,5 +1,5 @@
 import NotFoundComponent from "./components/noecRoot";
-import login from "./components/login/login2";
+import login from "./components/login/login";
 import Vue from "vue";
 import VueRouter from "vue-router";
 
