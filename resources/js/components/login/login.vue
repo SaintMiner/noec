@@ -56,7 +56,8 @@ export default {
 
     .login-block .right {
         font-family: 'Lato', sans-serif;
-        background: linear-gradient(to bottom, #2c3437 0%,#232b2e 50%,#2c3437 50%,#232b2e 100%);
+        background: linear-gradient(to bottom, #2c3437 0%,#000 50%,#000 50%,#232b2e 100%);
+        letter-spacing: 5.5px
     }
 
     .login-bg {
@@ -64,6 +65,7 @@ export default {
         position: absolute;
         width: 100%;
         height: 100%;
+        background-color: aliceblue;
     }
 
     .login-color {

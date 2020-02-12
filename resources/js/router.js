@@ -2,6 +2,7 @@ import NotFoundComponent from "./components/noecRoot";
 import login from "./components/login/login";
 import Vue from "vue";
 import VueRouter from "vue-router";
+import sidebar from "./components/sidebar/sidebar";
 
 Vue.use(VueRouter);
 
@@ -14,7 +15,7 @@ export default new VueRouter({
 
         {
             path: '/dashboard', 
-            component: login,
+            component: sidebar,
         },
 
         { 
