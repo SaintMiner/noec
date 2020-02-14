@@ -5,7 +5,7 @@
         "icon": "tachometer-alt"
     },
     {
-        "name": "Personal",
+        "name": "Human Resources",
         "routeName": "personal",
         "icon": "users"
     }

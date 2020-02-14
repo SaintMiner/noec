@@ -8,7 +8,7 @@ import notFound from "./components/404";
 /****             SystemContent                ****/
 /**************************************************/
 
-import personal from "./components/content/personal";
+import personal from "./components/content/personal/personal";
 import dashboard from "./components/content/dashboard";
 
 
