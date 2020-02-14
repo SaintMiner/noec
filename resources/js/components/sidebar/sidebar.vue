@@ -1,7 +1,11 @@
 <template>
-    <div class="sidebar" :style="{'min-height': clientHeight}">
-        <div class="h-100 mx-2 text-light pt-5">
-            <sidebarItem v-for="i in 10" :key="i.id" :itemName="i"/>
+    <div class="sidebar h-100 overflow-auto" >
+        <div class="mx-2 text-light overflow-hidden py-5">
+            <sidebarItem v-for="i in sidebarContent" :key="i.id" 
+                :itemName="i.name" 
+                :routeName="i.routeName" 
+                :icon="i.icon"
+            />
         </div>
     </div>
 </template>
@@ -15,7 +19,6 @@ export default {
 
     data() {
         return {
-            clientHeight: String,
         }
     },
 
@@ -23,23 +26,21 @@ export default {
         sidebarItem,
     },
 
+    props: {
+        sidebarContent: Array,
+    },
+
     methods: {
-        getWindowInnerHeight() {
-            this.clientHeight = window.innerHeight+"px";
-        }
     },
 
     mounted() {
-        window.addEventListener("resize", this.getWindowInnerHeight);
-        this.getWindowInnerHeight();
     }
 }
 </script>
 
 <style>
     .sidebar {
-        min-height: 100%;
-        max-width: 265px;
+        width: 265px;
         background-color: #1b262c ;
     }
 </style>

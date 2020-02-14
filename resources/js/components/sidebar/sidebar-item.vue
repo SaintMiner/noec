@@ -1,9 +1,8 @@
 <template>
-    <div class="p-3  my-3 font-weight-bold sidebar-item">
-        <span>
-            <font-awesome-icon icon="user" class="mx-2"/> {{itemName}}
-        </span>
-    </div>
+
+    <router-link class="btn btn-block text-left text-light p-3 mt-3 font-weight-bold sidebar-item" :to="{name: routeName}">
+        <span> <font-awesome-icon :icon="icon" class="mx-2"/> {{itemName}} </span>
+    </router-link>
 </template>
 
 <script>
@@ -11,7 +10,9 @@ export default {
     name: "sidebar-item",
 
     props: {
-        itemName: String
+        itemName: String,
+        routeName: String,
+        icon: String,
     },
 }
 </script>

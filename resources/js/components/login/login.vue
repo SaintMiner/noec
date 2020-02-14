@@ -42,10 +42,13 @@ export default {
 <style scoped>
 
     .login-block {
-        position: fixed;
+        /* position: fixed;
         top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+        left: 50%; */
+        /* transform: translate(-50%, -50%); */
+        margin-top: 10%;        
+        margin-left: auto;
+        margin-right: auto;
         width: 640px;
         background-color: white;
         border-radius: 5.5px;
