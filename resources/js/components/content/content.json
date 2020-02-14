@@ -1,0 +1,12 @@
+[
+    {
+        "name": "Dashboard",
+        "routeName": "dashboard",
+        "icon": "tachometer-alt"
+    },
+    {
+        "name": "Human Resources",
+        "routeName": "personal",
+        "icon": "users"
+    }
+]

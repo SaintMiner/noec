@@ -1,47 +1,66 @@
 <template>
-    <div class="login-bg login-color">
-        <div class="login-block">
-            <div>
-                <h3 class="font-weight-bold text-center py-5">Login</h3>
-            </div>
-            <form class="mx-3 my-2">
-                <div class="form-group mb-4">
-                    <label>Email address</label>
-                    <input type="email" class="form-control">
-                </div>
-
-                <div class="form-group mb-5">
-                    <label>Password</label>
-                    <input type="password" class="form-control">
-                </div>
+    <div class="login-bg">
+        <div class="login-block row">
+            <div class="left col mb-4 py-5">
                 
-                <div class="">
-                    <button type="submit" class="font-weight-bold btn btn-primary btn-block login-color">Login</button>
-                </div>
-            </form>
+                <login-input type="text" icon="user" placeholder="Username"/>
+                <login-input type="password" icon="key" placeholder="Password"/>
 
+                <hr class="my-5">
+
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <a href=""><em> Forgot Password? </em> </a>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input">
+                        <label class="form-check-label">Remember me</label>
+                    </div>
+                </div>
+
+            </div>
+            
+            <button class="right col-4 btn">
+                <h3 class="text-light"> LOGIN </h3>
+            </button>
         </div>
         
     </div>
 </template>
 
 <script>
+import loginInput from "./elements/login-input";
 export default {
-    name: "login",
+    name: "login2",
+
+    components: {
+        "login-input": loginInput,
+    },
 }
 </script>
 
 <style scoped>
 
     .login-block {
-        position: fixed;
+        /* position: fixed;
         top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 567px;
+        left: 50%; */
+        /* transform: translate(-50%, -50%); */
+        margin-top: 10%;        
+        margin-left: auto;
+        margin-right: auto;
+        width: 640px;
         background-color: white;
         border-radius: 5.5px;
+        box-shadow: 32px 27px 43px -14px rgba(0,0,0,0.75);
         overflow: hidden;
+        
+    }
+
+    .login-block .right {
+        font-family: 'Lato', sans-serif;
+        background: linear-gradient(to bottom, #2c3437 0%,#000 50%,#000 50%,#232b2e 100%);
+        letter-spacing: 5.5px
     }
 
     .login-bg {
@@ -49,6 +68,7 @@ export default {
         position: absolute;
         width: 100%;
         height: 100%;
+        background-color: aliceblue;
     }
 
     .login-color {
