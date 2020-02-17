@@ -2,9 +2,7 @@
     <div class="sidebar h-100 overflow-auto" >
         <div class="mx-2 text-light overflow-hidden py-5">
             <sidebarItem v-for="i in sidebarContent" :key="i.id" 
-                :itemName="i.name" 
-                :routeName="i.routeName" 
-                :icon="i.icon"
+                :item="i"
             />
         </div>
     </div>
@@ -19,6 +17,7 @@ export default {
 
     data() {
         return {
+            
         }
     },
 
@@ -38,9 +37,11 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
     .sidebar {
         width: 265px;
         background-color: #1b262c ;
     }
+
+    
 </style>

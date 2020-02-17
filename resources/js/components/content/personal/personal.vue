@@ -34,6 +34,7 @@
 <script>
 import personalSelect from "./elements/personal-select";
 import personalTable from "./personalTable/personalTable";
+
 export default {
     name: "personal",
 
@@ -67,6 +68,14 @@ export default {
         personalSelect,
         personalTable,
     },
+
+    mounted() {
+        this.$webService.get("resource").then(response => {
+            console.log(response.data);
+        }).catch(e => {
+            console.log(e);
+        })
+    }
 }
 </script>
 
@@ -77,5 +86,10 @@ export default {
 
     .personal-table {
         height: 96%;
+    }
+
+    .ptr-button-cube button {
+        width: 40px;
+        height: 40px;
     }
 </style>
