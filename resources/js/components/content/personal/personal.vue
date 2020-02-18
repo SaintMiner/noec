@@ -4,7 +4,7 @@
             <div class="d-flex">
                 <div class="">
                     <div class="input-group">
-                        <input type="text" class="form-control personal-search" placeholder="Search by name, surname">
+                        <input type="text" class="form-control personal-search" placeholder="Search by name, surname" v-model="filters.search">
                         <div class="input-group-append">
                             <button class="input-group-text btn"> <font-awesome-icon icon="search" class="mx-2"/> </button>
                         </div>
@@ -14,12 +14,16 @@
                     <personalSelect 
                         placeHolderValue="Choose Department" 
                         :values="[{name: 'First Department', value: '1'}, {name: 'Second Department', value: '2'}]"
+                        :model="filters.department"
+                        @input="filters.department = $event"
                     />
                 </div>
                 <div class="">
                     <personalSelect 
                         placeHolderValue="Choose Enterprise" 
                         :values="[{name: 'First Enterprise', value: '1'}, {name: 'Second Enterprise', value: '2'}]"
+                        :model="filters.enterprise"
+                        @input="filters.enterprise = $event"
                     />
                 </div>
             </div>
@@ -60,7 +64,14 @@ export default {
                 {id: 5, nameSurname: "Jacob Scronung", position: "Thornton", status: "Candidat"},
                 {id: 6, nameSurname: "Larry NeGarry", position: "the Bird", status: "Otpusk"},
                 {id: 7, nameSurname: "Andy Larkin", position: "Pilot", status: "Candidat"},
-            ]
+            ],
+
+            filters: {
+                search: "",
+                department: "0",
+                enterprise: "0",
+            },
+            
         }
     },
 
@@ -68,13 +79,39 @@ export default {
         personalSelect,
         personalTable,
     },
-
+    
     mounted() {
-        this.$webService.get("resource").then(response => {
-            console.log(response.data);
-        }).catch(e => {
-            console.log(e);
-        })
+        this.feed();
+    },
+
+    methods: {
+        feed: function() {
+             this.$webService.get("resource", {
+                params: { filters: this.filters }
+             }).then(response => {
+                 
+                console.log(response.data);
+                this.personal = response.data[0];
+            }).catch(e => {
+                console.log(e);
+            })
+        },
+
+        setSelectModel: function(model) {
+            
+        }
+    },
+
+    watch: {
+        'filters.search': function() {
+            this.feed();
+        },
+        'filters.enterprise': function() {
+            this.feed();
+        },
+        'filters.department': function() {
+            this.feed();
+        }
     }
 }
 </script>

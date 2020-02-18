@@ -11752,10 +11752,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "personal-select",
+  computed: {
+    selected: {
+      get: function get() {
+        return this.model;
+      },
+      set: function set(val) {
+        this.$emit("input", val);
+      }
+    }
+  },
   props: {
     values: Array,
-    placeHolderValue: [Boolean, String]
-  }
+    placeHolderValue: [Boolean, String],
+    model: String
+  },
+  watch: {}
 });
 
 /***/ }),
@@ -11771,6 +11783,10 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _elements_personal_select__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./elements/personal-select */ "./resources/js/components/content/personal/elements/personal-select.vue");
 /* harmony import */ var _personalTable_personalTable__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./personalTable/personalTable */ "./resources/js/components/content/personal/personalTable/personalTable.vue");
+//
+//
+//
+//
 //
 //
 //
@@ -11905,7 +11921,12 @@ __webpack_require__.r(__webpack_exports__);
         nameSurname: "Andy Larkin",
         position: "Pilot",
         status: "Candidat"
-      }]
+      }],
+      filters: {
+        search: "",
+        department: "0",
+        enterprise: "0"
+      }
     };
   },
   components: {
@@ -11913,11 +11934,35 @@ __webpack_require__.r(__webpack_exports__);
     personalTable: _personalTable_personalTable__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
   mounted: function mounted() {
-    this.$webService.get("resource").then(function (response) {
-      console.log(response.data);
-    })["catch"](function (e) {
-      console.log(e);
-    });
+    this.feed();
+  },
+  methods: {
+    feed: function feed() {
+      var _this = this;
+
+      this.$webService.get("resource", {
+        params: {
+          filters: this.filters
+        }
+      }).then(function (response) {
+        console.log(response.data);
+        _this.personal = response.data[0];
+      })["catch"](function (e) {
+        console.log(e);
+      });
+    },
+    setSelectModel: function setSelectModel(model) {}
+  },
+  watch: {
+    'filters.search': function filtersSearch() {
+      this.feed();
+    },
+    'filters.enterprise': function filtersEnterprise() {
+      this.feed();
+    },
+    'filters.department': function filtersDepartment() {
+      this.feed();
+    }
   }
 });
 
@@ -48611,11 +48656,36 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "select",
-    { staticClass: "custom-select" },
+    {
+      directives: [
+        {
+          name: "model",
+          rawName: "v-model",
+          value: _vm.selected,
+          expression: "selected"
+        }
+      ],
+      staticClass: "custom-select",
+      on: {
+        change: function($event) {
+          var $$selectedVal = Array.prototype.filter
+            .call($event.target.options, function(o) {
+              return o.selected
+            })
+            .map(function(o) {
+              var val = "_value" in o ? o._value : o.value
+              return val
+            })
+          _vm.selected = $event.target.multiple
+            ? $$selectedVal
+            : $$selectedVal[0]
+        }
+      }
+    },
     [
       _vm.placeHolderValue
-        ? _c("option", { attrs: { selected: "", disabled: "" } }, [
-            _vm._v(" " + _vm._s(_vm.placeHolderValue) + " ")
+        ? _c("option", { attrs: { value: "0", selected: "", disabled: "" } }, [
+            _vm._v(" " + _vm._s(_vm.placeHolderValue))
           ])
         : _vm._e(),
       _vm._v(" "),
@@ -48658,8 +48728,25 @@ var render = function() {
         _c("div", {}, [
           _c("div", { staticClass: "input-group" }, [
             _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.filters.search,
+                  expression: "filters.search"
+                }
+              ],
               staticClass: "form-control personal-search",
-              attrs: { type: "text", placeholder: "Search by name, surname" }
+              attrs: { type: "text", placeholder: "Search by name, surname" },
+              domProps: { value: _vm.filters.search },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.filters, "search", $event.target.value)
+                }
+              }
             }),
             _vm._v(" "),
             _c("div", { staticClass: "input-group-append" }, [
@@ -48688,7 +48775,13 @@ var render = function() {
                 values: [
                   { name: "First Department", value: "1" },
                   { name: "Second Department", value: "2" }
-                ]
+                ],
+                model: _vm.filters.department
+              },
+              on: {
+                input: function($event) {
+                  _vm.filters.department = $event
+                }
               }
             })
           ],
@@ -48705,7 +48798,13 @@ var render = function() {
                 values: [
                   { name: "First Enterprise", value: "1" },
                   { name: "Second Enterprise", value: "2" }
-                ]
+                ],
+                model: _vm.filters.enterprise
+              },
+              on: {
+                input: function($event) {
+                  _vm.filters.enterprise = $event
+                }
               }
             })
           ],
