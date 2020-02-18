@@ -1,7 +1,6 @@
 <template>
     <table class="table table-hover table-responsive mb-0">
-
-        <thead class="">
+        <thead>
             <tr>
                 <th scope="col">#</th>
                 <th scope="col" class="vw-100">Name Surname</th>
@@ -41,5 +40,4 @@ export default {
 </script>
 
 <style>
-
 </style>

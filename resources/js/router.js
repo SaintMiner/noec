@@ -9,6 +9,7 @@ import notFound from "./components/404";
 /**************************************************/
 
 import personal from "./components/content/personal/personal";
+import department from "./components/content/department/department";
 import dashboard from "./components/content/dashboard";
 
 
@@ -31,11 +32,18 @@ export default new VueRouter({
             
             children: [
                 {
-                    path: "personal",
-                    name: "personal",
+                    path: "resources",
+                    name: "resources",
                     components: {
                         content: personal,
                     },
+                },
+                {
+                    path: "department",
+                    name: "department",
+                    components: {
+                        content: department,
+                    }
                 },
                 {
                     path: "dashboard",

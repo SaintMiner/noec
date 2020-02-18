@@ -6,7 +6,19 @@
     },
     {
         "name": "Human Resources",
-        "routeName": "personal",
-        "icon": "users"
+        "icon": "users",
+        "collapseID": "HumanResources",
+        "subitems": [
+            {
+                "name": "Resources",
+                "icon": "users-cog",
+                "routeName": "resources"
+            },
+            {
+                "name": "Departments",
+                "icon": "project-diagram",
+                "routeName": "department"
+            }
+        ]
     }
 ]
