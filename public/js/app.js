@@ -11752,6 +11752,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "personal-select",
+  data: function data() {
+    return {
+      changed: false,
+      placeHolderValueData: this.placeHolderValue
+    };
+  },
   computed: {
     selected: {
       get: function get() {
@@ -11759,6 +11765,8 @@ __webpack_require__.r(__webpack_exports__);
       },
       set: function set(val) {
         this.$emit("input", val);
+        this.placeHolderValueData = "None";
+        this.changed = true;
       }
     }
   },
@@ -11826,102 +11834,26 @@ __webpack_require__.r(__webpack_exports__);
   name: "personal",
   data: function data() {
     return {
-      personal: [{
-        id: 1,
-        nameSurname: "Mark Surok",
-        position: "Otto",
-        status: "working very hard"
-      }, {
-        id: 2,
-        nameSurname: "Jacob Scronung",
-        position: "Thornton",
-        status: "Komandirovka"
-      }, {
-        id: 3,
-        nameSurname: "Larry NeGarry",
-        position: "the Bird",
-        status: "Otpusk"
-      }, {
-        id: 4,
-        nameSurname: "Andy Larkin",
-        position: "Pilot",
-        status: "Boleet"
-      }, {
-        id: 5,
-        nameSurname: "Jacob Scronung",
-        position: "Thornton",
-        status: "Candidat"
-      }, {
-        id: 6,
-        nameSurname: "Larry NeGarry",
-        position: "the Bird",
-        status: "Otpusk"
-      }, {
-        id: 7,
-        nameSurname: "Andy Larkin",
-        position: "Pilot",
-        status: "Candidat"
-      }, {
-        id: 4,
-        nameSurname: "Andy Larkin",
-        position: "Pilot",
-        status: "Boleet"
-      }, {
-        id: 5,
-        nameSurname: "Jacob Scronung",
-        position: "Thornton",
-        status: "Candidat"
-      }, {
-        id: 6,
-        nameSurname: "Larry NeGarry",
-        position: "the Bird",
-        status: "Otpusk"
-      }, {
-        id: 7,
-        nameSurname: "Andy Larkin",
-        position: "Pilot",
-        status: "Candidat"
-      }, {
-        id: 4,
-        nameSurname: "Andy Larkin",
-        position: "Pilot",
-        status: "Boleet"
-      }, {
-        id: 5,
-        nameSurname: "Jacob Scronung",
-        position: "Thornton",
-        status: "Candidat"
-      }, {
-        id: 6,
-        nameSurname: "Larry NeGarry",
-        position: "the Bird",
-        status: "Otpusk"
-      }, {
-        id: 7,
-        nameSurname: "Andy Larkin",
-        position: "Pilot",
-        status: "Candidat"
-      }, {
-        id: 4,
-        nameSurname: "Andy Larkin",
-        position: "Pilot",
-        status: "Boleet"
-      }, {
-        id: 5,
-        nameSurname: "Jacob Scronung",
-        position: "Thornton",
-        status: "Candidat"
-      }, {
-        id: 6,
-        nameSurname: "Larry NeGarry",
-        position: "the Bird",
-        status: "Otpusk"
-      }, {
-        id: 7,
-        nameSurname: "Andy Larkin",
-        position: "Pilot",
-        status: "Candidat"
-      }],
+      personal: [// {id: 1, nameSurname: "Mark Surok", position: "Otto", status: "working very hard"},
+        // {id: 2, nameSurname: "Jacob Scronung", position: "Thornton", status: "Komandirovka"},
+        // {id: 3, nameSurname: "Larry NeGarry", position: "the Bird", status: "Otpusk"},
+        // {id: 4, nameSurname: "Andy Larkin", position: "Pilot", status: "Boleet"},
+        // {id: 5, nameSurname: "Jacob Scronung", position: "Thornton", status: "Candidat"},
+        // {id: 6, nameSurname: "Larry NeGarry", position: "the Bird", status: "Otpusk"},
+        // {id: 7, nameSurname: "Andy Larkin", position: "Pilot", status: "Candidat"},
+        // {id: 4, nameSurname: "Andy Larkin", position: "Pilot", status: "Boleet"},
+        // {id: 5, nameSurname: "Jacob Scronung", position: "Thornton", status: "Candidat"},
+        // {id: 6, nameSurname: "Larry NeGarry", position: "the Bird", status: "Otpusk"},
+        // {id: 7, nameSurname: "Andy Larkin", position: "Pilot", status: "Candidat"},
+        // {id: 4, nameSurname: "Andy Larkin", position: "Pilot", status: "Boleet"},
+        // {id: 5, nameSurname: "Jacob Scronung", position: "Thornton", status: "Candidat"},
+        // {id: 6, nameSurname: "Larry NeGarry", position: "the Bird", status: "Otpusk"},
+        // {id: 7, nameSurname: "Andy Larkin", position: "Pilot", status: "Candidat"},
+        // {id: 4, nameSurname: "Andy Larkin", position: "Pilot", status: "Boleet"},
+        // {id: 5, nameSurname: "Jacob Scronung", position: "Thornton", status: "Candidat"},
+        // {id: 6, nameSurname: "Larry NeGarry", position: "the Bird", status: "Otpusk"},
+        // {id: 7, nameSurname: "Andy Larkin", position: "Pilot", status: "Candidat"},
+      ],
       filters: {
         search: "",
         department: "0",
@@ -12004,6 +11936,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "personalTable",
@@ -12049,7 +11983,9 @@ __webpack_require__.r(__webpack_exports__);
     id: [String, Number],
     nameSurname: String,
     position: String,
-    status: String
+    status: String,
+    department: String,
+    enterprise: String
   }
 });
 
@@ -48684,9 +48620,11 @@ var render = function() {
     },
     [
       _vm.placeHolderValue
-        ? _c("option", { attrs: { value: "0", selected: "", disabled: "" } }, [
-            _vm._v(" " + _vm._s(_vm.placeHolderValue))
-          ])
+        ? _c(
+            "option",
+            { attrs: { value: "0", selected: "", disabled: !_vm.changed } },
+            [_vm._v(" " + _vm._s(_vm.placeHolderValueData))]
+          )
         : _vm._e(),
       _vm._v(" "),
       _vm._l(_vm.values, function(value) {
@@ -48747,21 +48685,7 @@ var render = function() {
                   _vm.$set(_vm.filters, "search", $event.target.value)
                 }
               }
-            }),
-            _vm._v(" "),
-            _c("div", { staticClass: "input-group-append" }, [
-              _c(
-                "button",
-                { staticClass: "input-group-text btn" },
-                [
-                  _c("font-awesome-icon", {
-                    staticClass: "mx-2",
-                    attrs: { icon: "search" }
-                  })
-                ],
-                1
-              )
-            ])
+            })
           ])
         ]),
         _vm._v(" "),
@@ -48856,10 +48780,12 @@ var render = function() {
           return _c("personalTableRow", {
             key: index,
             attrs: {
-              id: index,
+              id: person.id,
               nameSurname: person.nameSurname,
-              position: person.position,
-              status: person.status
+              position: person.position.name,
+              status: person.status.name,
+              department: person.department.name,
+              enterprise: person.enterprise.name
             }
           })
         }),
@@ -48930,9 +48856,9 @@ var render = function() {
     _vm._v(" "),
     _c("td", [_vm._v(" " + _vm._s(_vm.position) + " ")]),
     _vm._v(" "),
-    _c("td", [_vm._v(" In progress ")]),
+    _c("td", [_vm._v(" " + _vm._s(_vm.department) + " ")]),
     _vm._v(" "),
-    _c("td", [_vm._v(" In progress ")]),
+    _c("td", [_vm._v(" " + _vm._s(_vm.enterprise) + " ")]),
     _vm._v(" "),
     _c("td", [_vm._v(" " + _vm._s(_vm.status) + " ")]),
     _vm._v(" "),
@@ -64379,7 +64305,7 @@ __webpack_require__.r(__webpack_exports__);
 
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
-_fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_4__["library"].add([_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__["faUsers"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__["faUser"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__["faKey"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__["faTachometerAlt"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__["faSearch"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__["faPen"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__["faInfo"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__["faUsersCog"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__["faProjectDiagram"]]);
+_fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_4__["library"].add([_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__["faUsers"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__["faUser"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__["faKey"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__["faTachometerAlt"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__["faSearch"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__["faPen"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__["faInfo"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__["faUsersCog"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__["faProjectDiagram"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__["faUserTag"]]);
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('font-awesome-icon', _fortawesome_vue_fontawesome__WEBPACK_IMPORTED_MODULE_6__["FontAwesomeIcon"]);
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.mixin({});
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.prototype.$webService = _webService_js__WEBPACK_IMPORTED_MODULE_2__["default"];
@@ -64601,7 +64527,7 @@ __webpack_require__.r(__webpack_exports__);
 /*! exports provided: 0, 1, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("[{\"name\":\"Dashboard\",\"routeName\":\"dashboard\",\"icon\":\"tachometer-alt\"},{\"name\":\"Human Resources\",\"icon\":\"users\",\"collapseID\":\"HumanResources\",\"subitems\":[{\"name\":\"Resources\",\"icon\":\"users-cog\",\"routeName\":\"resources\"},{\"name\":\"Departments\",\"icon\":\"project-diagram\",\"routeName\":\"department\"}]}]");
+module.exports = JSON.parse("[{\"name\":\"Dashboard\",\"routeName\":\"dashboard\",\"icon\":\"tachometer-alt\"},{\"name\":\"Human Resources\",\"icon\":\"users\",\"collapseID\":\"HumanResources\",\"subitems\":[{\"name\":\"Resources\",\"icon\":\"users-cog\",\"routeName\":\"resources\"},{\"name\":\"Departments\",\"icon\":\"project-diagram\",\"routeName\":\"department\"},{\"name\":\"Roles\",\"icon\":\"user-tag\",\"routeName\":\"resources\"}]}]");
 
 /***/ }),
 

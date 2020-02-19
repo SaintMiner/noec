@@ -14,10 +14,12 @@
 
         <tbody class="">
             <personalTableRow v-for="(person, index) in personal" :key="index" 
-                :id="index"
+                :id="person.id"
                 :nameSurname="person.nameSurname"
-                :position="person.position"
-                :status="person.status"
+                :position="person.position.name"
+                :status="person.status.name"
+                :department="person.department.name"
+                :enterprise="person.enterprise.name"
             />
         </tbody>
         

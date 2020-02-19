@@ -5,9 +5,9 @@
                 <div class="">
                     <div class="input-group">
                         <input type="text" class="form-control personal-search" placeholder="Search by name, surname" v-model="filters.search">
-                        <div class="input-group-append">
+                        <!-- <div class="input-group-append">
                             <button class="input-group-text btn"> <font-awesome-icon icon="search" class="mx-2"/> </button>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
                 <div class="">
@@ -45,25 +45,25 @@ export default {
     data() {
         return {
             personal: [
-                {id: 1, nameSurname: "Mark Surok", position: "Otto", status: "working very hard"},
-                {id: 2, nameSurname: "Jacob Scronung", position: "Thornton", status: "Komandirovka"},
-                {id: 3, nameSurname: "Larry NeGarry", position: "the Bird", status: "Otpusk"},
-                {id: 4, nameSurname: "Andy Larkin", position: "Pilot", status: "Boleet"},
-                {id: 5, nameSurname: "Jacob Scronung", position: "Thornton", status: "Candidat"},
-                {id: 6, nameSurname: "Larry NeGarry", position: "the Bird", status: "Otpusk"},
-                {id: 7, nameSurname: "Andy Larkin", position: "Pilot", status: "Candidat"},
-                {id: 4, nameSurname: "Andy Larkin", position: "Pilot", status: "Boleet"},
-                {id: 5, nameSurname: "Jacob Scronung", position: "Thornton", status: "Candidat"},
-                {id: 6, nameSurname: "Larry NeGarry", position: "the Bird", status: "Otpusk"},
-                {id: 7, nameSurname: "Andy Larkin", position: "Pilot", status: "Candidat"},
-                {id: 4, nameSurname: "Andy Larkin", position: "Pilot", status: "Boleet"},
-                {id: 5, nameSurname: "Jacob Scronung", position: "Thornton", status: "Candidat"},
-                {id: 6, nameSurname: "Larry NeGarry", position: "the Bird", status: "Otpusk"},
-                {id: 7, nameSurname: "Andy Larkin", position: "Pilot", status: "Candidat"},
-                {id: 4, nameSurname: "Andy Larkin", position: "Pilot", status: "Boleet"},
-                {id: 5, nameSurname: "Jacob Scronung", position: "Thornton", status: "Candidat"},
-                {id: 6, nameSurname: "Larry NeGarry", position: "the Bird", status: "Otpusk"},
-                {id: 7, nameSurname: "Andy Larkin", position: "Pilot", status: "Candidat"},
+                // {id: 1, nameSurname: "Mark Surok", position: "Otto", status: "working very hard"},
+                // {id: 2, nameSurname: "Jacob Scronung", position: "Thornton", status: "Komandirovka"},
+                // {id: 3, nameSurname: "Larry NeGarry", position: "the Bird", status: "Otpusk"},
+                // {id: 4, nameSurname: "Andy Larkin", position: "Pilot", status: "Boleet"},
+                // {id: 5, nameSurname: "Jacob Scronung", position: "Thornton", status: "Candidat"},
+                // {id: 6, nameSurname: "Larry NeGarry", position: "the Bird", status: "Otpusk"},
+                // {id: 7, nameSurname: "Andy Larkin", position: "Pilot", status: "Candidat"},
+                // {id: 4, nameSurname: "Andy Larkin", position: "Pilot", status: "Boleet"},
+                // {id: 5, nameSurname: "Jacob Scronung", position: "Thornton", status: "Candidat"},
+                // {id: 6, nameSurname: "Larry NeGarry", position: "the Bird", status: "Otpusk"},
+                // {id: 7, nameSurname: "Andy Larkin", position: "Pilot", status: "Candidat"},
+                // {id: 4, nameSurname: "Andy Larkin", position: "Pilot", status: "Boleet"},
+                // {id: 5, nameSurname: "Jacob Scronung", position: "Thornton", status: "Candidat"},
+                // {id: 6, nameSurname: "Larry NeGarry", position: "the Bird", status: "Otpusk"},
+                // {id: 7, nameSurname: "Andy Larkin", position: "Pilot", status: "Candidat"},
+                // {id: 4, nameSurname: "Andy Larkin", position: "Pilot", status: "Boleet"},
+                // {id: 5, nameSurname: "Jacob Scronung", position: "Thornton", status: "Candidat"},
+                // {id: 6, nameSurname: "Larry NeGarry", position: "the Bird", status: "Otpusk"},
+                // {id: 7, nameSurname: "Andy Larkin", position: "Pilot", status: "Candidat"},
             ],
 
             filters: {

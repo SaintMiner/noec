@@ -21,11 +21,11 @@ class Feed implements Responsable
         $filters = json_decode($request->get('filters'));
 
        // $this->resources = Resource::with('department')
-        $query = Resource::with('department');
+        $query = Resource::with("department", "enterprise", "status", "position");
 
 
         if($filters->search) {
-            $query->where('name', 'like', '%' . $filters->search . '%');
+            $query->where('name', 'like', '%' . $filters->search . '%')->orWhere('surname', 'like', '%' . $filters->search . '%');
         }
         if ($filters->enterprise) {
             $query->where("enterprise_id", "=", $filters->enterprise);
@@ -71,6 +71,9 @@ class Feed implements Responsable
             "surname" => $item->surname,
             "nameSurname" => "$item->name $item->surname",
             "department" => $item->department,
+            "enterprise" => $item->enterprise,
+            "status" => $item->status,
+            "position" => $item->position,
         ];
     }
 

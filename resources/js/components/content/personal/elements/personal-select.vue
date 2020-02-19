@@ -1,6 +1,6 @@
 <template>
     <select class="custom-select" v-model="selected">
-        <option value=0 selected disabled v-if="placeHolderValue"> {{placeHolderValue}}</option>
+        <option value=0 selected :disabled="!changed" v-if="placeHolderValue"> {{placeHolderValueData}}</option>
         <option :value="value.value" v-for="value in values" :key="value.id">
             {{value.name}}
         </option>
@@ -11,6 +11,13 @@
 export default {
     name: "personal-select",
 
+    data() {
+        return {
+            changed: false,
+            placeHolderValueData: this.placeHolderValue
+        }
+    },
+
     computed: {
         selected: {
             get() {
@@ -19,6 +26,8 @@ export default {
 
             set(val) {
                 this.$emit("input", val);
+                this.placeHolderValueData = "None";
+                this.changed = true;
             }
         }
     },

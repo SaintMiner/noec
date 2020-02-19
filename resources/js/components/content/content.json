@@ -18,6 +18,12 @@
                 "name": "Departments",
                 "icon": "project-diagram",
                 "routeName": "department"
+             
+            },
+            {
+                "name": "Roles",
+                "icon": "user-tag",
+                "routeName": "resources"
             }
         ]
     }
