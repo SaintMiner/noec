@@ -33,6 +33,10 @@ class CreateResourcesTable extends Migration
             $table->foreign("status_id")->references("id")->on("statuses");
             $table->foreign("enterprise_id")->references("id")->on("enterprises");
         });
+
+        Schema::table("departments", function($table) {
+            $table->foreign("manager_id")->references("id")->on("resources");
+        });
     }
 
     /**

@@ -3,8 +3,8 @@
         <th scope="row"> {{id}} </th>
         <td> {{nameSurname}} </td>
         <td> {{position}} </td>
-        <td> In progress </td>
-        <td> In progress </td>
+        <td> {{department}} </td>
+        <td> {{enterprise}} </td>
         <td> {{status}} </td>
         <td>
             <div class="d-flex ptr-button-cube text-center">
@@ -23,6 +23,8 @@ export default {
         nameSurname: String,
         position: String,
         status: String,
+        department: String,
+        enterprise: String,
     },
 }
 </script>
