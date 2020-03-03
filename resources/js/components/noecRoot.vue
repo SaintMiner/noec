@@ -9,7 +9,7 @@
 
 <script>
     import sidebar from "./sidebar/sidebar";
-    import sidebarContent from "./content/content.json";
+    import sidebarContent from "./sidebar/content.json";
     export default {
         name: "system-root",
         

@@ -11,7 +11,7 @@ import notFound from "./components/404";
 import personal from "./components/content/personal/personal";
 import department from "./components/content/department/department";
 import dashboard from "./components/content/dashboard";
-
+import enterprise from "./components/content/enterprise/enterprise";
 
 /**************************************************/
 /****                 Routes                   ****/
@@ -50,6 +50,13 @@ export default new VueRouter({
                     name: "dashboard",
                     components: {
                         content: dashboard,
+                    },
+                },
+                {
+                    path: "enterprises",
+                    name: "enterprises",
+                    components: {
+                        content: enterprise,
                     },
                 },
                 {

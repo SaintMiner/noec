@@ -5,6 +5,11 @@
         "icon": "tachometer-alt"
     },
     {
+        "name": "Enterprises and Storages",
+        "routeName": "enterprises",
+        "icon": "solar-panel"
+    },
+    {
         "name": "Human Resources",
         "icon": "users",
         "collapseID": "HumanResources",
@@ -27,4 +32,5 @@
             }
         ]
     }
+    
 ]
