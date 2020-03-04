@@ -13,4 +13,9 @@ use Illuminate\Http\Request;
 |
 */
 
+Route::get("enterprise/getProducts/{enterpriseID}", "EnterpriseController@getProducts");
+
 Route::resource('resource', 'ResourceController');
+
+Route::resource('enterprise', 'EnterpriseController');
+

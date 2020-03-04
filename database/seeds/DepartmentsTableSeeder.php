@@ -11,14 +11,11 @@ class DepartmentsTableSeeder extends Seeder
      */
     public function run()
     {
-        App\Department::create([
-            "id" => 1,
-            "name" => "Dark"
-        ]);
+        $departments = [
+            ["id" => 1, "name" => "Dark"],
+            ["id" => 2, "name" => "Light"]
+        ];
+        App\Department::insert($departments);
 
-        App\Department::create([
-            "id" => 2,
-            "name" => "Light"
-        ]);
     }
 }

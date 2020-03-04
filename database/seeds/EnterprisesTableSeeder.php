@@ -11,14 +11,10 @@ class EnterprisesTableSeeder extends Seeder
      */
     public function run()
     {
-        App\Enterprise::create([
-            "id" => 1,
-            "name" => "First Enterprise (not) ever"
-        ]);
-
-        App\Enterprise::create([
-            "id" => 2,
-            "name" => "Trikster"
-        ]);
+        $enterprises = [
+            ["id" => 1, "title" => "First Enterprise (not) ever", "location" => "Ventspils, Kaķu iela 1"],
+            ["id" => 2, "title" => "Trikster", "location" => "Rīga, Kaķu iela 1"]
+        ];
+        App\Enterprise::insert($enterprises);
     }
 }

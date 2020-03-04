@@ -1,5 +1,6 @@
 <?php
 
+use App\Product;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -16,7 +17,8 @@ class DatabaseSeeder extends Seeder
             EnterprisesTableSeeder::class,
             PositionsTableSeeder::class,
             StatusesTableSeeder::class,
-            ResourcesTableSeeder::class
+            ResourcesTableSeeder::class,
+            ProductsTableSeeder::class,
         ]);
     }
 }

@@ -11,19 +11,11 @@ class PositionsTableSeeder extends Seeder
      */
     public function run()
     {
-        App\Position::create([
-            "id" => 1,
-            "name" => "High"
-        ]);
-
-        App\Position::create([
-            "id" => 2,
-            "name" => "Medium"
-        ]);
-
-        App\Position::create([
-            "id" => 3,
-            "name" => "Low"
-        ]);
+        $positions = [
+            ["id" => 1, "name" => "High"],
+            ["id" => 2, "name" => "Medium"],
+            ["id" => 3, "name" => "Low"]
+        ];
+        App\Position::insert($positions);
     }
 }

@@ -1,6 +1,6 @@
 <template>
     <tr>
-        <th scope="row"> {{id}} </th>
+        <th> {{id}} </th>
         <td> {{nameSurname}} </td>
         <td> {{position}} </td>
         <td> {{department}} </td>

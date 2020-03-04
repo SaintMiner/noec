@@ -5,9 +5,16 @@
         "icon": "tachometer-alt"
     },
     {
-        "name": "Enterprises and Storages",
-        "routeName": "enterprises",
-        "icon": "solar-panel"
+        "name": "Enterprises And Storages",
+        "icon": "solar-panel",
+        "collapseID": "EnterpriseAndStorages",
+        "subitems": [
+            {
+                "name": "Enterprise control",
+                "icon": "wrench",
+                "routeName": "enterprises"
+            }
+        ]
     },
     {
         "name": "Human Resources",

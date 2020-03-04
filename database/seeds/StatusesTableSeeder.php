@@ -11,19 +11,11 @@ class StatusesTableSeeder extends Seeder
      */
     public function run()
     {
-        App\Status::create([
-            "id" => 1,
-            "name" => "Good"
-        ]);
-
-        App\Status::create([
-            "id" => 2,
-            "name" => "Normal"
-        ]);
-
-        App\Status::create([
-            "id" => 3,
-            "name" => "Bad"
-        ]);
+        $statuses = [
+            ["id" => 1, "name" => "Good"],
+            ["id" => 2, "name" => "Normal"],
+            ["id" => 3, "name" => "Bad"]
+        ];
+        App\Status::insert($statuses);
     }
 }
