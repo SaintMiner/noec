@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             StatusesTableSeeder::class,
             ResourcesTableSeeder::class,
             ProductsTableSeeder::class,
+            StoragesTableSeeder::class,
         ]);
     }
 }

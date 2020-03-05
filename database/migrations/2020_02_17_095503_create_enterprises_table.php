@@ -17,6 +17,7 @@ class CreateEnterprisesTable extends Migration
             $table->bigIncrements('id');
             $table->string("title");
             $table->string("location");
+            $table->bigInteger("registration_number");
             $table->timestamps();
         });
     }

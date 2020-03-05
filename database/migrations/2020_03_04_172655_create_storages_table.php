@@ -15,6 +15,7 @@ class CreateStoragesTable extends Migration
     {
         Schema::create('storages', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string("title");
             $table->string("location");
             $table->enum("class", ["A", "B", "C", "D"]);
             $table->unsignedSmallInteger("palete_capacity");

@@ -19,3 +19,4 @@ Route::resource('resource', 'ResourceController');
 
 Route::resource('enterprise', 'EnterpriseController');
 
+Route::resource('storage', 'StorageController');

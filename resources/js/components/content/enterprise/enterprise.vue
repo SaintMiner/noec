@@ -15,7 +15,7 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>Name</th>
+                            <th>Title</th>
                             <th>Personal</th>
                             <th>Location</th>
                         </tr>
@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import addEnterpriseModal from "./addEnterpriseModal";
+import addEnterpriseModal from "./enterpriseControlModal";
 
 export default {
     name: "enterprise-control",
