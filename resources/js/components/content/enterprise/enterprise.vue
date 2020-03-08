@@ -1,7 +1,11 @@
 <template>
-    <div class="mh-100">
-        <addEnterpriseModal/>
-        <div class="enterprise-table">
+    <div>
+        <addEnterpriseModal 
+            @loadEnterPrises="loadEnterPrises" 
+            :editMode="editMode" 
+            :editingEnterprise="editingEnterprise"
+        />
+        <div class="enterprise-control mb-5">
             <div class="d-flex justify-content-between">
                 <h2>Enterprises</h2>
                 <div>
@@ -15,22 +19,32 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>Title</th>
+                            <th class="w-50">Title</th>
                             <th>Personal</th>
                             <th>Location</th>
+                            <th class="action-col">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="enterprise in enterprises" :key="enterprise.id" @click="showEnterpriseStorage(enterprise.id)">
-                            <td> {{enterprise.title}} </td>
-                            <td> 10/10 </td>
-                            <td> {{enterprise.location}} </td>
+                        <tr v-for="enterprise in enterprises" :key="enterprise.id" >
+                            <td @click="showEnterpriseLocalStorageProducts(enterprise.id)"> {{enterprise.title}} </td>
+                            <td @click="showEnterpriseLocalStorageProducts(enterprise.id)"> 10/10 </td>
+                            <td @click="showEnterpriseLocalStorageProducts(enterprise.id)"> {{enterprise.location}} </td>
+                            <td class="d-flex ptr-button-cube text-center">
+                                <button class="btn btn-primary mx-1" @click="openEditEnterpriseModal(enterprise)">
+                                    <font-awesome-icon icon="pen" class=""/>
+                                </button>
+                                <button class="btn btn-primary mx-1" @click="showEnterpriseLocalStorageProducts(enterprise.id)">
+                                    <font-awesome-icon icon="boxes" class=""/>
+                                </button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-        <div class="local-storage-table">
+
+        <div class="local-storage">
             <div class="d-flex justify-content-between">
                 <h2>Local Storage</h2>
                 <div>
@@ -41,7 +55,7 @@
                 </div>
             </div>
 
-            <div class="card enterprise-control-table">
+            <div class="card local-storage-table">
                 <table class="table table-hover">
                     <thead>
                         <tr>
@@ -57,18 +71,6 @@
                             <td> {{product.amount}} </td>
                             <td> {{product.price}} </td>
                             <td> {{product.salePrice}} </td>
-                        </tr>
-                        <tr>
-                            <td>Tomato</td>
-                            <td>130</td>
-                            <td>3.40</td>
-                            <td>4.50</td>
-                        </tr>
-                        <tr>
-                            <td>Watermelon</td>
-                            <td>999</td>
-                            <td>1.40</td>
-                            <td>2.50</td>
                         </tr>
                     </tbody>
                 </table>
@@ -86,8 +88,10 @@ export default {
 
     data() {
         return {
+            editingEnterprise: null,
             enterprises: [],
             enterpriseStorage: [],
+            editMode: false,
         }
     },
 
@@ -97,13 +101,29 @@ export default {
 
     methods: {
         openAddEnterpriseModal: function() {
-            $('#addEnterpriseModal').modal('show')
+            this.editMode = false;
+            this.editingEnterprise = null;
+            $('#addEnterpriseModal').modal('show');
         },
 
-        showEnterpriseStorage: function(enterpriseID) {
-            console.log(enterpriseID);
+        openEditEnterpriseModal: function(enterprise) {
+            this.editingEnterprise = enterprise;
+            this.editMode = true;
+            $('#addEnterpriseModal').modal('show');
+        },
+
+        
+        showEnterpriseLocalStorageProducts: function(enterpriseID) {
             this.$webService.get(`enterprise/getProducts/${enterpriseID}`).then(response => {
                 this.enterpriseStorage = response.data;
+            }).catch(e => {
+                console.error(e);
+            })
+        },
+
+        loadEnterPrises: function() {
+            this.$webService.get("enterprise").then(response => {
+                this.enterprises = response.data;
             }).catch(e => {
                 console.error(e);
             })
@@ -111,31 +131,40 @@ export default {
     },
 
     mounted() {
-        this.$webService.get("enterprise").then(response => {
-            this.enterprises = response.data;
-        }).catch(e => {
-            console.error(e);
-        })
+        this.loadEnterPrises();
     }
 }
 </script>
 
 <style>
-    .enterprise-table {
-        height: 25%;
+    .enterprise-control {
+        min-height: 500px;
+    }
+
+    .local-storage {
+        min-height: 500px;
     }
 
     .local-storage-table {
-        margin-top: 60px;
-        height: 60%;
-    }
-
-    .enterprise-control-table {
-        height: 100%;
+        height: 500px;
         overflow: auto;
     }
 
-    .mh-30 {
-        max-height: 1%;
+    .enterprise-control-table {
+        height: 500px;
+        overflow: auto;
+    }
+
+    .enterprise-control-table td {
+        vertical-align: middle;
+    }
+
+    .action-col {
+        width: 1px;
+    }
+
+    .ptr-button-cube button {
+        width: 40px;
+        height: 40px;
     }
 </style>

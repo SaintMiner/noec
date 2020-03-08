@@ -8,7 +8,7 @@ import {
         faTachometerAlt, faSearch, faPen,
         faInfo, faUsersCog, faProjectDiagram,
         faUserTag, faSolarPanel, faPlus,
-        faWrench,
+        faWrench, faBoxes, faTrash
         } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 require('./bootstrap');
@@ -17,7 +17,7 @@ library.add([
             faTachometerAlt, faSearch, faPen,
             faInfo, faUsersCog, faProjectDiagram,
             faUserTag, faSolarPanel, faPlus,
-            faWrench,
+            faWrench, faBoxes, faTrash
         ]);
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)    

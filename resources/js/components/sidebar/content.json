@@ -13,6 +13,16 @@
                 "name": "Enterprise control",
                 "icon": "wrench",
                 "routeName": "enterprises"
+            },
+            {
+                "name": "Storage control",
+                "icon": "wrench",
+                "routeName": "enterprises"
+            },
+            {
+                "name": "Product control",
+                "icon": "wrench",
+                "routeName": "products"
             }
         ]
     },

@@ -1,5 +1,5 @@
 <template>
-    <div class="sidebar h-100 overflow-auto" >
+    <div class="sidebar overflow-auto" >
         <div class="mx-2 text-light overflow-hidden py-5">
             <sidebarItem v-for="i in sidebarContent" :key="i.id" 
                 :item="i"
@@ -41,6 +41,9 @@ export default {
     .sidebar {
         width: 265px;
         background-color: #1b262c ;
+        position: sticky;
+        top: 0;
+        height: 100vh;
     }
 
     

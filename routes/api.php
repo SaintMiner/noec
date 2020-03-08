@@ -14,9 +14,14 @@ use Illuminate\Http\Request;
 */
 
 Route::get("enterprise/getProducts/{enterpriseID}", "EnterpriseController@getProducts");
+Route::get("enterprise/getStorages/{enterpriseID}", "EnterpriseController@getStorages");
+Route::get("enterprise/isRegNumberFree/{registration_number}", "EnterpriseController@isRegNumberFree");
+
 
 Route::resource('resource', 'ResourceController');
 
 Route::resource('enterprise', 'EnterpriseController');
 
 Route::resource('storage', 'StorageController');
+
+Route::resource('product', 'ProductController');

@@ -13,7 +13,7 @@ class EnterprisesTableSeeder extends Seeder
     {
         $enterprises = [
             ["id" => 1, "title" => "First Enterprise (not) ever", "registration_number" => 41233742426, "location" => "Ventspils, Kaķu iela 1"],
-            ["id" => 2, "title" => "Trikster", "registration_number" => 41233742426, "location" => "Rīga, Kaķu iela 1"]
+            ["id" => 2, "title" => "Trikster", "registration_number" => 41233512426, "location" => "Rīga, Kaķu iela 1"]
         ];
         App\Enterprise::insert($enterprises);
     }

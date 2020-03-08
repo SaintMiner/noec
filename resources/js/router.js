@@ -12,6 +12,7 @@ import personal from "./components/content/personal/personal";
 import department from "./components/content/department/department";
 import dashboard from "./components/content/dashboard";
 import enterprise from "./components/content/enterprise/enterprise";
+import product from "./components/content/product/product";
 
 /**************************************************/
 /****                 Routes                   ****/
@@ -58,6 +59,13 @@ export default new VueRouter({
                     components: {
                         content: enterprise,
                     },
+                },
+                {
+                    path: "products",
+                    name: "products",
+                    components: {
+                        content: product,
+                    }
                 },
                 {
                     path: "*",

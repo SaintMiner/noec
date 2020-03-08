@@ -27,6 +27,6 @@
 
 <style >
     .root {
-        height: 100%;
+        height: fit-content;
     }
 </style>
