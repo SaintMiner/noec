@@ -13,6 +13,7 @@ import department from "./components/content/department/department";
 import dashboard from "./components/content/dashboard";
 import enterprise from "./components/content/enterprise/enterprise";
 import product from "./components/content/product/product";
+import storage from "./components/content/storage/storage";
 
 /**************************************************/
 /****                 Routes                   ****/
@@ -65,6 +66,13 @@ export default new VueRouter({
                     name: "products",
                     components: {
                         content: product,
+                    }
+                },
+                {
+                    path: "storages",
+                    name: "storages",
+                    components: {
+                        content: storage,
                     }
                 },
                 {

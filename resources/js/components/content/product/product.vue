@@ -72,7 +72,7 @@
 import productControlModal from "./productControlModal";
 import confirmModal from "../../elements/confirmModal";
 export default {
-    name: "product",
+    name: "product-control",
 
     components: {
         productControlModal,
