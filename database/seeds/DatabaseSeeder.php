@@ -18,8 +18,8 @@ class DatabaseSeeder extends Seeder
             PositionsTableSeeder::class,
             StatusesTableSeeder::class,
             ResourcesTableSeeder::class,
-            ProductsTableSeeder::class,
             StoragesTableSeeder::class,
+            ProductsTableSeeder::class,
         ]);
     }
 }

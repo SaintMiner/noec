@@ -24,9 +24,9 @@ class ProductController extends Controller
 
     public function update(Request $request, $id) {
         $this->validate($request, [
-            "name" => "required|min:3|max:256",
+            "name" => "required|min:3|max:255",
             "price" => "required|numeric",
-            "amount_per_palete" => "required|numeric",
+            "amount_per_palete" => "required|numeric|regex:^[1-9]\d*$",
         ]);
         $product = Product::find($id);
         $product->update($request->all());

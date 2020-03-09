@@ -17,6 +17,8 @@ Route::get("enterprise/getProducts/{enterpriseID}", "EnterpriseController@getPro
 Route::get("enterprise/getStorages/{enterpriseID}", "EnterpriseController@getStorages");
 Route::get("enterprise/isRegNumberFree/{registration_number}", "EnterpriseController@isRegNumberFree");
 
+Route::get("storage/getProducts/{storageID}", "StorageController@getProducts");
+
 
 Route::resource('resource', 'ResourceController');
 

@@ -27,5 +27,15 @@ class ProductsTableSeeder extends Seeder
             ["enterprise_id" => 1, "product_id" => 1, "sale_price" => 3.33,"amount" => 613],
         ];
         DB::table("enterprise_product")->insert($enterprise_products);
+
+        $storage_products = [
+            ["storage_id" => 1, "product_id" => 1, "palete_amount" => 20],
+            ["storage_id" => 3, "product_id" => 1, "palete_amount" => 30],
+            ["storage_id" => 1, "product_id" => 2, "palete_amount" => 55],
+            ["storage_id" => 1, "product_id" => 3, "palete_amount" => 10],
+            ["storage_id" => 3, "product_id" => 4, "palete_amount" => 100],
+        ];
+        DB::table("product_storage")->insert($storage_products);
+
     }
 }

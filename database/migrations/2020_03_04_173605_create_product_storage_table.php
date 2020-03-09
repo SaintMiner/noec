@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateStorageProductsTable extends Migration
+class CreateProductStorageTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateStorageProductsTable extends Migration
      */
     public function up()
     {
-        Schema::create('storage_products', function (Blueprint $table) {
+        Schema::create('product_storage', function (Blueprint $table) {
             $table->unsignedBigInteger("storage_id");
             $table->unsignedBigInteger("product_id");
             $table->unsignedSmallInteger("palete_amount");
         });
 
-        Schema::table("storage_products", function($table) {
+        Schema::table("product_storage", function($table) {
             $table->primary(["storage_id", "product_id"]);
             $table->foreign("storage_id")->references("id")->on("storages");
             $table->foreign("product_id")->references("id")->on("products");
