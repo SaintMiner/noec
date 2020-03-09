@@ -14,7 +14,8 @@
                         <div class="form-group">
                             <label class="col-form-label">Storage title</label>
                             <input type="text"  class="form-control" 
-                                :class="{'is-invalid': !titleValidator && focused.title}"
+                                :class="{'is-invalid': !titleValidator && focused.title, 
+                                        'is-valid': titleValidator && focused.title}"
                                 v-model="storage.title"
                                 @focus="focused.title = true"
                             >
@@ -23,7 +24,8 @@
                         <div class="form-group">
                             <label class="col-form-label">Storage location</label>
                             <input type="text"  class="form-control" 
-                                :class="{'is-invalid': !locationValidator && focused.location}"
+                                :class="{'is-invalid': !locationValidator && focused.location, 
+                                        'is-valid': locationValidator && focused.location}"
                                 v-model="storage.location"
                                 @focus="focused.location = true"
                             >
@@ -32,7 +34,8 @@
                         <div class="form-group">
                             <label class="col-form-label">Storage palete maximum capacity</label>
                             <input type="text"  class="form-control"
-                                :class="{'is-invalid': !paleteCapacityValidator && focused.palete_capacity}"
+                                :class="{'is-invalid': !paleteCapacityValidator && focused.palete_capacity, 
+                                        'is-valid': paleteCapacityValidator && focused.palete_capacity}"
                                 v-model="storage.palete_capacity" 
                                 @focus="focused.palete_capacity = true"
                             >
@@ -40,12 +43,15 @@
                         </div>
                         <div class="form-group">
                             <label class="col-form-label">Storage class</label>
-                            <select class="custom-select" v-model="storage.class">
+                            <select class="custom-select" v-model="storage.class"
+                                :class="{'is-invalid': !classValidator, 'is-valid': classValidator}"
+                            >
                                 <option value="D" selected>D</option>
                                 <option value="C">C</option>
                                 <option value="B">B</option>
                                 <option value="A">A</option>
                             </select>
+                            <div class="invalid-feedback"> {{error.class}} </div>
                         </div>
                     </form>
                 </div>
@@ -61,7 +67,7 @@
 
 <script>
 export default {
-    name: "ProductControlModal",
+    name: "StorageControlModal",
 
     props: {
         editMode: {type: Boolean, default: false},
@@ -118,6 +124,16 @@ export default {
                 return true;
             } else {
                 this.error.palete_capacity = "Storage palete amount must be a positive integer numbers and more than 0!"
+                return false;
+            }
+        },
+
+        classValidator: function() {
+            let storageClass = String(this.storage.class);
+            if (storageClass == "A" || storageClass == "B" || storageClass == "C" || storageClass == "D") {
+                return true;
+            } else {
+                this.error.class = "Storage class must be only A, B, C or D class"
                 return false;
             }
         },

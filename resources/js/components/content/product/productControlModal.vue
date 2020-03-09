@@ -14,7 +14,8 @@
                         <div class="form-group">
                             <label class="col-form-label">Product name</label>
                             <input type="text"  class="form-control" 
-                                :class="{'is-invalid': !nameValidator && focused.name}"
+                                :class="{'is-invalid': !nameValidator && focused.name,
+                                        'is-valid': nameValidator && focused.name}"
                                 v-model="product.name"
                                 @focus="focused.name = true"
                             >
@@ -23,7 +24,8 @@
                         <div class="form-group">
                             <label class="col-form-label">Price</label>
                             <input type="text"  class="form-control" 
-                                :class="{'is-invalid': !priceValidator && focused.price}"
+                                :class="{'is-invalid': !priceValidator && focused.price,
+                                        'is-valid': priceValidator && focused.price}"
                                 v-model="product.price"
                                 @focus="focused.price = true"
                                 @blur="fixPrice"
@@ -33,7 +35,8 @@
                         <div class="form-group">
                             <label class="col-form-label">Amount per palete</label>
                             <input type="text"  class="form-control"
-                                :class="{'is-invalid': !amountPerPaletepaleteValidator && focused.amount_per_palete}"
+                                :class="{'is-invalid': !amountPerPaletepaleteValidator && focused.amount_per_palete,
+                                        'is-valid': amountPerPaletepaleteValidator && focused.amount_per_palete}"
                                 v-model="product.amount_per_palete" 
                                 @focus="focused.amount_per_palete = true"
                                 @blur="fixAmountPerPalete"

@@ -12615,6 +12615,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "ProductControlModal",
   props: {
@@ -12961,8 +12964,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: "ProductControlModal",
+  name: "StorageControlModal",
   props: {
     editMode: {
       type: Boolean,
@@ -13022,6 +13031,16 @@ __webpack_require__.r(__webpack_exports__);
         return true;
       } else {
         this.error.palete_capacity = "Storage palete amount must be a positive integer numbers and more than 0!";
+        return false;
+      }
+    },
+    classValidator: function classValidator() {
+      var storageClass = String(this.storage["class"]);
+
+      if (storageClass == "A" || storageClass == "B" || storageClass == "C" || storageClass == "D") {
+        return true;
+      } else {
+        this.error["class"] = "Storage class must be only A, B, C or D class";
         return false;
       }
     },
@@ -50985,7 +51004,8 @@ var render = function() {
                   ],
                   staticClass: "form-control",
                   class: {
-                    "is-invalid": !_vm.nameValidator && _vm.focused.name
+                    "is-invalid": !_vm.nameValidator && _vm.focused.name,
+                    "is-valid": _vm.nameValidator && _vm.focused.name
                   },
                   attrs: { type: "text" },
                   domProps: { value: _vm.product.name },
@@ -51023,7 +51043,8 @@ var render = function() {
                   ],
                   staticClass: "form-control",
                   class: {
-                    "is-invalid": !_vm.priceValidator && _vm.focused.price
+                    "is-invalid": !_vm.priceValidator && _vm.focused.price,
+                    "is-valid": _vm.priceValidator && _vm.focused.price
                   },
                   attrs: { type: "text" },
                   domProps: { value: _vm.product.price },
@@ -51064,6 +51085,9 @@ var render = function() {
                   class: {
                     "is-invalid":
                       !_vm.amountPerPaletepaleteValidator &&
+                      _vm.focused.amount_per_palete,
+                    "is-valid":
+                      _vm.amountPerPaletepaleteValidator &&
                       _vm.focused.amount_per_palete
                   },
                   attrs: { type: "text" },
@@ -51431,7 +51455,8 @@ var render = function() {
                 ],
                 staticClass: "form-control",
                 class: {
-                  "is-invalid": !_vm.titleValidator && _vm.focused.title
+                  "is-invalid": !_vm.titleValidator && _vm.focused.title,
+                  "is-valid": _vm.titleValidator && _vm.focused.title
                 },
                 attrs: { type: "text" },
                 domProps: { value: _vm.storage.title },
@@ -51469,7 +51494,8 @@ var render = function() {
                 ],
                 staticClass: "form-control",
                 class: {
-                  "is-invalid": !_vm.locationValidator && _vm.focused.location
+                  "is-invalid": !_vm.locationValidator && _vm.focused.location,
+                  "is-valid": _vm.locationValidator && _vm.focused.location
                 },
                 attrs: { type: "text" },
                 domProps: { value: _vm.storage.location },
@@ -51508,7 +51534,9 @@ var render = function() {
                 staticClass: "form-control",
                 class: {
                   "is-invalid":
-                    !_vm.paleteCapacityValidator && _vm.focused.palete_capacity
+                    !_vm.paleteCapacityValidator && _vm.focused.palete_capacity,
+                  "is-valid":
+                    _vm.paleteCapacityValidator && _vm.focused.palete_capacity
                 },
                 attrs: { type: "text" },
                 domProps: { value: _vm.storage.palete_capacity },
@@ -51551,6 +51579,10 @@ var render = function() {
                     }
                   ],
                   staticClass: "custom-select",
+                  class: {
+                    "is-invalid": !_vm.classValidator,
+                    "is-valid": _vm.classValidator
+                  },
                   on: {
                     change: function($event) {
                       var $$selectedVal = Array.prototype.filter
@@ -51582,7 +51614,11 @@ var render = function() {
                   _vm._v(" "),
                   _c("option", { attrs: { value: "A" } }, [_vm._v("A")])
                 ]
-              )
+              ),
+              _vm._v(" "),
+              _c("div", { staticClass: "invalid-feedback" }, [
+                _vm._v(" " + _vm._s(_vm.error.class) + " ")
+              ])
             ])
           ])
         ]),
