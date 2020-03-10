@@ -16,7 +16,7 @@ class CreateProductStorageTable extends Migration
         Schema::create('product_storage', function (Blueprint $table) {
             $table->unsignedBigInteger("storage_id");
             $table->unsignedBigInteger("product_id");
-            $table->unsignedSmallInteger("palete_amount");
+            $table->unsignedSmallInteger("palete_amount")->default(0);
         });
 
         Schema::table("product_storage", function($table) {

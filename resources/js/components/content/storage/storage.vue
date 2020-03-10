@@ -1,5 +1,6 @@
 <template>
     <div>
+        <addProductToStorage id="addProductToStorage" :selectedStorage="selectedStorage" :storageProducts="storageProducts"/>
         <storageControlModal id="storageControlModal" :editMode="editMode" :editingStorage="editingStorage" @loadStorages="loadStorages"/>
         <div>
             <div class="d-flex justify-content-between">
@@ -48,7 +49,7 @@
             <div class="d-flex justify-content-between">
                 <h2>Products</h2>
                 <div>
-                    <button class="btn btn-primary" @click="">
+                    <button class="btn btn-primary" :disabled="selectedStorage == null" @click="openAddProductToStorageModal">
                         <font-awesome-icon icon="plus"/>
                         <span class="ml-2">Add product</span>
                     </button>
@@ -66,7 +67,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="product in storageProduct" :key="product.id">
+                        <tr v-for="product in storageProducts" :key="product.id">
                             <td> {{product.name}} </td>
                             <td> {{product.price}} </td>
                             <td> {{product.palete_amount}} </td>
@@ -80,18 +81,21 @@
 </template>
 
 <script>
+import addProductToStorage from "./addProductToStorage";
 import storageControlModal from "./storageControlModal";
 export default {
     name: "storage-control",
 
     components: {
         storageControlModal,
+        addProductToStorage,
     },
 
     data() {
         return {
             storages: [],
-            storageProduct: [],
+            selectedStorage: null,
+            storageProducts: [],
             editMode: false,
             editingStorage: null,
 
@@ -102,7 +106,6 @@ export default {
         loadStorages: function() {
             this.$webService.get("storage").then(response => {
                 this.storages = response.data;
-                console.log(this.storages);
             }).catch(e => {
                 console.error(e);
             })
@@ -110,10 +113,11 @@ export default {
 
         loadStorageProducts: function(id) {
             this.$webService.get(`storage/getProducts/${id}`).then(response => {
-                this.storageProduct = response.data;
+                this.selectedStorage = id;
+                this.storageProducts = response.data;
             }).catch(e => {
                 console.error(e);
-            })
+            });
         },
 
         openAddStorageModal: function() {
@@ -126,7 +130,15 @@ export default {
             this.editMode = true;
             this.editingStorage = storage;
             $('#storageControlModal').modal('show');
-        }
+        },
+        
+        openAddProductToStorageModal: function() {
+            if (this.selectedStorage != null) {
+                $('#addProductToStorage').modal('show');
+            } else {
+                // Some warnings LATER...
+            }
+        },
     },
 
     mounted() {

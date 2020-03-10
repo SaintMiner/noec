@@ -1,9 +1,13 @@
 <template>
     <div class="sidebar overflow-auto" >
         <div class="mx-2 text-light overflow-hidden py-5">
-            <sidebarItem v-for="i in sidebarContent" :key="i.id" 
+            <hr>
+            <div v-for="i in sidebarContent" :key="i.id">
+            <sidebarItem  
                 :item="i"
             />
+            <hr>
+            </div>
         </div>
     </div>
 </template>

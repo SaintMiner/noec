@@ -16,6 +16,7 @@ class StorageProducts extends JsonResource
     {
         $pivot = $this->pivot;
         return [
+            "id" => $this->id,
             "name" => $this->name,
             "price" => $this->price,
             "palete_amount" => $pivot->palete_amount,

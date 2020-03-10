@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Storage;
+use App\Product;
 use App\Http\Resources\StorageProducts as StorageProducts;
-
 
 class StorageController extends Controller
 {
@@ -39,5 +39,16 @@ class StorageController extends Controller
     public function getProducts($storageID) {
         $storageProducts = Storage::find($storageID)->products()->get();
         return StorageProducts::collection($storageProducts);
+    }
+
+    public function getNotIncludedProduct($storageID) {
+        $includedProductsID = Storage::find($storageID)->products()->get()->pluck("id");
+        $notIncludedProducts = Product::whereNotIn("id", $includedProductsID)->get();
+        return $notIncludedProducts;
+    }
+
+    public function addProductToStorage(Request $request) {
+        $storage = Storage::find($request->storage);
+        $storage->products()->attach($request->products);
     }
 }
