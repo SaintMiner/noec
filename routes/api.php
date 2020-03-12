@@ -20,6 +20,7 @@ Route::get("enterprise/isRegNumberFree/{registration_number}", "EnterpriseContro
 Route::get("storage/getProducts/{storageID}", "StorageController@getProducts");
 Route::get("storage/getNotIncludedProduct/{storageID}", "StorageController@getNotIncludedProduct");
 Route::post("storage/addProductToStorage", "StorageController@addProductToStorage");
+Route::put("storage/addPalletes/{storageID}", "StorageController@addPalletes");
 
 Route::resource('resource', 'ResourceController');
 

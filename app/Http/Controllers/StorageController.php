@@ -36,6 +36,17 @@ class StorageController extends Controller
         return response("updated", 201);
     }
 
+    public function addPalletes(Request $request, $id) {
+        $storage = Storage::find($id);
+        $palete_amount = $storage->products()->find($request->productID)->pivot->palete_amount;
+        $storage->products()->updateExistingPivot($request->productID, ["palete_amount" => $palete_amount+$request->palleteCount]);
+        // $storage->products()->where("product_id", $request->productID)->get();
+        
+        // return $storage->products()->where("product_id", $request->productID)->get();
+
+        return response("added", 201);
+    }
+
     public function getProducts($storageID) {
         $storageProducts = Storage::find($storageID)->products()->get();
         return StorageProducts::collection($storageProducts);
@@ -46,9 +57,10 @@ class StorageController extends Controller
         $notIncludedProducts = Product::whereNotIn("id", $includedProductsID)->get();
         return $notIncludedProducts;
     }
-
+    
     public function addProductToStorage(Request $request) {
         $storage = Storage::find($request->storage);
         $storage->products()->attach($request->products);
+        return response("added", 201);
     }
 }

@@ -19,6 +19,7 @@ class StorageProducts extends JsonResource
             "id" => $this->id,
             "name" => $this->name,
             "price" => $this->price,
+            "amount_per_palete" => $this->amount_per_palete,
             "palete_amount" => $pivot->palete_amount,
         ];
     }

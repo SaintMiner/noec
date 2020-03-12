@@ -53,12 +53,12 @@ export default {
     },
 
     props: {
-        selectedStorage: Number,
+        selectedStorage: Object,
     },
 
     methods: {
         loadProducts: function() {
-            this.$webService.get(`storage/getNotIncludedProduct/${this.selectedStorage}`).then(response => {
+            this.$webService.get(`storage/getNotIncludedProduct/${this.selectedStorage.id}`).then(response => {
                 console.log(response.data);
                 this.products = response.data;
                 console.log(this.products);
@@ -77,10 +77,13 @@ export default {
         },
 
         addProductToStorage: function() {
-            let data = {storage: this.selectedStorage, products: this.getCheckedProducts()};
+            let data = {storage: this.selectedStorage.id, products: this.getCheckedProducts()};
             this.$webService.post("storage/addProductToStorage", data).then(response => {
-                console.log(response.data);
-            })
+                if (response.status == 201) {
+                    this.$emit("loadStorageProducts", this.selectedStorage);
+                    $('#addProductToStorage').modal('hide');
+                }
+            });
             
         }
     },
