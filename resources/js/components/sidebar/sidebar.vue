@@ -1,6 +1,9 @@
 <template>
     <div class="sidebar overflow-auto" >
-        <div class="mx-2 text-light overflow-hidden py-5">
+        <div class="text-light p-3">
+            {{user.name}}
+        </div>
+        <div class="mx-2 text-light overflow-hidden">
             <hr>
             <div v-for="i in sidebarContent" :key="i.id">
             <sidebarItem  
@@ -21,7 +24,9 @@ export default {
 
     data() {
         return {
-            
+            user: {
+                name: null
+            },
         }
     },
 
@@ -37,6 +42,11 @@ export default {
     },
 
     mounted() {
+        this.$webService.post("auth/me").then(response => {
+            this.user = response.data;
+        }).catch(e => {
+            console.error(e);
+        })
     }
 }
 </script>

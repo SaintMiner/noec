@@ -26,12 +26,13 @@ export default new VueRouter({
         {
             path: '/', 
             component: login,
+            name: "login",
         },
 
         {
             path: "/system",
             component: rootComp,
-            
+            name: "system",
             children: [
                 {
                     path: "resources",

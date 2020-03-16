@@ -20,6 +20,7 @@ Route::get("enterprise/isRegNumberFree/{registration_number}", "EnterpriseContro
 Route::get("storage/getProducts/{storageID}", "StorageController@getProducts");
 Route::get("storage/getNotIncludedProduct/{storageID}", "StorageController@getNotIncludedProduct");
 Route::post("storage/addProductToStorage", "StorageController@addProductToStorage");
+Route::post("storage/removeProductFromStorage", "StorageController@removeProductFromStorage");
 Route::put("storage/addPalletes/{storageID}", "StorageController@addPalletes");
 
 Route::resource('resource', 'ResourceController');
@@ -29,3 +30,13 @@ Route::resource('enterprise', 'EnterpriseController');
 Route::resource('storage', 'StorageController');
 
 Route::resource('product', 'ProductController');
+
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'auth'
+], function ($router) {
+    Route::post('login', 'AuthController@login');
+    Route::post('logout', 'AuthController@logout');
+    Route::post('refresh', 'AuthController@refresh');
+    Route::post('me', 'AuthController@me');
+});

@@ -22,6 +22,8 @@
         components: {
             sidebar,
         },
+
+        
     }
 </script>
 

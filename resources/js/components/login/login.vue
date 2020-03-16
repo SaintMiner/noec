@@ -3,12 +3,12 @@
         <div class="login-block row">
             <div class="left col mb-4 py-5">
                 
-                <login-input type="text" icon="user" placeholder="Username"/>
-                <login-input type="password" icon="key" placeholder="Password"/>
+                <login-input type="text" icon="user" placeholder="Username" @setValue="getUsername"/>
+                <login-input type="password" icon="key" placeholder="Password" @setValue="getPassword"/>
 
                 <hr class="my-5">
 
-                <div class="d-flex justify-content-between">
+                <!-- <div class="d-flex justify-content-between">
                     <div>
                         <a href=""><em> Forgot Password? </em> </a>
                     </div>
@@ -16,11 +16,10 @@
                         <input type="checkbox" class="form-check-input">
                         <label class="form-check-label">Remember me</label>
                     </div>
-                </div>
+                </div> -->
 
             </div>
-            
-            <button class="right col-4 btn">
+            <button class="right col-4 btn" @click="login">
                 <h3 class="text-light"> LOGIN </h3>
             </button>
         </div>
@@ -33,9 +32,44 @@ import loginInput from "./elements/login-input";
 export default {
     name: "login2",
 
+    data() {
+        return {
+            access_token: "",
+            password: "",
+            username: "",
+        }
+    },
+
     components: {
         "login-input": loginInput,
     },
+
+    methods: {
+
+        getPassword: function(password) {
+            this.password = password;
+        },
+
+        getUsername: function(username) {
+            this.username = username;
+        },
+
+        login: function() {
+            this.$webService.post("auth/login", {name: this.username, password: this.password}).then(response => {
+                this.access_token = response.data.access_token;
+                this.$webService.defaults.headers.common["Authorization"] = `Bearer ${this.access_token}`;
+                localStorage.setItem("token", this.access_token);
+                localStorage.setItem("token_expires_in", new Date().getTime()+1*1*10*60*1000);
+                this.$router.push("system");
+            }).catch(e => {
+                console.error(e);
+            });
+        },
+    },
+
+    mounted() {
+        
+    }
 }
 </script>
 

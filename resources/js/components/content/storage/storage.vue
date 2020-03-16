@@ -1,5 +1,9 @@
 <template>
     <div ref="storageControl">
+        <confirmModal id="confirmProductRemoveModal" 
+            confirmText="Are you sure you want to remove these products?"
+            @confirmAction="removeProducts(checkedProducts)"
+        />
         <addProductToStorage id="addProductToStorage" :selectedStorage="selectedStorage" :storageProducts="storageProducts" @loadStorageProducts="loadStorageProducts"/>
         <storageControlModal id="storageControlModal" :editMode="editMode" :editingStorage="editingStorage" @loadStorages="loadStorages"/>
         <div>
@@ -82,9 +86,9 @@
                                 <div class="dropdown-menu">
                                     <a class="dropdown-item" href="#">Order</a>
                                     <a class="dropdown-item" href="#" @click="openAddPalletesModal(product)">Add</a>
-                                    <a class="dropdown-item" href="#">Subtract</a>
+                                    <a class="dropdown-item" href="#" @click="openSubtractPalletesModal(product)">Subtract</a>
                                     <div role="separator" class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#">Remove</a>
+                                    <a class="dropdown-item" href="#" @click="openSingleRemoveProductConfirmModal(product)">Remove</a>
                                 </div>
                             </td>
                         </tr>
@@ -98,6 +102,7 @@
 
 <script>
 import Vue from "vue";
+import confirmModal from "../../elements/confirmModal";
 import storageProductActionModal from "./storageProductActionModal";
 import addProductToStorage from "./addProductToStorage";
 import storageControlModal from "./storageControlModal";
@@ -108,6 +113,7 @@ export default {
         storageControlModal,
         addProductToStorage,
         storageProductActionModal,
+        confirmModal,
     },
 
     data() {
@@ -121,6 +127,8 @@ export default {
 
             actionProduct: null,
             actionFunction: null,
+
+            checkedProducts: [],
         }
     },
 
@@ -164,8 +172,8 @@ export default {
         },
 
         openAddPalletesModal: function(product) {
-             let componentClass = Vue.extend(storageProductActionModal);
-             let instance = new componentClass({
+            let componentClass = Vue.extend(storageProductActionModal);
+            let instance = new componentClass({
                 propsData: {
                     actionTitle: "Add palletes",
                     actionText: "How many pallets need to be added?",
@@ -177,6 +185,38 @@ export default {
             instance.$mount(); 
             this.$refs.storageControl.appendChild(instance.$el);
             $('#storageActionModal').modal('show');
+        },
+
+        openSubtractPalletesModal: function(product) {
+            let componentClass = Vue.extend(storageProductActionModal);
+            let instance = new componentClass({
+                propsData: {
+                    actionTitle: "Subtract palletes",
+                    actionText: "How many pallets need to be subtracted?",
+                    actionProduct: product,
+                    actionStorage: this.selectedStorage,
+                    actionFunction: this.subtractPalletes,
+                },
+            });
+            instance.$mount(); 
+            this.$refs.storageControl.appendChild(instance.$el);
+            $('#storageActionModal').modal('show');
+        },
+
+        openSingleRemoveProductConfirmModal: function(product) {
+            this.checkedProducts = [product.id];
+            $('#confirmProductRemoveModal').modal('show');
+        },
+
+        removeProducts: function(checkedProducts) {
+            console.log(checkedProducts);
+            let data = {storage: this.selectedStorage.id, products: checkedProducts}
+            this.$webService.post("storage/removeProductFromStorage", data).then(response => {
+                this.loadStorageProducts(this.selectedStorage);
+                $('#confirmProductRemoveModal').modal('hide');
+            }).catch(e => {
+                console.error(e);
+            })
         },
 
         addPalletes: function(storage, product, palleteCount) {
@@ -191,14 +231,16 @@ export default {
             
         },
 
-        subtractProducts: function() {
-
+        subtractPalletes: function(storage, product, palleteCount) {
+            this.addPalletes(storage, product, -palleteCount);
         },
-        
+
     },
 
     mounted() {
         this.loadStorages();
+        
+
     }
 }
 </script>

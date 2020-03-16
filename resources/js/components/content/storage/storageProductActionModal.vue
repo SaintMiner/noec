@@ -55,7 +55,10 @@ export default {
     computed: {
         inputValue: {
             set: function(value) {
-                if (!isNaN(value) && Number(value) > 0 && value % 1 == 0) {
+                if (!isNaN(value) && Number(value) != 0 && Number(value) % 1 == 0) {
+                    if (Number(value) < 0) {
+                        value = Math.abs(value);
+                    }
                     this.isValid = true;
                     this.error = "";
                 } else {
