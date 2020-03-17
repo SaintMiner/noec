@@ -13006,6 +13006,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -13079,7 +13084,8 @@ __webpack_require__.r(__webpack_exports__);
           actionText: "How many pallets need to be added?",
           actionProduct: product,
           actionStorage: this.selectedStorage,
-          actionFunction: this.addPalletes
+          actionFunction: this.addPalletes,
+          actionType: "add"
         }
       });
       instance.$mount();
@@ -13094,7 +13100,8 @@ __webpack_require__.r(__webpack_exports__);
           actionText: "How many pallets need to be subtracted?",
           actionProduct: product,
           actionStorage: this.selectedStorage,
-          actionFunction: this.subtractPalletes
+          actionFunction: this.subtractPalletes,
+          actionType: "subtract"
         }
       });
       instance.$mount();
@@ -13131,6 +13138,8 @@ __webpack_require__.r(__webpack_exports__);
       this.$webService.put("storage/addPalletes/".concat(storage.id), data).then(function (response) {
         if (response.status == 201) {
           _this4.loadStorageProducts(storage);
+
+          _this4.loadStorages();
         }
       })["catch"](function (e) {
         console.error(e);
@@ -13410,12 +13419,16 @@ __webpack_require__.r(__webpack_exports__);
     actionStorage: Object,
     actionFunction: {
       type: Function
+    },
+    actionType: {
+      type: String,
+      "default": null
     }
   },
   data: function data() {
     return {
       value: "1",
-      error: "a",
+      error: "",
       isValid: true,
       focused: false
     };
@@ -13428,8 +13441,16 @@ __webpack_require__.r(__webpack_exports__);
             value = Math.abs(value);
           }
 
-          this.isValid = true;
-          this.error = "";
+          if (this.actionType == "add" && Number(value) > this.actionStorage.freeSpace) {
+            this.isValid = false;
+            this.error = "Value is more than storage palletes capacity. Free: ".concat(this.actionStorage.freeSpace);
+          } else if (this.actionType == "subtract" && Number(value) > this.actionProduct.palete_amount) {
+            this.isValid = false;
+            this.error = "Value is more than storage palletes count: ".concat(this.actionProduct.palete_amount);
+          } else {
+            this.isValid = true;
+            this.error = "";
+          }
         } else {
           this.isValid = false;
           this.error = "Value must be a positive number without places";
@@ -13450,6 +13471,13 @@ __webpack_require__.r(__webpack_exports__);
       $('#storageActionModal').modal('hide');
       this.actionFunction(this.actionStorage, this.actionProduct, this.value);
       this.$el.remove();
+    }
+  },
+  mounted: function mounted() {
+    if (1 > this.actionStorage.freeSpace && this.actionType == "add") {
+      this.isValid = false;
+      this.focused = true;
+      this.error = "No space in storage";
     }
   }
 });
@@ -51926,13 +51954,31 @@ var render = function() {
                   _c(
                     "td",
                     {
+                      class: {
+                        "text-danger":
+                          storage.busySpace >= storage.palete_capacity
+                      },
                       on: {
                         click: function($event) {
                           return _vm.loadStorageProducts(storage)
                         }
                       }
                     },
-                    [_vm._v(" " + _vm._s(storage.palete_capacity) + " ")]
+                    [
+                      _vm._v(
+                        " \n                            " +
+                          _vm._s(storage.busySpace) +
+                          "/" +
+                          _vm._s(storage.palete_capacity) +
+                          " \n                            "
+                      ),
+                      storage.busySpace > storage.palete_capacity
+                        ? _c("font-awesome-icon", {
+                            attrs: { icon: "exclamation" }
+                          })
+                        : _vm._e()
+                    ],
+                    1
                   ),
                   _vm._v(" "),
                   _c(
@@ -69280,7 +69326,7 @@ __webpack_require__.r(__webpack_exports__);
 
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
-_fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_5__["library"].add([_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faUsers"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faUser"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faKey"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faTachometerAlt"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faSearch"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faPen"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faInfo"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faUsersCog"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faProjectDiagram"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faUserTag"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faSolarPanel"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faPlus"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faWrench"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faBoxes"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faTrash"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faEllipsisV"]]);
+_fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_5__["library"].add([_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faUsers"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faUser"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faKey"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faTachometerAlt"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faSearch"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faPen"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faInfo"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faUsersCog"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faProjectDiagram"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faUserTag"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faSolarPanel"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faPlus"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faWrench"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faBoxes"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faTrash"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faEllipsisV"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faExclamation"]]);
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('font-awesome-icon', _fortawesome_vue_fontawesome__WEBPACK_IMPORTED_MODULE_7__["FontAwesomeIcon"]);
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.mixin({});
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.prototype.$webService = _webService_js__WEBPACK_IMPORTED_MODULE_3__["default"];

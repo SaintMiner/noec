@@ -40,13 +40,13 @@ export default {
         actionProduct: Object,
         actionStorage: Object,
         actionFunction: {type: Function},
-        
+        actionType: {type: String, default: null},
     },
 
     data() {
         return {
             value: "1",
-            error: "a",
+            error: "",
             isValid: true,
             focused: false,
         }
@@ -59,8 +59,17 @@ export default {
                     if (Number(value) < 0) {
                         value = Math.abs(value);
                     }
-                    this.isValid = true;
-                    this.error = "";
+
+                    if (this.actionType == "add" && Number(value) > (this.actionStorage.freeSpace)) {
+                        this.isValid = false;
+                        this.error = `Value is more than storage palletes capacity. Free: ${this.actionStorage.freeSpace}`;
+                    } else if (this.actionType == "subtract" && Number(value) > this.actionProduct.palete_amount) {
+                        this.isValid = false;
+                        this.error = `Value is more than storage palletes count: ${this.actionProduct.palete_amount}`;
+                    } else {
+                        this.isValid = true;
+                        this.error = "";
+                    }
                 } else {
                     this.isValid = false;
                     this.error = "Value must be a positive number without places";
@@ -85,6 +94,14 @@ export default {
             this.$el.remove();
         }
     },
+
+    mounted() {
+        if (1 > this.actionStorage.freeSpace && this.actionType == "add") {
+            this.isValid = false;
+            this.focused = true;
+            this.error = "No space in storage";
+        }
+    }
 
 }
 </script>

@@ -33,7 +33,12 @@
                             <td @click="loadStorageProducts(storage)"> {{storage.title}} </td>
                             <td @click="loadStorageProducts(storage)"> {{storage.location}} </td>
                             <td @click="loadStorageProducts(storage)"> {{storage.class}} </td>
-                            <td @click="loadStorageProducts(storage)"> {{storage.palete_capacity}} </td>
+                            <td 
+                                @click="loadStorageProducts(storage)" 
+                                :class="{'text-danger': storage.busySpace >= storage.palete_capacity}"> 
+                                {{storage.busySpace}}/{{storage.palete_capacity}} 
+                                <font-awesome-icon v-if="storage.busySpace > storage.palete_capacity" icon="exclamation"/>
+                            </td>
                             <td class="d-flex ptr-button-cube text-center">
                                 <button class="btn btn-primary mx-1" @click="openEditStorageModal(storage)">
                                     <font-awesome-icon icon="pen" class=""/>
@@ -180,6 +185,7 @@ export default {
                     actionProduct: product,
                     actionStorage: this.selectedStorage,
                     actionFunction: this.addPalletes,
+                    actionType: "add",
                 },
             });
             instance.$mount(); 
@@ -196,6 +202,7 @@ export default {
                     actionProduct: product,
                     actionStorage: this.selectedStorage,
                     actionFunction: this.subtractPalletes,
+                    actionType: "subtract",
                 },
             });
             instance.$mount(); 
@@ -224,6 +231,7 @@ export default {
             this.$webService.put(`storage/addPalletes/${storage.id}`, data).then(response => {
                 if (response.status == 201) {
                     this.loadStorageProducts(storage);
+                    this.loadStorages();
                 }
             }).catch(e => {
                 console.error(e);
@@ -238,9 +246,8 @@ export default {
     },
 
     mounted() {
-        this.loadStorages();
         
-
+        this.loadStorages();
     }
 }
 </script>

@@ -6,6 +6,7 @@
 export default {
     name: "App",
     beforeMount() {
+        
         console.log(this.$router.currentRoute)
         if (localStorage.getItem("token")) {
             this.$webService.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem("token")}`;

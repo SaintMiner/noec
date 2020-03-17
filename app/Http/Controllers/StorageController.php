@@ -6,11 +6,12 @@ use Illuminate\Http\Request;
 use App\Storage;
 use App\Product;
 use App\Http\Resources\StorageProducts as StorageProducts;
+use App\Http\Resources\StorageFullInfo as StorageInfo;
 
 class StorageController extends Controller
 {
     public function index() {
-        return Storage::all();
+        return StorageInfo::collection(Storage::all());
     }
 
     public function store(Request $request) {
@@ -40,9 +41,13 @@ class StorageController extends Controller
         $this->validate($request, [
             "palleteCount" => "required|numeric|not_in:0"
         ]);
+        
         $storage = Storage::find($id);
-        $palete_amount = $storage->products()->find($request->productID)->pivot->palete_amount;
-        $storage->products()->updateExistingPivot($request->productID, ["palete_amount" => $palete_amount+$request->palleteCount]);
+        $pallete_amount = $storage->products()->find($request->productID)->pivot->palete_amount;
+        if ($pallete_amount < abs($request->palleteCount) && $request->palleteCount < 0 ) {
+            $pallete_amount = abs($request->palleteCount);
+        }
+        $storage->products()->updateExistingPivot($request->productID, ["palete_amount" => $pallete_amount+$request->palleteCount]);
         // $storage->products()->where("product_id", $request->productID)->get();
         
         // return $storage->products()->where("product_id", $request->productID)->get();
