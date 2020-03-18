@@ -10,15 +10,12 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <h3>Product: [{{actionProduct.name}}]</h3>
+                    <h3 v-if="actionProducts.length == 1">Product: [{{actionProducts[0].name}}]</h3>
                     <label >{{actionText}}</label>
                     <input type="text" class="form-control mb-3" v-model="inputValue" :class="{'is-invalid': !isValid && focused}" @focus="focused = true">
-                    <div class="invalid-feedback">
+                    <div class="invalid-feedback" v-for="error in errors" :key="error.id">
                         {{ error }}
                     </div>
-                    <small class="form-text text-muted" v-if="isValid">
-                        {{inputValue}} pallete = {{inputValue*actionProduct.amount_per_palete}} products
-                    </small>
                 </div>
             </div>
             <div class="modal-footer">
@@ -37,7 +34,7 @@ export default {
     props: {
         actionText: String,
         actionTitle: String,
-        actionProduct: Object,
+        actionProducts: Array,
         actionStorage: Object,
         actionFunction: {type: Function},
         actionType: {type: String, default: null},
@@ -46,7 +43,7 @@ export default {
     data() {
         return {
             value: "1",
-            error: "",
+            errors: [],
             isValid: true,
             focused: false,
         }
@@ -55,24 +52,29 @@ export default {
     computed: {
         inputValue: {
             set: function(value) {
+                this.errors = [];
                 if (!isNaN(value) && Number(value) != 0 && Number(value) % 1 == 0) {
                     if (Number(value) < 0) {
                         value = Math.abs(value);
                     }
 
-                    if (this.actionType == "add" && Number(value) > (this.actionStorage.freeSpace)) {
+                    if (this.actionType == "add" && Number(value*this.actionProducts.length) > (this.actionStorage.freeSpace)) {
                         this.isValid = false;
-                        this.error = `Value is more than storage palletes capacity. Free: ${this.actionStorage.freeSpace}`;
-                    } else if (this.actionType == "subtract" && Number(value) > this.actionProduct.palete_amount) {
-                        this.isValid = false;
-                        this.error = `Value is more than storage palletes count: ${this.actionProduct.palete_amount}`;
+                        this.errors.push(`Value is more than storage palletes capacity. Free: ${this.actionStorage.freeSpace}`);
+                    } else if (this.actionType == "subtract") {
+                        let errProd = this.actionProducts.filter(product => {
+                           if (Number(value) > product.palete_amount) {
+                                this.isValid = false;
+                                this.errors.push(`Value is more than storage palletes count. [${product.name}]: ${product.palete_amount}`);
+                           }
+                        });
                     } else {
                         this.isValid = true;
-                        this.error = "";
+                        this.errors = [];
                     }
                 } else {
                     this.isValid = false;
-                    this.error = "Value must be a positive number without places";
+                    this.errors.push("Value must be a positive number without places");
                 }
                 this.value = value;
             },
@@ -90,16 +92,18 @@ export default {
 
         confirm: function() {
             $('#storageActionModal').modal('hide');
-            this.actionFunction(this.actionStorage, this.actionProduct, this.value);
+            this.actionFunction(this.actionStorage, this.actionProducts, this.value);
             this.$el.remove();
         }
     },
 
     mounted() {
+        console.log(this.actionStorage.freeSpace);
+        console.log(this.actionStorage.busySpace);
         if (1 > this.actionStorage.freeSpace && this.actionType == "add") {
             this.isValid = false;
             this.focused = true;
-            this.error = "No space in storage";
+            this.errors.push("No space in storage");
         }
     }
 

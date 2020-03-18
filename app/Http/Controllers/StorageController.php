@@ -14,6 +14,10 @@ class StorageController extends Controller
         return StorageInfo::collection(Storage::all());
     }
 
+    public function show($id) {
+        return StorageInfo::collection([Storage::find($id)])->first();
+    }
+
     public function store(Request $request) {
         $this->validate($request, [
             "title" => "required|min:3|max:255",
@@ -21,7 +25,7 @@ class StorageController extends Controller
             "palete_capacity" => "required|numeric|regex:/^[1-9]\d*$/",
             "class" => "required|in:A,B,C,D"
         ]);
-        Storage::create($request->all());
+           Storage::create($request->all());
         return response("created", 201);
     }
 
@@ -43,14 +47,13 @@ class StorageController extends Controller
         ]);
         
         $storage = Storage::find($id);
-        $pallete_amount = $storage->products()->find($request->productID)->pivot->palete_amount;
-        if ($pallete_amount < abs($request->palleteCount) && $request->palleteCount < 0 ) {
-            $pallete_amount = abs($request->palleteCount);
+        foreach($request->productsID as $productID) {
+            $pallete_amount = $storage->products()->find($productID)->pivot->palete_amount;
+            if ($pallete_amount < abs($request->palleteCount) && $request->palleteCount < 0 ) {
+                $pallete_amount = abs($request->palleteCount);
+            }
+            $storage->products()->updateExistingPivot($productID, ["palete_amount" => $pallete_amount+$request->palleteCount]);
         }
-        $storage->products()->updateExistingPivot($request->productID, ["palete_amount" => $pallete_amount+$request->palleteCount]);
-        // $storage->products()->where("product_id", $request->productID)->get();
-        
-        // return $storage->products()->where("product_id", $request->productID)->get();
 
         return response("Action done", 201);
     }

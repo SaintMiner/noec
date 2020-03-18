@@ -13011,6 +13011,20 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -13052,7 +13066,6 @@ __webpack_require__.r(__webpack_exports__);
     loadStorageProducts: function loadStorageProducts(storage) {
       var _this2 = this;
 
-      console.log(storage);
       this.$webService.get("storage/getProducts/".concat(storage.id)).then(function (response) {
         _this2.selectedStorage = storage;
         _this2.storageProducts = response.data;
@@ -13076,13 +13089,13 @@ __webpack_require__.r(__webpack_exports__);
       } else {// Some warnings LATER...
       }
     },
-    openAddPalletesModal: function openAddPalletesModal(product) {
+    openAddPalletesModal: function openAddPalletesModal(products) {
       var componentClass = vue__WEBPACK_IMPORTED_MODULE_0___default.a.extend(_storageProductActionModal__WEBPACK_IMPORTED_MODULE_2__["default"]);
       var instance = new componentClass({
         propsData: {
           actionTitle: "Add palletes",
           actionText: "How many pallets need to be added?",
-          actionProduct: product,
+          actionProducts: products,
           actionStorage: this.selectedStorage,
           actionFunction: this.addPalletes,
           actionType: "add"
@@ -13092,13 +13105,37 @@ __webpack_require__.r(__webpack_exports__);
       this.$refs.storageControl.appendChild(instance.$el);
       $('#storageActionModal').modal('show');
     },
-    openSubtractPalletesModal: function openSubtractPalletesModal(product) {
+    openMultipleActionPalleteModal: function openMultipleActionPalleteModal(mode, action) {
+      var checkedProducts = this.storageProducts.filter(function (product) {
+        return product.checked;
+      });
+
+      if (checkedProducts.length) {
+        var componentClass = vue__WEBPACK_IMPORTED_MODULE_0___default.a.extend(_storageProductActionModal__WEBPACK_IMPORTED_MODULE_2__["default"]);
+        var instance = new componentClass({
+          propsData: {
+            actionTitle: "Add palletes",
+            actionText: "How many pallets need to be added?",
+            actionProducts: checkedProducts,
+            actionStorage: this.selectedStorage,
+            actionFunction: action,
+            actionType: mode
+          }
+        });
+        instance.$mount();
+        this.$refs.storageControl.appendChild(instance.$el);
+        $('#storageActionModal').modal('show');
+      } else {
+        alert("Firstly check some products!");
+      }
+    },
+    openSubtractPalletesModal: function openSubtractPalletesModal(products) {
       var componentClass = vue__WEBPACK_IMPORTED_MODULE_0___default.a.extend(_storageProductActionModal__WEBPACK_IMPORTED_MODULE_2__["default"]);
       var instance = new componentClass({
         propsData: {
           actionTitle: "Subtract palletes",
           actionText: "How many pallets need to be subtracted?",
-          actionProduct: product,
+          actionProducts: products,
           actionStorage: this.selectedStorage,
           actionFunction: this.subtractPalletes,
           actionType: "subtract"
@@ -13112,34 +13149,57 @@ __webpack_require__.r(__webpack_exports__);
       this.checkedProducts = [product.id];
       $('#confirmProductRemoveModal').modal('show');
     },
+    openMultipleRemoveProductConfirmModal: function openMultipleRemoveProductConfirmModal() {
+      this.getCheckedProduct();
+      $('#confirmProductRemoveModal').modal('show');
+    },
     removeProducts: function removeProducts(checkedProducts) {
       var _this3 = this;
 
-      console.log(checkedProducts);
-      var data = {
-        storage: this.selectedStorage.id,
-        products: checkedProducts
-      };
-      this.$webService.post("storage/removeProductFromStorage", data).then(function (response) {
-        _this3.loadStorageProducts(_this3.selectedStorage);
+      if (checkedProducts.length) {
+        var data = {
+          storage: this.selectedStorage.id,
+          products: checkedProducts
+        };
+        this.$webService.post("storage/removeProductFromStorage", data).then(function (response) {
+          _this3.loadStorageProducts(_this3.selectedStorage);
 
-        $('#confirmProductRemoveModal').modal('hide');
-      })["catch"](function (e) {
-        console.error(e);
+          $('#confirmProductRemoveModal').modal('hide');
+
+          _this3.loadStorages();
+        })["catch"](function (e) {
+          console.error(e);
+        });
+      } else {
+        alert("Firstly check some products!");
+      }
+    },
+    getCheckedProduct: function getCheckedProduct() {
+      var checkedProducts = this.storageProducts.filter(function (product) {
+        return product.checked;
+      });
+      this.checkedProducts = checkedProducts.map(function (product) {
+        return product.id;
       });
     },
     addPalletes: function addPalletes(storage, product, palleteCount) {
       var _this4 = this;
 
       var data = {
-        productID: product.id,
+        productsID: product.map(function (prod) {
+          return prod.id;
+        }),
         palleteCount: palleteCount
       };
       this.$webService.put("storage/addPalletes/".concat(storage.id), data).then(function (response) {
         if (response.status == 201) {
-          _this4.loadStorageProducts(storage);
-
           _this4.loadStorages();
+
+          _this4.$webService.get("storage/".concat(storage.id)).then(function (response) {
+            _this4.loadStorageProducts(response.data);
+          })["catch"](function (e) {
+            console.error(e);
+          });
         }
       })["catch"](function (e) {
         console.error(e);
@@ -13407,15 +13467,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "storageProductActionModal",
   props: {
     actionText: String,
     actionTitle: String,
-    actionProduct: Object,
+    actionProducts: Array,
     actionStorage: Object,
     actionFunction: {
       type: Function
@@ -13428,7 +13485,7 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       value: "1",
-      error: "",
+      errors: [],
       isValid: true,
       focused: false
     };
@@ -13436,24 +13493,33 @@ __webpack_require__.r(__webpack_exports__);
   computed: {
     inputValue: {
       set: function set(value) {
+        var _this = this;
+
+        this.errors = [];
+
         if (!isNaN(value) && Number(value) != 0 && Number(value) % 1 == 0) {
           if (Number(value) < 0) {
             value = Math.abs(value);
           }
 
-          if (this.actionType == "add" && Number(value) > this.actionStorage.freeSpace) {
+          if (this.actionType == "add" && Number(value * this.actionProducts.length) > this.actionStorage.freeSpace) {
             this.isValid = false;
-            this.error = "Value is more than storage palletes capacity. Free: ".concat(this.actionStorage.freeSpace);
-          } else if (this.actionType == "subtract" && Number(value) > this.actionProduct.palete_amount) {
-            this.isValid = false;
-            this.error = "Value is more than storage palletes count: ".concat(this.actionProduct.palete_amount);
+            this.errors.push("Value is more than storage palletes capacity. Free: ".concat(this.actionStorage.freeSpace));
+          } else if (this.actionType == "subtract") {
+            var errProd = this.actionProducts.filter(function (product) {
+              if (Number(value) > product.palete_amount) {
+                _this.isValid = false;
+
+                _this.errors.push("Value is more than storage palletes count. [".concat(product.name, "]: ").concat(product.palete_amount));
+              }
+            });
           } else {
             this.isValid = true;
-            this.error = "";
+            this.errors = [];
           }
         } else {
           this.isValid = false;
-          this.error = "Value must be a positive number without places";
+          this.errors.push("Value must be a positive number without places");
         }
 
         this.value = value;
@@ -13469,15 +13535,18 @@ __webpack_require__.r(__webpack_exports__);
     },
     confirm: function confirm() {
       $('#storageActionModal').modal('hide');
-      this.actionFunction(this.actionStorage, this.actionProduct, this.value);
+      this.actionFunction(this.actionStorage, this.actionProducts, this.value);
       this.$el.remove();
     }
   },
   mounted: function mounted() {
+    console.log(this.actionStorage.freeSpace);
+    console.log(this.actionStorage.busySpace);
+
     if (1 > this.actionStorage.freeSpace && this.actionType == "add") {
       this.isValid = false;
       this.focused = true;
-      this.error = "No space in storage";
+      this.errors.push("No space in storage");
     }
   }
 });
@@ -52162,7 +52231,7 @@ var render = function() {
                             attrs: { href: "#" },
                             on: {
                               click: function($event) {
-                                return _vm.openAddPalletesModal(product)
+                                return _vm.openAddPalletesModal([product])
                               }
                             }
                           },
@@ -52176,7 +52245,7 @@ var render = function() {
                             attrs: { href: "#" },
                             on: {
                               click: function($event) {
-                                return _vm.openSubtractPalletesModal(product)
+                                return _vm.openSubtractPalletesModal([product])
                               }
                             }
                           },
@@ -52210,6 +52279,58 @@ var render = function() {
               }),
               0
             )
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "card " }, [
+          _c("div", { staticClass: "m-2 d-flex justify-content-between" }, [
+            _vm._m(2),
+            _vm._v(" "),
+            _c("div", [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-success",
+                  on: {
+                    click: function($event) {
+                      return _vm.openMultipleActionPalleteModal(
+                        "add",
+                        _vm.addPalletes
+                      )
+                    }
+                  }
+                },
+                [_c("font-awesome-icon", { attrs: { icon: "plus" } })],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-danger",
+                  on: {
+                    click: function($event) {
+                      return _vm.openMultipleActionPalleteModal(
+                        "subtract",
+                        _vm.subtractPalletes
+                      )
+                    }
+                  }
+                },
+                [_c("font-awesome-icon", { attrs: { icon: "minus" } })],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-dark",
+                  on: { click: _vm.openMultipleRemoveProductConfirmModal }
+                },
+                [_c("font-awesome-icon", { attrs: { icon: "trash" } })],
+                1
+              )
+            ])
           ])
         ])
       ])
@@ -52251,6 +52372,18 @@ var staticRenderFns = [
         _c("th", [_vm._v(" Palete amount ")]),
         _vm._v(" "),
         _c("th", { staticClass: "small-column" }, [_vm._v(" Actions ")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", [
+      _c("span", { staticClass: "with-checked-text" }, [
+        _vm._v(
+          "\n                        Actions with checked:\n                    "
+        )
       ])
     ])
   }
@@ -52593,61 +52726,62 @@ var render = function() {
           ]),
           _vm._v(" "),
           _c("div", { staticClass: "modal-body" }, [
-            _c("div", { staticClass: "form-group" }, [
-              _c("h3", [
-                _vm._v("Product: [" + _vm._s(_vm.actionProduct.name) + "]")
-              ]),
-              _vm._v(" "),
-              _c("label", [_vm._v(_vm._s(_vm.actionText))]),
-              _vm._v(" "),
-              _c("input", {
-                directives: [
-                  {
-                    name: "model",
-                    rawName: "v-model",
-                    value: _vm.inputValue,
-                    expression: "inputValue"
-                  }
-                ],
-                staticClass: "form-control mb-3",
-                class: { "is-invalid": !_vm.isValid && _vm.focused },
-                attrs: { type: "text" },
-                domProps: { value: _vm.inputValue },
-                on: {
-                  focus: function($event) {
-                    _vm.focused = true
-                  },
-                  input: function($event) {
-                    if ($event.target.composing) {
-                      return
+            _c(
+              "div",
+              { staticClass: "form-group" },
+              [
+                _vm.actionProducts.length == 1
+                  ? _c("h3", [
+                      _vm._v(
+                        "Product: [" + _vm._s(_vm.actionProducts[0].name) + "]"
+                      )
+                    ])
+                  : _vm._e(),
+                _vm._v(" "),
+                _c("label", [_vm._v(_vm._s(_vm.actionText))]),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.inputValue,
+                      expression: "inputValue"
                     }
-                    _vm.inputValue = $event.target.value
+                  ],
+                  staticClass: "form-control mb-3",
+                  class: { "is-invalid": !_vm.isValid && _vm.focused },
+                  attrs: { type: "text" },
+                  domProps: { value: _vm.inputValue },
+                  on: {
+                    focus: function($event) {
+                      _vm.focused = true
+                    },
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.inputValue = $event.target.value
+                    }
                   }
-                }
-              }),
-              _vm._v(" "),
-              _c("div", { staticClass: "invalid-feedback" }, [
-                _vm._v(
-                  "\n                    " +
-                    _vm._s(_vm.error) +
-                    "\n                "
-                )
-              ]),
-              _vm._v(" "),
-              _vm.isValid
-                ? _c("small", { staticClass: "form-text text-muted" }, [
-                    _vm._v(
-                      "\n                    " +
-                        _vm._s(_vm.inputValue) +
-                        " pallete = " +
-                        _vm._s(
-                          _vm.inputValue * _vm.actionProduct.amount_per_palete
-                        ) +
-                        " products\n                "
-                    )
-                  ])
-                : _vm._e()
-            ])
+                }),
+                _vm._v(" "),
+                _vm._l(_vm.errors, function(error) {
+                  return _c(
+                    "div",
+                    { key: error.id, staticClass: "invalid-feedback" },
+                    [
+                      _vm._v(
+                        "\n                    " +
+                          _vm._s(error) +
+                          "\n                "
+                      )
+                    ]
+                  )
+                })
+              ],
+              2
+            )
           ]),
           _vm._v(" "),
           _c("div", { staticClass: "modal-footer" }, [
@@ -69326,7 +69460,7 @@ __webpack_require__.r(__webpack_exports__);
 
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
-_fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_5__["library"].add([_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faUsers"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faUser"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faKey"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faTachometerAlt"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faSearch"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faPen"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faInfo"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faUsersCog"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faProjectDiagram"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faUserTag"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faSolarPanel"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faPlus"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faWrench"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faBoxes"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faTrash"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faEllipsisV"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faExclamation"]]);
+_fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_5__["library"].add([_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faUsers"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faUser"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faKey"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faTachometerAlt"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faSearch"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faPen"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faInfo"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faUsersCog"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faProjectDiagram"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faUserTag"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faSolarPanel"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faPlus"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faWrench"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faBoxes"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faTrash"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faEllipsisV"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faExclamation"], _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["faMinus"]]);
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('font-awesome-icon', _fortawesome_vue_fontawesome__WEBPACK_IMPORTED_MODULE_7__["FontAwesomeIcon"]);
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.mixin({});
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.prototype.$webService = _webService_js__WEBPACK_IMPORTED_MODULE_3__["default"];

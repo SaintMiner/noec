@@ -90,8 +90,8 @@
                                 </button>
                                 <div class="dropdown-menu">
                                     <a class="dropdown-item" href="#">Order</a>
-                                    <a class="dropdown-item" href="#" @click="openAddPalletesModal(product)">Add</a>
-                                    <a class="dropdown-item" href="#" @click="openSubtractPalletesModal(product)">Subtract</a>
+                                    <a class="dropdown-item" href="#" @click="openAddPalletesModal([product])">Add</a>
+                                    <a class="dropdown-item" href="#" @click="openSubtractPalletesModal([product])">Subtract</a>
                                     <div role="separator" class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="#" @click="openSingleRemoveProductConfirmModal(product)">Remove</a>
                                 </div>
@@ -99,6 +99,20 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <div class="card ">
+                <div class="m-2 d-flex justify-content-between">
+                    <div>
+                        <span class="with-checked-text">
+                            Actions with checked:
+                        </span>
+                    </div>
+                    <div>
+                        <button class="btn btn-success" @click="openMultipleActionPalleteModal('add', addPalletes)"><font-awesome-icon icon="plus" class=""/></button>
+                        <button class="btn btn-danger" @click="openMultipleActionPalleteModal('subtract', subtractPalletes)"><font-awesome-icon icon="minus" class=""/></button>
+                        <button class="btn btn-dark" @click="openMultipleRemoveProductConfirmModal"><font-awesome-icon icon="trash" class=""/></button>
+                    </div>
+                </div>  
             </div>
         </div>
         
@@ -147,7 +161,6 @@ export default {
         },
 
         loadStorageProducts: function(storage) {
-            console.log(storage)
             this.$webService.get(`storage/getProducts/${storage.id}`).then(response => {
                 this.selectedStorage = storage;
                 this.storageProducts = response.data;
@@ -176,13 +189,13 @@ export default {
             }
         },
 
-        openAddPalletesModal: function(product) {
+        openAddPalletesModal: function(products) {
             let componentClass = Vue.extend(storageProductActionModal);
             let instance = new componentClass({
                 propsData: {
                     actionTitle: "Add palletes",
                     actionText: "How many pallets need to be added?",
-                    actionProduct: product,
+                    actionProducts: products,
                     actionStorage: this.selectedStorage,
                     actionFunction: this.addPalletes,
                     actionType: "add",
@@ -193,13 +206,35 @@ export default {
             $('#storageActionModal').modal('show');
         },
 
-        openSubtractPalletesModal: function(product) {
+        openMultipleActionPalleteModal: function(mode, action) {
+            let checkedProducts = this.storageProducts.filter(product => product.checked);
+            if (checkedProducts.length) {
+                let componentClass = Vue.extend(storageProductActionModal);
+                let instance = new componentClass({
+                    propsData: {
+                        actionTitle: "Add palletes",
+                        actionText: "How many pallets need to be added?",
+                        actionProducts: checkedProducts,
+                        actionStorage: this.selectedStorage,
+                        actionFunction: action,
+                        actionType: mode,
+                    },
+                });
+                instance.$mount(); 
+                this.$refs.storageControl.appendChild(instance.$el);
+                $('#storageActionModal').modal('show');
+            } else {
+                alert("Firstly check some products!");
+            }
+        },
+
+        openSubtractPalletesModal: function(products) {
             let componentClass = Vue.extend(storageProductActionModal);
             let instance = new componentClass({
                 propsData: {
                     actionTitle: "Subtract palletes",
                     actionText: "How many pallets need to be subtracted?",
-                    actionProduct: product,
+                    actionProducts: products,
                     actionStorage: this.selectedStorage,
                     actionFunction: this.subtractPalletes,
                     actionType: "subtract",
@@ -215,23 +250,42 @@ export default {
             $('#confirmProductRemoveModal').modal('show');
         },
 
+        openMultipleRemoveProductConfirmModal: function() {
+            this.getCheckedProduct();
+            $('#confirmProductRemoveModal').modal('show');
+        },
+
         removeProducts: function(checkedProducts) {
-            console.log(checkedProducts);
-            let data = {storage: this.selectedStorage.id, products: checkedProducts}
-            this.$webService.post("storage/removeProductFromStorage", data).then(response => {
-                this.loadStorageProducts(this.selectedStorage);
-                $('#confirmProductRemoveModal').modal('hide');
-            }).catch(e => {
-                console.error(e);
-            })
+            if (checkedProducts.length) {
+                let data = {storage: this.selectedStorage.id, products: checkedProducts}
+                this.$webService.post("storage/removeProductFromStorage", data).then(response => {
+                    this.loadStorageProducts(this.selectedStorage);
+                    $('#confirmProductRemoveModal').modal('hide');
+                    this.loadStorages();
+                }).catch(e => {
+                    console.error(e);
+                });
+            } else {
+                alert("Firstly check some products!");
+            }
+        },
+
+        getCheckedProduct: function() {
+            let checkedProducts = this.storageProducts.filter(product => product.checked);
+            this.checkedProducts = checkedProducts.map(product => product.id);
         },
 
         addPalletes: function(storage, product, palleteCount) {
-            let data = {productID: product.id, palleteCount: palleteCount};
+            let data = {productsID: product.map(prod => prod.id), palleteCount: palleteCount};
             this.$webService.put(`storage/addPalletes/${storage.id}`, data).then(response => {
                 if (response.status == 201) {
-                    this.loadStorageProducts(storage);
                     this.loadStorages();
+                    this.$webService.get(`storage/${storage.id}`).then(response => {
+                        this.loadStorageProducts(response.data);
+                    }).catch(e => {
+                        console.error(e);
+                    })
+                    
                 }
             }).catch(e => {
                 console.error(e);
