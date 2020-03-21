@@ -16,6 +16,8 @@ use Illuminate\Http\Request;
 Route::get("enterprise/getProducts/{enterpriseID}", "EnterpriseController@getProducts");
 Route::get("enterprise/getStorages/{enterpriseID}", "EnterpriseController@getStorages");
 Route::get("enterprise/isRegNumberFree/{registration_number}", "EnterpriseController@isRegNumberFree");
+Route::get("enterprise/getNotIncludedProducts/{enterpriseID}", "EnterpriseController@getNotIncludedProducts");
+Route::post("enterprise/attachProducts", "EnterpriseController@attachProducts");
 
 Route::get("storage/getProducts/{storageID}", "StorageController@getProducts");
 Route::get("storage/getNotIncludedProduct/{storageID}", "StorageController@getNotIncludedProduct");

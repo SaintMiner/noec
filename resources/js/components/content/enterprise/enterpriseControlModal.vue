@@ -159,6 +159,7 @@ export default {
         },
 
         editEnterprise: function() {
+            console.log("edit");
             let checkedStorages = this.storages.filter(storage => storage.checked);
             checkedStorages = checkedStorages.map(storage => storage.id);
             let data = {

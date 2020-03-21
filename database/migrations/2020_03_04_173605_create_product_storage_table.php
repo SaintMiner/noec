@@ -21,8 +21,8 @@ class CreateProductStorageTable extends Migration
 
         Schema::table("product_storage", function($table) {
             $table->primary(["storage_id", "product_id"]);
-            $table->foreign("storage_id")->references("id")->on("storages");
-            $table->foreign("product_id")->references("id")->on("products");
+            $table->foreign("storage_id")->references("id")->on("storages")->onDelete("cascade");
+            $table->foreign("product_id")->references("id")->on("products")->onDelete("cascade");
         });
     }
 

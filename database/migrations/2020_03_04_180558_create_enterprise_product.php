@@ -17,13 +17,13 @@ class CreateEnterpriseProduct extends Migration
             $table->unsignedBigInteger("enterprise_id");
             $table->unsignedBigInteger("product_id");
             $table->decimal("sale_price", 8, 2);
-            $table->unsignedSmallInteger("amount");
+            $table->unsignedSmallInteger("amount")->default(0);
         });
 
         Schema::table("enterprise_product", function($table) {
             $table->primary(["enterprise_id", "product_id"]);
-            $table->foreign("enterprise_id")->references("id")->on("enterprises");
-            $table->foreign("product_id")->references("id")->on("products");
+            $table->foreign("enterprise_id")->references("id")->on("enterprises")->onDelete("cascade");
+            $table->foreign("product_id")->references("id")->on("products")->onDelete("cascade");
         });
     }
 

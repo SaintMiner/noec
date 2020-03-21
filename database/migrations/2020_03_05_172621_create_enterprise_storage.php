@@ -20,8 +20,8 @@ class CreateEnterpriseStorage extends Migration
 
         Schema::table("enterprise_storage", function($table) {
             $table->primary(["enterprise_id", "storage_id"]);
-            $table->foreign("enterprise_id")->references("id")->on("enterprises");
-            $table->foreign("storage_id")->references("id")->on("storages");
+            $table->foreign("enterprise_id")->references("id")->on("enterprises")->onDelete("cascade");
+            $table->foreign("storage_id")->references("id")->on("storages")->onDelete("cascade");
         });
     }
 

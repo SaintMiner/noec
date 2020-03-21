@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div ref="enterpriseControl">
         <addEnterpriseModal 
             @loadEnterPrises="loadEnterPrises" 
             :editMode="editMode" 
@@ -27,14 +27,14 @@
                     </thead>
                     <tbody>
                         <tr v-for="enterprise in enterprises" :key="enterprise.id" >
-                            <td @click="showEnterpriseLocalStorageProducts(enterprise.id)"> {{enterprise.title}} </td>
-                            <td @click="showEnterpriseLocalStorageProducts(enterprise.id)"> 10/10 </td>
-                            <td @click="showEnterpriseLocalStorageProducts(enterprise.id)"> {{enterprise.location}} </td>
+                            <td @click="showEnterpriseLocalStorageProducts(enterprise)"> {{enterprise.title}} </td>
+                            <td @click="showEnterpriseLocalStorageProducts(enterprise)"> 10/10 </td>
+                            <td @click="showEnterpriseLocalStorageProducts(enterprise)"> {{enterprise.location}} </td>
                             <td class="d-flex ptr-button-cube text-center">
                                 <button class="btn btn-primary mx-1" @click="openEditEnterpriseModal(enterprise)">
                                     <font-awesome-icon icon="pen" class=""/>
                                 </button>
-                                <button class="btn btn-primary mx-1" @click="showEnterpriseLocalStorageProducts(enterprise.id)">
+                                <button class="btn btn-primary mx-1" @click="showEnterpriseLocalStorageProducts(enterprise)">
                                     <font-awesome-icon icon="boxes" class=""/>
                                 </button>
                             </td>
@@ -48,7 +48,7 @@
             <div class="d-flex justify-content-between">
                 <h2>Local Storage</h2>
                 <div>
-                    <button class="btn btn-primary">
+                    <button class="btn btn-primary" @click="openAttachProductModal" :disabled="selectedEnterprise == null   "> 
                         <font-awesome-icon icon="plus"/>
                         <span class="ml-2">Add product</span>
                     </button>
@@ -82,7 +82,8 @@
 
 <script>
 import addEnterpriseModal from "./enterpriseControlModal";
-
+import attachProductModal from "./attachProductModal";
+import Vue from "vue";
 export default {
     name: "enterprise-control",
 
@@ -92,11 +93,13 @@ export default {
             enterprises: [],
             enterpriseStorage: [],
             editMode: false,
+            selectedEnterprise: null,
         }
     },
 
     components: {
         addEnterpriseModal,
+        attachProductModal
     },
 
     methods: {
@@ -113,8 +116,9 @@ export default {
         },
 
         
-        showEnterpriseLocalStorageProducts: function(enterpriseID) {
-            this.$webService.get(`enterprise/getProducts/${enterpriseID}`).then(response => {
+        showEnterpriseLocalStorageProducts: function(enterprise) {
+            this.$webService.get(`enterprise/getProducts/${enterprise.id}`).then(response => {
+                this.selectedEnterprise = enterprise;
                 this.enterpriseStorage = response.data;
             }).catch(e => {
                 console.error(e);
@@ -127,6 +131,22 @@ export default {
             }).catch(e => {
                 console.error(e);
             })
+        },
+
+        openAttachProductModal: function() {
+            if (this.selectedEnterprise != null) {
+                console.log("ok")
+                let componentClass = Vue.extend(attachProductModal);
+                let instance = new componentClass({
+                    propsData: {
+                        enterprise: this.selectedEnterprise,
+                        showEnterpriseLocalStorageProducts: this.showEnterpriseLocalStorageProducts,
+                    },
+                });
+                instance.$mount(); 
+                this.$refs.enterpriseControl.appendChild(instance.$el);
+                $('#attachProductModal').modal('show');
+            }
         }
     },
 

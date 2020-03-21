@@ -28,10 +28,10 @@ class CreateResourcesTable extends Migration
         });
 
         Schema::table("resources", function($table) {
-            $table->foreign("department_id")->references("id")->on("departments");
-            $table->foreign("position_id")->references("id")->on("positions");
-            $table->foreign("status_id")->references("id")->on("statuses");
-            $table->foreign("enterprise_id")->references("id")->on("enterprises");
+            $table->foreign("department_id")->references("id")->on("departments")->onDelete("cascade");
+            $table->foreign("position_id")->references("id")->on("positions")->onDelete("cascade");
+            $table->foreign("status_id")->references("id")->on("statuses")->onDelete("cascade");
+            $table->foreign("enterprise_id")->references("id")->on("enterprises")->onDelete("cascade");
         });
 
         Schema::table("departments", function($table) {
