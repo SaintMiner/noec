@@ -1,5 +1,5 @@
 <template>
-    <div id="storageActionModal" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true">
+    <div id="enterpriseActionModal" class="modal fade" data-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
             <div class="modal-header">
@@ -29,13 +29,13 @@
 
 <script>
 export default {
-    name: "storageProductActionModal",
+    name: "enterpriseProductActionModal",
 
     props: {
         actionText: String,
         actionTitle: String,
         actionProducts: Array,
-        actionStorage: Object,
+        actionEnterprise: Object,
         actionFunction: {type: Function},
         actionType: {type: String, default: null},
     },
@@ -54,18 +54,16 @@ export default {
             set: function(value) {
                 this.errors = [];
                 if (!isNaN(value) && Number(value) != 0 && Number(value) % 1 == 0) {
+
                     if (Number(value) < 0) {
                         value = Math.abs(value);
                     }
 
-                    if (this.actionType == "add" && Number(value*this.actionProducts.length) > (this.actionStorage.freeSpace)) {
-                        this.isValid = false;
-                        this.errors.push(`Value is more than storage palletes capacity. Free: ${this.actionStorage.freeSpace}`);
-                    } else if (this.actionType == "subtract") {
+                    if (this.actionType == "subtract") {
                         let errProd = this.actionProducts.filter(product => {
-                           if (Number(value) > product.palete_amount) {
+                           if (Number(value) > product.amount) {
                                 this.isValid = false;
-                                this.errors.push(`Value is more than storage palletes count. [${product.name}]: ${product.palete_amount}`);
+                                this.errors.push(`Value is more than product amount. [${product.name}]: ${product.amount}`);
                                 return product;
                            }
                         });
@@ -97,22 +95,11 @@ export default {
         },
 
         confirm: function() {
-            $('#storageActionModal').modal('hide');
-            this.actionFunction(this.actionStorage, this.actionProducts, this.value);
+            $('#enterpriseActionModal').modal('hide');
+            this.actionFunction(this.actionEnterprise, this.actionProducts, this.value);
             this.$el.remove();
         }
     },
-
-    mounted() {
-        console.log(this.actionStorage.freeSpace);
-        console.log(this.actionStorage.busySpace);
-        if (1 > this.actionStorage.freeSpace && this.actionType == "add") {
-            this.isValid = false;
-            this.focused = true;
-            this.errors.push("No space in storage");
-        }
-    }
-
 }
 </script>
 

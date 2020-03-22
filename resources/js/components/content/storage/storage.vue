@@ -84,7 +84,7 @@
                             <td> {{product.name}} </td>
                             <td> {{product.price}} </td>
                             <td> {{product.palete_amount}} </td>
-                            <td class="d-flex ptr-button-cube text-center" :ref="`actionCell${product.id}`">
+                            <td class="ptr-button-cube text-center" :ref="`actionCell${product.id}`">
                                 <button class="btn btn-outline-secondary " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <font-awesome-icon icon="ellipsis-v" class=""/>
                                 </button>

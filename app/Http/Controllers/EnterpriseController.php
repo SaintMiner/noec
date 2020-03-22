@@ -89,4 +89,28 @@ class EnterpriseController extends Controller
         $enterprise->products()->attach($request->products);
         return $enterprise;
     }
+
+    public function addProductAmount(Request $request, $id) {
+        $this->validate($request, [
+            "amount" => "required|numeric|not_in:0"
+        ]);
+
+        $enterprise = Enterprise::find($id);
+        // return $enterprise->products()->find($request->productsID[0])->pivot->amount;
+        foreach($request->productsID as $productID) {
+            
+            $product_amount = $enterprise->products()->find($productID)->pivot->amount;
+            if ($product_amount < abs($request->amount) && $request->amount < 0 ) {
+                $product_amount = abs($request->amount);
+            }
+            $enterprise->products()->updateExistingPivot($productID, ["amount" => $product_amount+$request->amount]);
+        }
+        return response("Action done", 201);
+    }
+
+    public function removeProductFromEnterprise(Request $request) {
+        $enterprise = Enterprise::find($request->enterprise);
+        $enterprise->products()->detach($request->products);
+        return $request;
+    }
 }

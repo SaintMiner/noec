@@ -16,6 +16,7 @@ class EnterpriseProducts extends JsonResource
     {
         $pivot = $this->pivot;
         return [
+            "id" => $this->id,
             "name" => $this->name,
             "price" => $this->price,
             "amount" => $pivot->amount,
