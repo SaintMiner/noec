@@ -1,5 +1,7 @@
 <template>
     <div ref="enterpriseControl">
+        <h1> Enterprise control </h1>
+        <hr>
         <addEnterpriseModal 
             @loadEnterPrises="loadEnterPrises" 
             :editMode="editMode" 
@@ -85,7 +87,7 @@
                                     <font-awesome-icon icon="ellipsis-v" class=""/>
                                 </button>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="#">Ordersss</a>
+                                    <a class="dropdown-item" href="#">Orders</a>
                                     <a class="dropdown-item" href="#" @click="openAddProductAmountModal([product])">Add</a>
                                     <a class="dropdown-item" href="#" @click="openSubtractProductAmountModal([product])">Subtract</a>
                                     <div role="separator" class="dropdown-divider"></div>

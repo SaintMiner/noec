@@ -5,6 +5,18 @@
         "icon": "tachometer-alt"
     },
     {
+        "name": "Orders",
+        "icon": "scroll",
+        "collapseID": "Orders",
+        "subitems": [
+            {
+                "name": "Shipping orders",
+                "icon": "scroll",
+                "routeName": "shippingOrder"
+            }
+        ]
+    },
+    {
         "name": "Enterprises And Storages",
         "icon": "solar-panel",
         "collapseID": "EnterpriseAndStorages",

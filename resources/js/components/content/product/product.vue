@@ -1,5 +1,7 @@
 <template>
     <div>
+        <h1> Product control </h1>
+        <hr>
         <productControlModal
             :editMode="editMode"
             :editingProduct="editingProduct"

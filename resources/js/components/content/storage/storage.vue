@@ -1,5 +1,7 @@
 <template>
     <div ref="storageControl">
+        <h1> Storage control </h1>
+        <hr>
         <confirmModal id="confirmProductRemoveModal" 
             confirmText="Are you sure you want to remove these products?"
             @confirmAction="removeProducts(checkedProducts)"
@@ -318,6 +320,8 @@ export default {
             }
             this.$webService.post(`shipping`, data).then(response => {
                 console.log(response);
+                this.checkedProducts = [];
+                this.loadStorageProducts(storage);
             }).catch(e => {
                 console.error(e);
             });

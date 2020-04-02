@@ -14,6 +14,7 @@ import dashboard from "./components/content/dashboard";
 import enterprise from "./components/content/enterprise/enterprise";
 import product from "./components/content/product/product";
 import storage from "./components/content/storage/storage";
+import shippingOrder from "./components/content/order/shippingOrder";
 
 /**************************************************/
 /****                 Routes                   ****/
@@ -74,6 +75,13 @@ export default new VueRouter({
                     name: "storages",
                     components: {
                         content: storage,
+                    }
+                },
+                {
+                    path: "shippingOrder",
+                    name: "shippingOrder",
+                    components: {
+                        content: shippingOrder,
                     }
                 },
                 {

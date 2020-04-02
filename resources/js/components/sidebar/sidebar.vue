@@ -60,5 +60,15 @@ export default {
         height: 100vh;
     }
 
+    .sidebar::-webkit-scrollbar {
+        width: 5px;
+        box-shadow: inset 0 0 5px grey;
+        background: white;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: gray; 
+        border-radius: 10px;
+    }
     
 </style>
