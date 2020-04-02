@@ -22,12 +22,14 @@ Route::post("enterprise/removeProductFromEnterprise", "EnterpriseController@remo
 Route::put("enterprise/addProductAmount/{enterpriseID}", "EnterpriseController@addProductAmount");
 
 
-
 Route::get("storage/getProducts/{storageID}", "StorageController@getProducts");
 Route::get("storage/getNotIncludedProduct/{storageID}", "StorageController@getNotIncludedProduct");
 Route::post("storage/addProductToStorage", "StorageController@addProductToStorage");
 Route::post("storage/removeProductFromStorage", "StorageController@removeProductFromStorage");
 Route::put("storage/addPalletes/{storageID}", "StorageController@addPalletes");
+
+
+Route::resource('shipping', 'ShippingController');
 
 Route::resource('resource', 'ResourceController');
 

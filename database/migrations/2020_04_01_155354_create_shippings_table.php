@@ -15,7 +15,6 @@ class CreateShippingsTable extends Migration
     {
         Schema::create('shippings', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger("product_id");
             $table->unsignedBigInteger("enterprise_id")->nullable();
             $table->unsignedBigInteger("storage_id");
             $table->enum("type", ["Replenish Storage", "Replenish Enterprise"]);
@@ -26,7 +25,6 @@ class CreateShippingsTable extends Migration
         Schema::table("shippings", function($table) {
             $table->foreign("storage_id")->references("id")->on("storages")->onDelete("cascade");
             $table->foreign("enterprise_id")->references("id")->on("enterprises")->onDelete("cascade");
-            $table->foreign("product_id")->references("id")->on("products")->onDelete("cascade");
         });
     }
 

@@ -25,7 +25,7 @@ class StorageController extends Controller
             "palete_capacity" => "required|numeric|regex:/^[1-9]\d*$/",
             "class" => "required|in:A,B,C,D"
         ]);
-           Storage::create($request->all());
+        Storage::create($request->all());
         return response("created", 201);
     }
 

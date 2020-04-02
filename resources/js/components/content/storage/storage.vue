@@ -112,6 +112,7 @@
                         </span>
                     </div>
                     <div>
+                        <button class="btn btn-dark" @click="openOrderPalletesModal(getCheckedProducts())"><font-awesome-icon icon="dolly" class=""/></button>
                         <button class="btn btn-success" @click="openAddPalletesModal(getCheckedProducts())"><font-awesome-icon icon="plus" class=""/></button>
                         <button class="btn btn-danger" @click="openSubtractPalletesModal(getCheckedProducts())"><font-awesome-icon icon="minus" class=""/></button>
                         <button class="btn btn-dark" @click="openMultipleRemoveProductConfirmModal"><font-awesome-icon icon="trash" class=""/></button>
@@ -305,10 +306,21 @@ export default {
             return checkedProducts;
         },
 
-        orderPalletes: function(storage, product, palleteCount) {
+        orderPalletes: function(storage, products, palleteCount) {
             console.log(storage);
-            console.log(product);
+            console.log(products);
             console.log(palleteCount);
+            let data = {
+                storageID: storage.id,
+                products: products.map(prod => prod.id),
+                palleteCount: palleteCount,
+                type: "Replenish Storage",
+            }
+            this.$webService.post(`shipping`, data).then(response => {
+                console.log(response);
+            }).catch(e => {
+                console.error(e);
+            });
             return;
         },
 
