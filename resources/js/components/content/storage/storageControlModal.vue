@@ -185,7 +185,7 @@ export default {
         clearData: function() {
             this.storage.title = "";
             this.storage.location = "";
-            this.storage.palete_capacity = "0.00";
+            this.storage.palete_capacity = "0";
             this.storage.class = "D";
             this.focused.title = false;
             this.focused.location = false;

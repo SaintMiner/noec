@@ -41,6 +41,11 @@ class StorageController extends Controller
         return response("updated", 201);
     }
 
+    public function destroy($id) {
+        $storage = Storage::find($id);
+        $storage->delete();
+    }
+
     public function addPalletes(Request $request, $id) {
         $this->validate($request, [
             "palleteCount" => "required|numeric|not_in:0"

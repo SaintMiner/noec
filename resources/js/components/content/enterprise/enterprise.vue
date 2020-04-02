@@ -96,6 +96,20 @@
                     </tbody>
                 </table>
             </div>
+            <div class="card ">
+                <div class="m-2 d-flex justify-content-between">
+                    <div>
+                        <span class="with-checked-text">
+                            Actions with checked:
+                        </span>
+                    </div>
+                    <div>
+                        <button class="btn btn-success" @click="openAddProductAmountModal(getCheckedProducts())"><font-awesome-icon icon="plus" class=""/></button>
+                        <button class="btn btn-danger" @click="openSubtractProductAmountModal(getCheckedProducts())"><font-awesome-icon icon="minus" class=""/></button>
+                        <button class="btn btn-dark" @click="openMultipleRemoveProductConfirmModal"><font-awesome-icon icon="trash" class=""/></button>
+                    </div>
+                </div>  
+            </div>
         </div>
     </div>
 
@@ -130,6 +144,19 @@ export default {
 
     methods: {
         
+        
+
+        getCheckedProducts: function() {
+            let checkedProducts = this.enterpriseStorage.filter(product => product.checked);
+            this.checkedProducts = checkedProducts.map(product => product.id);
+            return checkedProducts;
+        },
+
+        openMultipleRemoveProductConfirmModal: function() {
+            this.getCheckedProducts();
+            $('#confirmProductRemoveModal').modal('show');
+        },
+
         openSingleRemoveProductConfirmModal: function(product) {
             this.checkedProducts = [product.id];
             $('#confirmProductRemoveModal').modal('show');
@@ -150,37 +177,45 @@ export default {
         },
 
         openSubtractProductAmountModal: function(products) {
-            let componentClass = Vue.extend(enterpriseProductActionModal);
-            let instance = new componentClass({
-                propsData: {
-                    actionTitle: "Decrease product amount",
-                    actionText: "How many products need to be substracted?",
-                    actionProducts: products,
-                    actionEnterprise: this.selectedEnterprise,
-                    actionFunction: this.subtractProducts,
-                    actionType: "subtract",
-                },
-            });
-            instance.$mount(); 
-            this.$refs.enterpriseControl.appendChild(instance.$el);
-            $('#enterpriseActionModal').modal('show');
+            if (products.length) {
+                let componentClass = Vue.extend(enterpriseProductActionModal);
+                let instance = new componentClass({
+                    propsData: {
+                        actionTitle: "Decrease product amount",
+                        actionText: "How many products need to be substracted?",
+                        actionProducts: products,
+                        actionEnterprise: this.selectedEnterprise,
+                        actionFunction: this.subtractProducts,
+                        actionType: "subtract",
+                    },
+                });
+                instance.$mount(); 
+                this.$refs.enterpriseControl.appendChild(instance.$el);
+                $('#enterpriseActionModal').modal('show');
+            } else {
+                alert("Firstly check some product(s)");
+            }
         },
 
         openAddProductAmountModal: function(products) {
-            let componentClass = Vue.extend(enterpriseProductActionModal);
-            let instance = new componentClass({
-                propsData: {
-                    actionTitle: "Increase product amount",
-                    actionText: "How many products need to be added?",
-                    actionProducts: products,
-                    actionEnterprise: this.selectedEnterprise,
-                    actionFunction: this.addProducts,
-                    actionType: "add",
-                },
-            });
-            instance.$mount(); 
-            this.$refs.enterpriseControl.appendChild(instance.$el);
-            $('#enterpriseActionModal').modal('show');
+            if (products.length) {
+                let componentClass = Vue.extend(enterpriseProductActionModal);
+                let instance = new componentClass({
+                    propsData: {
+                        actionTitle: "Increase product amount",
+                        actionText: "How many products need to be added?",
+                        actionProducts: products,
+                        actionEnterprise: this.selectedEnterprise,
+                        actionFunction: this.addProducts,
+                        actionType: "add",
+                    },
+                });
+                instance.$mount(); 
+                this.$refs.enterpriseControl.appendChild(instance.$el);
+                $('#enterpriseActionModal').modal('show');
+            } else {
+                alert("Firstly check some product(s)");
+            }
         },
 
         addProducts: function(enterprise, product, amount) {

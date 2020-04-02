@@ -5,7 +5,13 @@
                 <font-awesome-icon :icon="icon" />
             </span>
         </div>
-        <input :type="type" class="form-control" :placeholder="placeholder" v-model="inputValue">
+        <input 
+            :type="type"
+            class="form-control"
+            :placeholder="placeholder"
+            v-model="inputValue"
+            @keyup.enter="$emit(`login`)"
+        >
     </div>
 </template>
 

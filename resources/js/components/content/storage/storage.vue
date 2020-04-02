@@ -4,6 +4,10 @@
             confirmText="Are you sure you want to remove these products?"
             @confirmAction="removeProducts(checkedProducts)"
         />
+        <confirmModal id="confirmStorageRemoveModal" 
+            confirmText="Are you sure you want to delete these storage?"
+            @confirmAction="deleteStorage(removableStorage)"
+        />
         <addProductToStorage id="addProductToStorage" :selectedStorage="selectedStorage" :storageProducts="storageProducts" @loadStorageProducts="loadStorageProducts"/>
         <storageControlModal id="storageControlModal" :editMode="editMode" :editingStorage="editingStorage" @loadStorages="loadStorages"/>
         <div>
@@ -43,7 +47,7 @@
                                 <button class="btn btn-primary mx-1" @click="openEditStorageModal(storage)">
                                     <font-awesome-icon icon="pen" class=""/>
                                 </button>
-                                <button class="btn btn-danger mx-1" @click="">
+                                <button class="btn btn-danger mx-1" @click="openRemoveStorageConfirmModal(storage)">
                                     <font-awesome-icon icon="trash" class=""/>
                                 </button>
                             </td>
@@ -89,7 +93,7 @@
                                     <font-awesome-icon icon="ellipsis-v" class=""/>
                                 </button>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="#">Order</a>
+                                    <a class="dropdown-item" href="#" @click="openOrderPalletesModal([product])" >Order</a>
                                     <a class="dropdown-item" href="#" @click="openAddPalletesModal([product])">Add</a>
                                     <a class="dropdown-item" href="#" @click="openSubtractPalletesModal([product])">Subtract</a>
                                     <div role="separator" class="dropdown-divider"></div>
@@ -108,8 +112,8 @@
                         </span>
                     </div>
                     <div>
-                        <button class="btn btn-success" @click="openMultipleActionPalleteModal('add', addPalletes)"><font-awesome-icon icon="plus" class=""/></button>
-                        <button class="btn btn-danger" @click="openMultipleActionPalleteModal('subtract', subtractPalletes)"><font-awesome-icon icon="minus" class=""/></button>
+                        <button class="btn btn-success" @click="openAddPalletesModal(getCheckedProducts())"><font-awesome-icon icon="plus" class=""/></button>
+                        <button class="btn btn-danger" @click="openSubtractPalletesModal(getCheckedProducts())"><font-awesome-icon icon="minus" class=""/></button>
                         <button class="btn btn-dark" @click="openMultipleRemoveProductConfirmModal"><font-awesome-icon icon="trash" class=""/></button>
                     </div>
                 </div>  
@@ -148,6 +152,7 @@ export default {
             actionFunction: null,
 
             checkedProducts: [],
+            removableStorage: null,
         }
     },
 
@@ -189,60 +194,72 @@ export default {
             }
         },
 
-        openAddPalletesModal: function(products) {
-            let componentClass = Vue.extend(storageProductActionModal);
-            let instance = new componentClass({
-                propsData: {
-                    actionTitle: "Add palletes",
-                    actionText: "How many pallets need to be added?",
-                    actionProducts: products,
-                    actionStorage: this.selectedStorage,
-                    actionFunction: this.addPalletes,
-                    actionType: "add",
-                },
-            });
-            instance.$mount(); 
-            this.$refs.storageControl.appendChild(instance.$el);
-            $('#storageActionModal').modal('show');
-        },
-
-        openMultipleActionPalleteModal: function(mode, action) {
-            let checkedProducts = this.storageProducts.filter(product => product.checked);
-            if (checkedProducts.length) {
+        openOrderPalletesModal: function(products) {
+            if (products.length) {
                 let componentClass = Vue.extend(storageProductActionModal);
                 let instance = new componentClass({
                     propsData: {
-                        actionTitle: "Add palletes",
-                        actionText: "How many pallets need to be added?",
-                        actionProducts: checkedProducts,
+                        actionTitle: "Palletes ordering",
+                        actionText: "How many pallets need to be ordered?",
+                        actionProducts: products,
                         actionStorage: this.selectedStorage,
-                        actionFunction: action,
-                        actionType: mode,
+                        actionFunction: this.orderPalletes,
+                        actionType: "order",
                     },
                 });
                 instance.$mount(); 
                 this.$refs.storageControl.appendChild(instance.$el);
                 $('#storageActionModal').modal('show');
             } else {
-                alert("Firstly check some products!");
+                alert("Firstly check some product(s)");
+            }
+        },
+
+        openAddPalletesModal: function(products) {
+            if (products.length) {
+                let componentClass = Vue.extend(storageProductActionModal);
+                let instance = new componentClass({
+                    propsData: {
+                        actionTitle: "Add palletes",
+                        actionText: "How many pallets need to be added?",
+                        actionProducts: products,
+                        actionStorage: this.selectedStorage,
+                        actionFunction: this.addPalletes,
+                        actionType: "add",
+                    },
+                });
+                instance.$mount(); 
+                this.$refs.storageControl.appendChild(instance.$el);
+                $('#storageActionModal').modal('show');
+            } else {
+                alert("Firstly check some product(s)");
             }
         },
 
         openSubtractPalletesModal: function(products) {
-            let componentClass = Vue.extend(storageProductActionModal);
-            let instance = new componentClass({
-                propsData: {
-                    actionTitle: "Subtract palletes",
-                    actionText: "How many pallets need to be subtracted?",
-                    actionProducts: products,
-                    actionStorage: this.selectedStorage,
-                    actionFunction: this.subtractPalletes,
-                    actionType: "subtract",
-                },
-            });
-            instance.$mount(); 
-            this.$refs.storageControl.appendChild(instance.$el);
-            $('#storageActionModal').modal('show');
+            if (products.length) {
+                let componentClass = Vue.extend(storageProductActionModal);
+                let instance = new componentClass({
+                    propsData: {
+                        actionTitle: "Subtract palletes",
+                        actionText: "How many pallets need to be subtracted?",
+                        actionProducts: products,
+                        actionStorage: this.selectedStorage,
+                        actionFunction: this.subtractPalletes,
+                        actionType: "subtract",
+                    },
+                });
+                instance.$mount(); 
+                this.$refs.storageControl.appendChild(instance.$el);
+                $('#storageActionModal').modal('show');
+            } else {
+                alert("Firstly check some product(s)");
+            }
+        },
+
+        openRemoveStorageConfirmModal: function(storage) {
+            this.removableStorage = storage;
+            $('#confirmStorageRemoveModal').modal('show');
         },
 
         openSingleRemoveProductConfirmModal: function(product) {
@@ -251,7 +268,7 @@ export default {
         },
 
         openMultipleRemoveProductConfirmModal: function() {
-            this.getCheckedProduct();
+            this.getCheckedProducts();
             $('#confirmProductRemoveModal').modal('show');
         },
 
@@ -270,9 +287,29 @@ export default {
             }
         },
 
-        getCheckedProduct: function() {
+        deleteStorage: function(storage) {
+            this.$webService.delete(`storage/${storage.id}`).then(response => {
+                console.log(response.data);
+                $('#confirmStorageRemoveModal').modal('hide');
+                this.loadStorages();
+                this.selectedStorage = {id: null, title: "Storage Not Selected"};
+                this.storageProducts = [];
+            }).catch(e => {
+                console.error(e);
+            })
+        },
+
+        getCheckedProducts: function() {
             let checkedProducts = this.storageProducts.filter(product => product.checked);
             this.checkedProducts = checkedProducts.map(product => product.id);
+            return checkedProducts;
+        },
+
+        orderPalletes: function(storage, product, palleteCount) {
+            console.log(storage);
+            console.log(product);
+            console.log(palleteCount);
+            return;
         },
 
         addPalletes: function(storage, product, palleteCount) {

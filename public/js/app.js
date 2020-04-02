@@ -12041,6 +12041,20 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -12068,6 +12082,19 @@ __webpack_require__.r(__webpack_exports__);
     confirmModal: _elements_confirmModal__WEBPACK_IMPORTED_MODULE_3__["default"]
   },
   methods: {
+    getCheckedProducts: function getCheckedProducts() {
+      var checkedProducts = this.enterpriseStorage.filter(function (product) {
+        return product.checked;
+      });
+      this.checkedProducts = checkedProducts.map(function (product) {
+        return product.id;
+      });
+      return checkedProducts;
+    },
+    openMultipleRemoveProductConfirmModal: function openMultipleRemoveProductConfirmModal() {
+      this.getCheckedProducts();
+      $('#confirmProductRemoveModal').modal('show');
+    },
     openSingleRemoveProductConfirmModal: function openSingleRemoveProductConfirmModal(product) {
       this.checkedProducts = [product.id];
       $('#confirmProductRemoveModal').modal('show');
@@ -12092,36 +12119,44 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     openSubtractProductAmountModal: function openSubtractProductAmountModal(products) {
-      var componentClass = vue__WEBPACK_IMPORTED_MODULE_4___default.a.extend(_enterpriseProductActionModal__WEBPACK_IMPORTED_MODULE_0__["default"]);
-      var instance = new componentClass({
-        propsData: {
-          actionTitle: "Decrease product amount",
-          actionText: "How many products need to be substracted?",
-          actionProducts: products,
-          actionEnterprise: this.selectedEnterprise,
-          actionFunction: this.subtractProducts,
-          actionType: "subtract"
-        }
-      });
-      instance.$mount();
-      this.$refs.enterpriseControl.appendChild(instance.$el);
-      $('#enterpriseActionModal').modal('show');
+      if (products.length) {
+        var componentClass = vue__WEBPACK_IMPORTED_MODULE_4___default.a.extend(_enterpriseProductActionModal__WEBPACK_IMPORTED_MODULE_0__["default"]);
+        var instance = new componentClass({
+          propsData: {
+            actionTitle: "Decrease product amount",
+            actionText: "How many products need to be substracted?",
+            actionProducts: products,
+            actionEnterprise: this.selectedEnterprise,
+            actionFunction: this.subtractProducts,
+            actionType: "subtract"
+          }
+        });
+        instance.$mount();
+        this.$refs.enterpriseControl.appendChild(instance.$el);
+        $('#enterpriseActionModal').modal('show');
+      } else {
+        alert("Firstly check some product(s)");
+      }
     },
     openAddProductAmountModal: function openAddProductAmountModal(products) {
-      var componentClass = vue__WEBPACK_IMPORTED_MODULE_4___default.a.extend(_enterpriseProductActionModal__WEBPACK_IMPORTED_MODULE_0__["default"]);
-      var instance = new componentClass({
-        propsData: {
-          actionTitle: "Increase product amount",
-          actionText: "How many products need to be added?",
-          actionProducts: products,
-          actionEnterprise: this.selectedEnterprise,
-          actionFunction: this.addProducts,
-          actionType: "add"
-        }
-      });
-      instance.$mount();
-      this.$refs.enterpriseControl.appendChild(instance.$el);
-      $('#enterpriseActionModal').modal('show');
+      if (products.length) {
+        var componentClass = vue__WEBPACK_IMPORTED_MODULE_4___default.a.extend(_enterpriseProductActionModal__WEBPACK_IMPORTED_MODULE_0__["default"]);
+        var instance = new componentClass({
+          propsData: {
+            actionTitle: "Increase product amount",
+            actionText: "How many products need to be added?",
+            actionProducts: products,
+            actionEnterprise: this.selectedEnterprise,
+            actionFunction: this.addProducts,
+            actionType: "add"
+          }
+        });
+        instance.$mount();
+        this.$refs.enterpriseControl.appendChild(instance.$el);
+        $('#enterpriseActionModal').modal('show');
+      } else {
+        alert("Firstly check some product(s)");
+      }
     },
     addProducts: function addProducts(enterprise, product, amount) {
       var _this2 = this;
@@ -13438,6 +13473,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 
 
@@ -13463,7 +13502,8 @@ __webpack_require__.r(__webpack_exports__);
       editingStorage: null,
       actionProduct: null,
       actionFunction: null,
-      checkedProducts: []
+      checkedProducts: [],
+      removableStorage: null
     };
   },
   methods: {
@@ -13502,68 +13542,76 @@ __webpack_require__.r(__webpack_exports__);
       } else {// Some warnings LATER...
       }
     },
-    openAddPalletesModal: function openAddPalletesModal(products) {
-      var componentClass = vue__WEBPACK_IMPORTED_MODULE_0___default.a.extend(_storageProductActionModal__WEBPACK_IMPORTED_MODULE_2__["default"]);
-      var instance = new componentClass({
-        propsData: {
-          actionTitle: "Add palletes",
-          actionText: "How many pallets need to be added?",
-          actionProducts: products,
-          actionStorage: this.selectedStorage,
-          actionFunction: this.addPalletes,
-          actionType: "add"
-        }
-      });
-      instance.$mount();
-      this.$refs.storageControl.appendChild(instance.$el);
-      $('#storageActionModal').modal('show');
-    },
-    openMultipleActionPalleteModal: function openMultipleActionPalleteModal(mode, action) {
-      var checkedProducts = this.storageProducts.filter(function (product) {
-        return product.checked;
-      });
-
-      if (checkedProducts.length) {
+    openOrderPalletesModal: function openOrderPalletesModal(products) {
+      if (products.length) {
         var componentClass = vue__WEBPACK_IMPORTED_MODULE_0___default.a.extend(_storageProductActionModal__WEBPACK_IMPORTED_MODULE_2__["default"]);
         var instance = new componentClass({
           propsData: {
-            actionTitle: "Add palletes",
-            actionText: "How many pallets need to be added?",
-            actionProducts: checkedProducts,
+            actionTitle: "Palletes ordering",
+            actionText: "How many pallets need to be ordered?",
+            actionProducts: products,
             actionStorage: this.selectedStorage,
-            actionFunction: action,
-            actionType: mode
+            actionFunction: this.orderPalletes,
+            actionType: "order"
           }
         });
         instance.$mount();
         this.$refs.storageControl.appendChild(instance.$el);
         $('#storageActionModal').modal('show');
       } else {
-        alert("Firstly check some products!");
+        alert("Firstly check some product(s)");
+      }
+    },
+    openAddPalletesModal: function openAddPalletesModal(products) {
+      if (products.length) {
+        var componentClass = vue__WEBPACK_IMPORTED_MODULE_0___default.a.extend(_storageProductActionModal__WEBPACK_IMPORTED_MODULE_2__["default"]);
+        var instance = new componentClass({
+          propsData: {
+            actionTitle: "Add palletes",
+            actionText: "How many pallets need to be added?",
+            actionProducts: products,
+            actionStorage: this.selectedStorage,
+            actionFunction: this.addPalletes,
+            actionType: "add"
+          }
+        });
+        instance.$mount();
+        this.$refs.storageControl.appendChild(instance.$el);
+        $('#storageActionModal').modal('show');
+      } else {
+        alert("Firstly check some product(s)");
       }
     },
     openSubtractPalletesModal: function openSubtractPalletesModal(products) {
-      var componentClass = vue__WEBPACK_IMPORTED_MODULE_0___default.a.extend(_storageProductActionModal__WEBPACK_IMPORTED_MODULE_2__["default"]);
-      var instance = new componentClass({
-        propsData: {
-          actionTitle: "Subtract palletes",
-          actionText: "How many pallets need to be subtracted?",
-          actionProducts: products,
-          actionStorage: this.selectedStorage,
-          actionFunction: this.subtractPalletes,
-          actionType: "subtract"
-        }
-      });
-      instance.$mount();
-      this.$refs.storageControl.appendChild(instance.$el);
-      $('#storageActionModal').modal('show');
+      if (products.length) {
+        var componentClass = vue__WEBPACK_IMPORTED_MODULE_0___default.a.extend(_storageProductActionModal__WEBPACK_IMPORTED_MODULE_2__["default"]);
+        var instance = new componentClass({
+          propsData: {
+            actionTitle: "Subtract palletes",
+            actionText: "How many pallets need to be subtracted?",
+            actionProducts: products,
+            actionStorage: this.selectedStorage,
+            actionFunction: this.subtractPalletes,
+            actionType: "subtract"
+          }
+        });
+        instance.$mount();
+        this.$refs.storageControl.appendChild(instance.$el);
+        $('#storageActionModal').modal('show');
+      } else {
+        alert("Firstly check some product(s)");
+      }
+    },
+    openRemoveStorageConfirmModal: function openRemoveStorageConfirmModal(storage) {
+      this.removableStorage = storage;
+      $('#confirmStorageRemoveModal').modal('show');
     },
     openSingleRemoveProductConfirmModal: function openSingleRemoveProductConfirmModal(product) {
       this.checkedProducts = [product.id];
       $('#confirmProductRemoveModal').modal('show');
     },
     openMultipleRemoveProductConfirmModal: function openMultipleRemoveProductConfirmModal() {
-      this.getCheckedProduct();
+      this.getCheckedProducts();
       $('#confirmProductRemoveModal').modal('show');
     },
     removeProducts: function removeProducts(checkedProducts) {
@@ -13587,16 +13635,41 @@ __webpack_require__.r(__webpack_exports__);
         alert("Firstly check some products!");
       }
     },
-    getCheckedProduct: function getCheckedProduct() {
+    deleteStorage: function deleteStorage(storage) {
+      var _this4 = this;
+
+      this.$webService["delete"]("storage/".concat(storage.id)).then(function (response) {
+        console.log(response.data);
+        $('#confirmStorageRemoveModal').modal('hide');
+
+        _this4.loadStorages();
+
+        _this4.selectedStorage = {
+          id: null,
+          title: "Storage Not Selected"
+        };
+        _this4.storageProducts = [];
+      })["catch"](function (e) {
+        console.error(e);
+      });
+    },
+    getCheckedProducts: function getCheckedProducts() {
       var checkedProducts = this.storageProducts.filter(function (product) {
         return product.checked;
       });
       this.checkedProducts = checkedProducts.map(function (product) {
         return product.id;
       });
+      return checkedProducts;
+    },
+    orderPalletes: function orderPalletes(storage, product, palleteCount) {
+      console.log(storage);
+      console.log(product);
+      console.log(palleteCount);
+      return;
     },
     addPalletes: function addPalletes(storage, product, palleteCount) {
-      var _this4 = this;
+      var _this5 = this;
 
       var data = {
         productsID: product.map(function (prod) {
@@ -13606,10 +13679,10 @@ __webpack_require__.r(__webpack_exports__);
       };
       this.$webService.put("storage/addPalletes/".concat(storage.id), data).then(function (response) {
         if (response.status == 201) {
-          _this4.loadStorages();
+          _this5.loadStorages();
 
-          _this4.$webService.get("storage/".concat(storage.id)).then(function (response) {
-            _this4.loadStorageProducts(response.data);
+          _this5.$webService.get("storage/".concat(storage.id)).then(function (response) {
+            _this5.loadStorageProducts(response.data);
           })["catch"](function (e) {
             console.error(e);
           });
@@ -13831,7 +13904,7 @@ __webpack_require__.r(__webpack_exports__);
     clearData: function clearData() {
       this.storage.title = "";
       this.storage.location = "";
-      this.storage.palete_capacity = "0.00";
+      this.storage.palete_capacity = "0";
       this.storage["class"] = "D";
       this.focused.title = false;
       this.focused.location = false;
@@ -13915,7 +13988,7 @@ __webpack_require__.r(__webpack_exports__);
             value = Math.abs(value);
           }
 
-          if (this.actionType == "add" && Number(value * this.actionProducts.length) > this.actionStorage.freeSpace) {
+          if ((this.actionType == "add" || this.actionType == "order") && Number(value * this.actionProducts.length) > this.actionStorage.freeSpace) {
             this.isValid = false;
             this.errors.push("Value is more than storage palletes capacity. Free: ".concat(this.actionStorage.freeSpace));
           } else if (this.actionType == "subtract") {
@@ -14034,6 +14107,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "login-input",
   data: function data() {
@@ -14071,8 +14150,6 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _elements_login_input__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./elements/login-input */ "./resources/js/components/login/elements/login-input.vue");
-//
-//
 //
 //
 //
@@ -51489,6 +51566,54 @@ var render = function() {
               0
             )
           ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "card " }, [
+          _c("div", { staticClass: "m-2 d-flex justify-content-between" }, [
+            _vm._m(2),
+            _vm._v(" "),
+            _c("div", [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-success",
+                  on: {
+                    click: function($event) {
+                      _vm.openAddProductAmountModal(_vm.getCheckedProducts())
+                    }
+                  }
+                },
+                [_c("font-awesome-icon", { attrs: { icon: "plus" } })],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-danger",
+                  on: {
+                    click: function($event) {
+                      _vm.openSubtractProductAmountModal(
+                        _vm.getCheckedProducts()
+                      )
+                    }
+                  }
+                },
+                [_c("font-awesome-icon", { attrs: { icon: "minus" } })],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-dark",
+                  on: { click: _vm.openMultipleRemoveProductConfirmModal }
+                },
+                [_c("font-awesome-icon", { attrs: { icon: "trash" } })],
+                1
+              )
+            ])
+          ])
         ])
       ])
     ],
@@ -51529,6 +51654,18 @@ var staticRenderFns = [
         _c("th", [_vm._v("Sale Price")]),
         _vm._v(" "),
         _c("th", { staticClass: "small-column" }, [_vm._v("Action")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", [
+      _c("span", { staticClass: "with-checked-text" }, [
+        _vm._v(
+          "\n                        Actions with checked:\n                    "
+        )
       ])
     ])
   }
@@ -52959,6 +53096,18 @@ var render = function() {
         }
       }),
       _vm._v(" "),
+      _c("confirmModal", {
+        attrs: {
+          id: "confirmStorageRemoveModal",
+          confirmText: "Are you sure you want to delete these storage?"
+        },
+        on: {
+          confirmAction: function($event) {
+            return _vm.deleteStorage(_vm.removableStorage)
+          }
+        }
+      }),
+      _vm._v(" "),
       _c("addProductToStorage", {
         attrs: {
           id: "addProductToStorage",
@@ -53094,7 +53243,11 @@ var render = function() {
                         "button",
                         {
                           staticClass: "btn btn-danger mx-1",
-                          on: { click: function($event) {} }
+                          on: {
+                            click: function($event) {
+                              return _vm.openRemoveStorageConfirmModal(storage)
+                            }
+                          }
                         },
                         [_c("font-awesome-icon", { attrs: { icon: "trash" } })],
                         1
@@ -53241,7 +53394,12 @@ var render = function() {
                           "a",
                           {
                             staticClass: "dropdown-item",
-                            attrs: { href: "#" }
+                            attrs: { href: "#" },
+                            on: {
+                              click: function($event) {
+                                return _vm.openOrderPalletesModal([product])
+                              }
+                            }
                           },
                           [_vm._v("Order")]
                         ),
@@ -53315,10 +53473,7 @@ var render = function() {
                   staticClass: "btn btn-success",
                   on: {
                     click: function($event) {
-                      return _vm.openMultipleActionPalleteModal(
-                        "add",
-                        _vm.addPalletes
-                      )
+                      _vm.openAddPalletesModal(_vm.getCheckedProducts())
                     }
                   }
                 },
@@ -53332,10 +53487,7 @@ var render = function() {
                   staticClass: "btn btn-danger",
                   on: {
                     click: function($event) {
-                      return _vm.openMultipleActionPalleteModal(
-                        "subtract",
-                        _vm.subtractPalletes
-                      )
+                      _vm.openSubtractPalletesModal(_vm.getCheckedProducts())
                     }
                   }
                 },
@@ -53973,6 +54125,15 @@ var render = function() {
               : _vm.inputValue
           },
           on: {
+            keyup: function($event) {
+              if (
+                !$event.type.indexOf("key") &&
+                _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+              ) {
+                return null
+              }
+              return _vm.$emit("login")
+            },
             change: function($event) {
               var $$a = _vm.inputValue,
                 $$el = $event.target,
@@ -54008,6 +54169,15 @@ var render = function() {
           attrs: { placeholder: _vm.placeholder, type: "radio" },
           domProps: { checked: _vm._q(_vm.inputValue, null) },
           on: {
+            keyup: function($event) {
+              if (
+                !$event.type.indexOf("key") &&
+                _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+              ) {
+                return null
+              }
+              return _vm.$emit("login")
+            },
             change: function($event) {
               _vm.inputValue = null
             }
@@ -54026,6 +54196,15 @@ var render = function() {
           attrs: { placeholder: _vm.placeholder, type: _vm.type },
           domProps: { value: _vm.inputValue },
           on: {
+            keyup: function($event) {
+              if (
+                !$event.type.indexOf("key") &&
+                _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+              ) {
+                return null
+              }
+              return _vm.$emit("login")
+            },
             input: function($event) {
               if ($event.target.composing) {
                 return
@@ -54066,12 +54245,12 @@ var render = function() {
         [
           _c("login-input", {
             attrs: { type: "text", icon: "user", placeholder: "Username" },
-            on: { setValue: _vm.getUsername }
+            on: { setValue: _vm.getUsername, login: _vm.login }
           }),
           _vm._v(" "),
           _c("login-input", {
             attrs: { type: "password", icon: "key", placeholder: "Password" },
-            on: { setValue: _vm.getPassword }
+            on: { setValue: _vm.getPassword, login: _vm.login }
           }),
           _vm._v(" "),
           _c("hr", { staticClass: "my-5" })

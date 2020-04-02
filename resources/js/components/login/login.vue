@@ -2,10 +2,8 @@
     <div class="login-bg">
         <div class="login-block row">
             <div class="left col mb-4 py-5">
-                
-                <login-input type="text" icon="user" placeholder="Username" @setValue="getUsername"/>
-                <login-input type="password" icon="key" placeholder="Password" @setValue="getPassword"/>
-
+                <login-input type="text" icon="user" placeholder="Username" @setValue="getUsername" @login="login"/>
+                <login-input type="password" icon="key" placeholder="Password" @setValue="getPassword" @login="login"/>
                 <hr class="my-5">
 
                 <!-- <div class="d-flex justify-content-between">

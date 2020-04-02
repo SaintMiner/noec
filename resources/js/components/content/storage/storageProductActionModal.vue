@@ -58,7 +58,7 @@ export default {
                         value = Math.abs(value);
                     }
 
-                    if (this.actionType == "add" && Number(value*this.actionProducts.length) > (this.actionStorage.freeSpace)) {
+                    if ((this.actionType == "add" || this.actionType == "order") && Number(value*this.actionProducts.length) > (this.actionStorage.freeSpace)) {
                         this.isValid = false;
                         this.errors.push(`Value is more than storage palletes capacity. Free: ${this.actionStorage.freeSpace}`);
                     } else if (this.actionType == "subtract") {
