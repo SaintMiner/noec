@@ -80,7 +80,11 @@ npm i
 
 php artisan cache:clear
 
-php artisan migrate
+php artisan migrate -seed
 ```
 
 9. Dodamies uz [http://localhost](http://localhost), lai pārbaudīt sistēmu
+
+10. Lai ieiet sistēma izmantojam sekojošus datus:
+* Lietotajvārds: Admin
+* Parole: Password123

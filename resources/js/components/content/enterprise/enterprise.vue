@@ -176,6 +176,27 @@ export default {
             }
         },
 
+        openOrderPalletesModal: function(products) {
+            if (products.length) {
+                let componentClass = Vue.extend(storageProductActionModal);
+                let instance = new componentClass({
+                    propsData: {
+                        actionTitle: "Palletes ordering",
+                        actionText: "How many pallets need to be ordered?",
+                        actionProducts: products,
+                        actionStorage: this.selectedStorage,
+                        actionFunction: this.orderPalletes,
+                        actionType: "order",
+                    },
+                });
+                instance.$mount(); 
+                this.$refs.storageControl.appendChild(instance.$el);
+                $('#storageActionModal').modal('show');
+            } else {
+                alert("Firstly check some product(s)");
+            }
+        },
+
         openSubtractProductAmountModal: function(products) {
             if (products.length) {
                 let componentClass = Vue.extend(enterpriseProductActionModal);
