@@ -320,11 +320,11 @@ export default {
             }
             this.$webService.post(`shipping`, data).then(response => {
                 console.log(response);
-                this.checkedProducts = [];
                 this.loadStorageProducts(storage);
             }).catch(e => {
                 console.error(e);
             });
+            this.checkedProducts = [];
             return;
         },
 

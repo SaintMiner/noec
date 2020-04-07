@@ -1,11 +1,13 @@
 <template>
-    <div>
+    <div ref="shippingControl">
+        <confirmModal id="shippingAcceptConfirmModal" confirmText="Are you sure you want to confirm this shiiping?" @confirmAction="acceptShippingConfirm(acceptingShipping)"/>
+        <confirmModal id="shippingCancelConfirmModal" confirmText="Are you sure you want to cancel this shiiping?"/>
         <h1>
             Shipping Orders
         </h1>
         <hr>
 
-         <div class="card storage-control-table">
+         <div class="card shippingOrder-control-table">
                 <table class="table table-hover">
                     <thead>
                         <tr>
@@ -14,18 +16,18 @@
                             <th> Storage </th>
                             <th> Type </th>
                             <th> Status </th>
-                            <th> Products count </th>
+                            <th> Products kind count </th>
                             <th> Created at </th>
                             <th class="small-column"> Actions  </th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="shipping in shippings" :key="shipping.id">
-                            <td @click=""> {{shipping.id}} </td>
-                            <td @click=""> {{shipping.enterprise == null ? "" : shipping.enterprise.title}} </td>
-                            <td @click=""> {{shipping.storage.title}} </td>
-                            <td @click=""> {{shipping.type}} </td>
-                            <td @click=""> 
+                            <td @click="openInfoModal(shipping)"> {{shipping.id}} </td>
+                            <td @click="openInfoModal(shipping)"> {{shipping.enterprise == null ? "" : shipping.enterprise.title}} </td>
+                            <td @click="openInfoModal(shipping)"> {{shipping.storage.title}} </td>
+                            <td @click="openInfoModal(shipping)"> {{shipping.type}} </td>
+                            <td @click="openInfoModal(shipping)"> 
                                 <span v-if="shipping.status == 'In progress'" class="text-primary">
                                     {{shipping.status}}
                                 </span>
@@ -36,13 +38,13 @@
                                     {{shipping.status}}
                                 </span>
                             </td>
-                            <td> {{shipping.products.length}} </td>
-                            <td @click=""> {{formatDate(shipping.created_at)}} </td>
+                            <td @click="openInfoModal(shipping)"> {{shipping.products.length}} </td>
+                            <td @click="openInfoModal(shipping)"> {{formatDate(shipping.created_at)}} </td>
                             <td class="d-flex ptr-button-cube text-center">
-                                <button class="btn btn-success mx-1" @click="">
+                                <button class="btn btn-success mx-1" @click="acceptShipping(shipping)" :disabled="shipping.status != 'In progress'">
                                     <font-awesome-icon icon="check" class=""/>
                                 </button>
-                                <button class="btn btn-danger mx-1" @click="">
+                                <button class="btn btn-danger mx-1" @click="cancelShipping">
                                     <font-awesome-icon icon="times" class=""/>
                                 </button>
                             </td>
@@ -55,13 +57,24 @@
 </template>
 
 <script>
+import shippingOrderInfoModal from "./shippingOrderInfoModal";
+import confirmModal from "../../elements/confirmModal";
+import Vue from "vue";
 export default {
     name: "shippingOrder",
+
+    components: {
+        shippingOrderInfoModal,
+        confirmModal,
+    },
 
     data() {
         return{
             shippings: [],
             selectedShipping: null,
+
+            acceptingShipping: null,
+            cancelingShipping: null,
         }
     },
 
@@ -84,6 +97,32 @@ export default {
             let minutes = ("0"+convertedDate.getMinutes()).slice(-2);
             let formatedDate = `${year}-${month}-${day} ${hours}:${minutes}`;
             return formatedDate;
+        },
+
+        openInfoModal: function(shipping) {
+            let componentClass = Vue.extend(shippingOrderInfoModal);
+            let instance = new componentClass({
+                propsData: {
+                    shipping: shipping,
+                },
+            });
+            instance.$mount(); 
+            this.$refs.shippingControl.appendChild(instance.$el);
+            $('#shippingOrderInfoModal').modal('show');
+        },
+
+        acceptShipping: function(shipping) {
+            this.acceptingShipping = shipping.id;
+            console.log(this.acceptingShipping);
+            $('#shippingAcceptConfirmModal').modal('show');
+        },
+
+        acceptShippingConfirm: function(shipping) {
+            this.$webService.get(`shipping/acceptShipping/${shipping}`).then(response => {
+                console.log(response);
+            }).catch(e => {
+                console.error(e);
+            })
         }
     },
 
@@ -94,5 +133,13 @@ export default {
 </script>
 
 <style>
+    .shippingOrder-control-table {
+        overflow: auto;
+        max-height: 78vh;
+    }
+
+    .shippingOrder-control-table td {
+        vertical-align: middle;
+    }
 
 </style>
