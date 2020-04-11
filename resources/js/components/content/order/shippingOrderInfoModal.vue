@@ -1,5 +1,5 @@
 <template>
-    <div class="modal fade" id="shippingOrderInfoModal" @click="onClose">
+    <div class="modal fade" id="shippingOrderInfoModal" data-backdrop="static">
         <div class="modal-dialog modal-lg" @click.stop>
             <div class="modal-content">
                 <div class="modal-header">
@@ -27,8 +27,8 @@
                             </tr>
                         </tbody>
                     </table>
-                    
                 </div>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="onClose">Close</button>
             </div>
         </div>
     </div>

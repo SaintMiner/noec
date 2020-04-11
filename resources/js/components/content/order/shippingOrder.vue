@@ -1,7 +1,7 @@
 <template>
     <div ref="shippingControl">
-        <confirmModal id="shippingAcceptConfirmModal" confirmText="Are you sure you want to confirm this shiiping?" @confirmAction="acceptShippingConfirm(acceptingShipping)"/>
-        <confirmModal id="shippingCancelConfirmModal" confirmText="Are you sure you want to cancel this shiiping?"/>
+        <confirmModal id="shippingCompleteConfirmModal" confirmText="Are you sure you want to complete this shiiping?" @confirmAction="completeShippingConfirm(completingShipping)"/>
+        <confirmModal id="shippingCancelConfirmModal" confirmText="Are you sure you want to cancel this shiiping?" @confirmAction="cancelShippingConfirm(cancelingShipping)"/>
         <h1>
             Shipping Orders
         </h1>
@@ -41,10 +41,10 @@
                             <td @click="openInfoModal(shipping)"> {{shipping.products.length}} </td>
                             <td @click="openInfoModal(shipping)"> {{formatDate(shipping.created_at)}} </td>
                             <td class="d-flex ptr-button-cube text-center">
-                                <button class="btn btn-success mx-1" @click="acceptShipping(shipping)" :disabled="shipping.status != 'In progress'">
+                                <button class="btn btn-success mx-1" @click="completeShipping(shipping)" :disabled="shipping.status != 'In progress'">
                                     <font-awesome-icon icon="check" class=""/>
                                 </button>
-                                <button class="btn btn-danger mx-1" @click="cancelShipping">
+                                <button class="btn btn-danger mx-1" @click="cancelShipping(shipping)" :disabled="shipping.status == 'Canceled'">
                                     <font-awesome-icon icon="times" class=""/>
                                 </button>
                             </td>
@@ -73,7 +73,7 @@ export default {
             shippings: [],
             selectedShipping: null,
 
-            acceptingShipping: null,
+            completingShipping: null,
             cancelingShipping: null,
         }
     },
@@ -111,19 +111,37 @@ export default {
             $('#shippingOrderInfoModal').modal('show');
         },
 
-        acceptShipping: function(shipping) {
-            this.acceptingShipping = shipping.id;
-            console.log(this.acceptingShipping);
-            $('#shippingAcceptConfirmModal').modal('show');
+        completeShipping: function(shipping) {
+            this.completingShipping = shipping.id;
+            console.log(this.completingShipping);
+            $('#shippingCompleteConfirmModal').modal('show');
         },
 
-        acceptShippingConfirm: function(shipping) {
-            this.$webService.get(`shipping/acceptShipping/${shipping}`).then(response => {
-                console.log(response);
+        completeShippingConfirm: function(shipping) {
+            this.$webService.get(`shipping/completeShipping/${shipping}`).then(response => {
+                $('#shippingCompleteConfirmModal').modal('hide');
+                this.loadShippings();
             }).catch(e => {
                 console.error(e);
             })
-        }
+        },
+
+        cancelShipping: function(shipping) {
+            this.cancelingShipping = shipping.id;
+            console.log(this.cancelingShipping);
+            $('#shippingCancelConfirmModal').modal('show');
+        },
+
+        cancelShippingConfirm: function(shipping) {
+            this.$webService.get(`shipping/cancelShipping/${shipping}`).then(response => {
+                $('#shippingCancelConfirmModal').modal('hide');
+                this.loadShippings();
+            }).catch(e => {
+                console.error(e);
+            })
+        },
+
+
     },
 
     mounted() {

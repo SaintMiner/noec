@@ -114,10 +114,10 @@
                         </span>
                     </div>
                     <div>
-                        <button class="btn btn-dark" @click="openOrderPalletesModal(getCheckedProducts())"><font-awesome-icon icon="dolly" class=""/></button>
-                        <button class="btn btn-success" @click="openAddPalletesModal(getCheckedProducts())"><font-awesome-icon icon="plus" class=""/></button>
-                        <button class="btn btn-danger" @click="openSubtractPalletesModal(getCheckedProducts())"><font-awesome-icon icon="minus" class=""/></button>
-                        <button class="btn btn-dark" @click="openMultipleRemoveProductConfirmModal"><font-awesome-icon icon="trash" class=""/></button>
+                        <button class="btn btn-dark" @click="openOrderPalletesModal(getCheckedProducts())" :disabled="selectedStorage.id == null"><font-awesome-icon icon="dolly" class=""/></button>
+                        <button class="btn btn-success" @click="openAddPalletesModal(getCheckedProducts())" :disabled="selectedStorage.id == null"><font-awesome-icon icon="plus" class=""/></button>
+                        <button class="btn btn-danger" @click="openSubtractPalletesModal(getCheckedProducts())" :disabled="selectedStorage.id == null"><font-awesome-icon icon="minus" class=""/></button>
+                        <button class="btn btn-dark" @click="openMultipleRemoveProductConfirmModal" :disabled="selectedStorage.id == null"><font-awesome-icon icon="trash" class=""/></button>
                     </div>
                 </div>  
             </div>
@@ -309,9 +309,7 @@ export default {
         },
 
         orderPalletes: function(storage, products, palleteCount) {
-            console.log(storage);
-            console.log(products);
-            console.log(palleteCount);
+            
             let data = {
                 storageID: storage.id,
                 products: products.map(prod => prod.id),

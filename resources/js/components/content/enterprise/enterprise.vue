@@ -87,7 +87,7 @@
                                     <font-awesome-icon icon="ellipsis-v" class=""/>
                                 </button>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="#">Orders</a>
+                                    <a class="dropdown-item" href="#" @click="openOrderPalletesModal([product])">Orders</a>
                                     <a class="dropdown-item" href="#" @click="openAddProductAmountModal([product])">Add</a>
                                     <a class="dropdown-item" href="#" @click="openSubtractProductAmountModal([product])">Subtract</a>
                                     <div role="separator" class="dropdown-divider"></div>
@@ -106,9 +106,10 @@
                         </span>
                     </div>
                     <div>
-                        <button class="btn btn-success" @click="openAddProductAmountModal(getCheckedProducts())"><font-awesome-icon icon="plus" class=""/></button>
-                        <button class="btn btn-danger" @click="openSubtractProductAmountModal(getCheckedProducts())"><font-awesome-icon icon="minus" class=""/></button>
-                        <button class="btn btn-dark" @click="openMultipleRemoveProductConfirmModal"><font-awesome-icon icon="trash" class=""/></button>
+                        <button class="btn btn-dark" @click="openOrderPalletesModal(getCheckedProducts())" :disabled="selectedEnterprise.id == null"><font-awesome-icon icon="dolly" class=""/></button>
+                        <button class="btn btn-success" @click="openAddProductAmountModal(getCheckedProducts())" :disabled="selectedEnterprise.id == null"><font-awesome-icon icon="plus" class=""/></button>
+                        <button class="btn btn-danger" @click="openSubtractProductAmountModal(getCheckedProducts())" :disabled="selectedEnterprise.id == null"><font-awesome-icon icon="minus" class=""/></button>
+                        <button class="btn btn-dark" @click="openMultipleRemoveProductConfirmModal" :disabled="selectedEnterprise.id == null"><font-awesome-icon icon="trash" class=""/></button>
                     </div>
                 </div>  
             </div>
@@ -180,20 +181,20 @@ export default {
 
         openOrderPalletesModal: function(products) {
             if (products.length) {
-                let componentClass = Vue.extend(storageProductActionModal);
+                let componentClass = Vue.extend(enterpriseProductActionModal);
                 let instance = new componentClass({
                     propsData: {
                         actionTitle: "Palletes ordering",
                         actionText: "How many pallets need to be ordered?",
                         actionProducts: products,
-                        actionStorage: this.selectedStorage,
+                        actionEnterprise: this.selectedEnterprise,
                         actionFunction: this.orderPalletes,
                         actionType: "order",
                     },
                 });
                 instance.$mount(); 
-                this.$refs.storageControl.appendChild(instance.$el);
-                $('#storageActionModal').modal('show');
+                this.$refs.enterpriseControl.appendChild(instance.$el);
+                $('#enterpriseActionModal').modal('show');
             } else {
                 alert("Firstly check some product(s)");
             }
@@ -255,6 +256,27 @@ export default {
 
         subtractProducts: function(storage, product, amount) {
             this.addProducts(storage, product, -amount);
+        },
+
+        orderPalletes: function(enterprise, storage, products, palleteCount) {
+            console.log(enterprise);
+            console.log(storage);
+            console.log(products);
+            console.log(palleteCount);
+            let data = {
+                enterpriseID: enterprise.id,
+                storageID: storage,
+                products: products.map(prod => prod.id),
+                palleteCount: palleteCount,
+                type: "Replenish Enterprise",
+            }
+            this.$webService.post(`shipping`, data).then(response => {
+                console.log(response);
+            }).catch(e => {
+                console.error(e);
+            });
+            this.checkedProducts = [];
+            return;
         },
 
         openAddEnterpriseModal: function() {

@@ -12057,6 +12057,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 
@@ -12122,20 +12123,20 @@ __webpack_require__.r(__webpack_exports__);
     },
     openOrderPalletesModal: function openOrderPalletesModal(products) {
       if (products.length) {
-        var componentClass = vue__WEBPACK_IMPORTED_MODULE_4___default.a.extend(storageProductActionModal);
+        var componentClass = vue__WEBPACK_IMPORTED_MODULE_4___default.a.extend(_enterpriseProductActionModal__WEBPACK_IMPORTED_MODULE_0__["default"]);
         var instance = new componentClass({
           propsData: {
             actionTitle: "Palletes ordering",
             actionText: "How many pallets need to be ordered?",
             actionProducts: products,
-            actionStorage: this.selectedStorage,
+            actionEnterprise: this.selectedEnterprise,
             actionFunction: this.orderPalletes,
             actionType: "order"
           }
         });
         instance.$mount();
-        this.$refs.storageControl.appendChild(instance.$el);
-        $('#storageActionModal').modal('show');
+        this.$refs.enterpriseControl.appendChild(instance.$el);
+        $('#enterpriseActionModal').modal('show');
       } else {
         alert("Firstly check some product(s)");
       }
@@ -12199,6 +12200,28 @@ __webpack_require__.r(__webpack_exports__);
     },
     subtractProducts: function subtractProducts(storage, product, amount) {
       this.addProducts(storage, product, -amount);
+    },
+    orderPalletes: function orderPalletes(enterprise, storage, products, palleteCount) {
+      console.log(enterprise);
+      console.log(storage);
+      console.log(products);
+      console.log(palleteCount);
+      var data = {
+        enterpriseID: enterprise.id,
+        storageID: storage,
+        products: products.map(function (prod) {
+          return prod.id;
+        }),
+        palleteCount: palleteCount,
+        type: "Replenish Enterprise"
+      };
+      this.$webService.post("shipping", data).then(function (response) {
+        console.log(response);
+      })["catch"](function (e) {
+        console.error(e);
+      });
+      this.checkedProducts = [];
+      return;
     },
     openAddEnterpriseModal: function openAddEnterpriseModal() {
       this.editMode = false;
@@ -12549,6 +12572,25 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "enterpriseProductActionModal",
   props: {
@@ -12569,7 +12611,12 @@ __webpack_require__.r(__webpack_exports__);
       value: "1",
       errors: [],
       isValid: true,
-      focused: false
+      focused: false,
+      storages: null,
+      selectedStorage: null,
+      selectedStorageLoading: false,
+      notIncludedProducts: [],
+      isValidStorage: true
     };
   },
   computed: {
@@ -12614,6 +12661,46 @@ __webpack_require__.r(__webpack_exports__);
       get: function get() {
         return this.value;
       }
+    },
+    storageModel: {
+      set: function set(value) {
+        var _this2 = this;
+
+        this.selectedStorage = value;
+        this.selectedStorageLoading = true;
+        this.$webService.get("storage/getProducts/".concat(value)).then(function (response) {
+          _this2.actionProducts.forEach(function (actionProd) {
+            var res = response.data.find(function (prod) {
+              return prod.id == actionProd.id;
+            });
+
+            if (res != undefined) {
+              actionProd.storaged = true;
+            } else {
+              actionProd.storaged = false;
+            }
+          });
+
+          var notIncludedProducts = _this2.actionProducts.filter(function (prod) {
+            return prod.storaged == false;
+          });
+
+          _this2.notIncludedProducts = notIncludedProducts;
+
+          if (notIncludedProducts.length) {
+            _this2.isValidStorage = false;
+          } else {
+            _this2.isValidStorage = true;
+          }
+
+          _this2.selectedStorageLoading = false;
+        })["catch"](function (e) {
+          console.error(e);
+        });
+      },
+      get: function get() {
+        return this.selectedStorage;
+      }
     }
   },
   methods: {
@@ -12622,8 +12709,29 @@ __webpack_require__.r(__webpack_exports__);
     },
     confirm: function confirm() {
       $('#enterpriseActionModal').modal('hide');
-      this.actionFunction(this.actionEnterprise, this.actionProducts, this.value);
+
+      if (this.actionType = "order") {
+        this.actionFunction(this.actionEnterprise, this.selectedStorage, this.actionProducts, this.value);
+      } else {
+        this.actionFunction(this.actionEnterprise, this.actionProducts, this.value);
+      }
+
       this.$el.remove();
+    },
+    laodStorages: function laodStorages() {
+      var _this3 = this;
+
+      this.$webService.get("enterprise/getStorages/".concat(this.actionEnterprise.id)).then(function (response) {
+        _this3.storages = response.data;
+      })["catch"](function (e) {
+        console.error(e);
+      });
+    }
+  },
+  mounted: function mounted() {
+    if (this.actionType == "order") {
+      this.laodStorages();
+      this.isValidStorage = false;
     }
   }
 });
@@ -12714,7 +12822,7 @@ __webpack_require__.r(__webpack_exports__);
     return {
       shippings: [],
       selectedShipping: null,
-      acceptingShipping: null,
+      completingShipping: null,
       cancelingShipping: null
     };
   },
@@ -12750,14 +12858,34 @@ __webpack_require__.r(__webpack_exports__);
       this.$refs.shippingControl.appendChild(instance.$el);
       $('#shippingOrderInfoModal').modal('show');
     },
-    acceptShipping: function acceptShipping(shipping) {
-      this.acceptingShipping = shipping.id;
-      console.log(this.acceptingShipping);
-      $('#shippingAcceptConfirmModal').modal('show');
+    completeShipping: function completeShipping(shipping) {
+      this.completingShipping = shipping.id;
+      console.log(this.completingShipping);
+      $('#shippingCompleteConfirmModal').modal('show');
     },
-    acceptShippingConfirm: function acceptShippingConfirm(shipping) {
-      this.$webService.get("shipping/acceptShipping/".concat(shipping)).then(function (response) {
-        console.log(response);
+    completeShippingConfirm: function completeShippingConfirm(shipping) {
+      var _this2 = this;
+
+      this.$webService.get("shipping/completeShipping/".concat(shipping)).then(function (response) {
+        $('#shippingCompleteConfirmModal').modal('hide');
+
+        _this2.loadShippings();
+      })["catch"](function (e) {
+        console.error(e);
+      });
+    },
+    cancelShipping: function cancelShipping(shipping) {
+      this.cancelingShipping = shipping.id;
+      console.log(this.cancelingShipping);
+      $('#shippingCancelConfirmModal').modal('show');
+    },
+    cancelShippingConfirm: function cancelShippingConfirm(shipping) {
+      var _this3 = this;
+
+      this.$webService.get("shipping/cancelShipping/".concat(shipping)).then(function (response) {
+        $('#shippingCancelConfirmModal').modal('hide');
+
+        _this3.loadShippings();
       })["catch"](function (e) {
         console.error(e);
       });
@@ -13895,9 +14023,6 @@ __webpack_require__.r(__webpack_exports__);
     orderPalletes: function orderPalletes(storage, products, palleteCount) {
       var _this5 = this;
 
-      console.log(storage);
-      console.log(products);
-      console.log(palleteCount);
       var data = {
         storageID: storage.id,
         products: products.map(function (prod) {
@@ -51806,7 +51931,15 @@ var render = function() {
                     _c("div", { staticClass: "dropdown-menu" }, [
                       _c(
                         "a",
-                        { staticClass: "dropdown-item", attrs: { href: "#" } },
+                        {
+                          staticClass: "dropdown-item",
+                          attrs: { href: "#" },
+                          on: {
+                            click: function($event) {
+                              return _vm.openOrderPalletesModal([product])
+                            }
+                          }
+                        },
                         [_vm._v("Orders")]
                       ),
                       _vm._v(" "),
@@ -51877,7 +52010,23 @@ var render = function() {
               _c(
                 "button",
                 {
+                  staticClass: "btn btn-dark",
+                  attrs: { disabled: _vm.selectedEnterprise.id == null },
+                  on: {
+                    click: function($event) {
+                      _vm.openOrderPalletesModal(_vm.getCheckedProducts())
+                    }
+                  }
+                },
+                [_c("font-awesome-icon", { attrs: { icon: "dolly" } })],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
                   staticClass: "btn btn-success",
+                  attrs: { disabled: _vm.selectedEnterprise.id == null },
                   on: {
                     click: function($event) {
                       _vm.openAddProductAmountModal(_vm.getCheckedProducts())
@@ -51892,6 +52041,7 @@ var render = function() {
                 "button",
                 {
                   staticClass: "btn btn-danger",
+                  attrs: { disabled: _vm.selectedEnterprise.id == null },
                   on: {
                     click: function($event) {
                       _vm.openSubtractProductAmountModal(
@@ -51908,6 +52058,7 @@ var render = function() {
                 "button",
                 {
                   staticClass: "btn btn-dark",
+                  attrs: { disabled: _vm.selectedEnterprise.id == null },
                   on: { click: _vm.openMultipleRemoveProductConfirmModal }
                 },
                 [_c("font-awesome-icon", { attrs: { icon: "trash" } })],
@@ -52343,6 +52494,107 @@ var render = function() {
           ]),
           _vm._v(" "),
           _c("div", { staticClass: "modal-body" }, [
+            _vm.actionType == "order"
+              ? _c("div", { staticClass: "form-group" }, [
+                  _c("div", { staticClass: "d-flex" }, [
+                    _vm._m(0),
+                    _vm._v(" "),
+                    _vm.selectedStorageLoading
+                      ? _c(
+                          "div",
+                          {
+                            staticClass: "spinner-border spinner-border-sm m-1",
+                            attrs: { role: "status" }
+                          },
+                          [
+                            _c("span", { staticClass: "sr-only" }, [
+                              _vm._v("Loading...")
+                            ])
+                          ]
+                        )
+                      : _vm._e()
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    { staticClass: "form-group" },
+                    [
+                      _c(
+                        "select",
+                        {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.storageModel,
+                              expression: "storageModel"
+                            }
+                          ],
+                          staticClass: "custom-select custom-select mb-3",
+                          class: {
+                            "is-invalid": _vm.notIncludedProducts.length
+                          },
+                          on: {
+                            change: function($event) {
+                              var $$selectedVal = Array.prototype.filter
+                                .call($event.target.options, function(o) {
+                                  return o.selected
+                                })
+                                .map(function(o) {
+                                  var val = "_value" in o ? o._value : o.value
+                                  return val
+                                })
+                              _vm.storageModel = $event.target.multiple
+                                ? $$selectedVal
+                                : $$selectedVal[0]
+                            }
+                          }
+                        },
+                        [
+                          _c(
+                            "option",
+                            {
+                              attrs: { selected: "", disabled: "" },
+                              domProps: { value: null }
+                            },
+                            [_vm._v("Select storage")]
+                          ),
+                          _vm._v(" "),
+                          _vm._l(_vm.storages, function(storage) {
+                            return _c(
+                              "option",
+                              {
+                                key: storage.storage_id,
+                                domProps: { value: storage.storage_id }
+                              },
+                              [_vm._v(" " + _vm._s(storage.title) + " ")]
+                            )
+                          })
+                        ],
+                        2
+                      ),
+                      _vm._v(" "),
+                      _vm._l(_vm.notIncludedProducts, function(product) {
+                        return _c(
+                          "div",
+                          { key: product.id, staticClass: "invalid-feedback" },
+                          [
+                            _c("span", [
+                              _vm._v(
+                                " [" +
+                                  _vm._s(product.name) +
+                                  "] is not included in this storage"
+                              )
+                            ])
+                          ]
+                        )
+                      })
+                    ],
+                    2
+                  )
+                ])
+              : _vm._e(),
+            _vm._v(" "),
             _c(
               "div",
               { staticClass: "form-group" },
@@ -52416,7 +52668,10 @@ var render = function() {
               "button",
               {
                 staticClass: "btn btn-primary",
-                attrs: { type: "button", disabled: !_vm.isValid },
+                attrs: {
+                  type: "button",
+                  disabled: !_vm.isValid || !_vm.isValidStorage
+                },
                 on: { click: _vm.confirm }
               },
               [_vm._v("Confirm")]
@@ -52427,7 +52682,14 @@ var render = function() {
     ]
   )
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", [_c("h4", [_vm._v("Select storage")])])
+  }
+]
 render._withStripped = true
 
 
@@ -52455,12 +52717,12 @@ var render = function() {
     [
       _c("confirmModal", {
         attrs: {
-          id: "shippingAcceptConfirmModal",
-          confirmText: "Are you sure you want to confirm this shiiping?"
+          id: "shippingCompleteConfirmModal",
+          confirmText: "Are you sure you want to complete this shiiping?"
         },
         on: {
           confirmAction: function($event) {
-            return _vm.acceptShippingConfirm(_vm.acceptingShipping)
+            return _vm.completeShippingConfirm(_vm.completingShipping)
           }
         }
       }),
@@ -52469,6 +52731,11 @@ var render = function() {
         attrs: {
           id: "shippingCancelConfirmModal",
           confirmText: "Are you sure you want to cancel this shiiping?"
+        },
+        on: {
+          confirmAction: function($event) {
+            return _vm.cancelShippingConfirm(_vm.cancelingShipping)
+          }
         }
       }),
       _vm._v(" "),
@@ -52619,7 +52886,7 @@ var render = function() {
                         attrs: { disabled: shipping.status != "In progress" },
                         on: {
                           click: function($event) {
-                            return _vm.acceptShipping(shipping)
+                            return _vm.completeShipping(shipping)
                           }
                         }
                       },
@@ -52631,7 +52898,12 @@ var render = function() {
                       "button",
                       {
                         staticClass: "btn btn-danger mx-1",
-                        on: { click: _vm.cancelShipping }
+                        attrs: { disabled: shipping.status == "Canceled" },
+                        on: {
+                          click: function($event) {
+                            return _vm.cancelShipping(shipping)
+                          }
+                        }
                       },
                       [_c("font-awesome-icon", { attrs: { icon: "times" } })],
                       1
@@ -52699,8 +52971,7 @@ var render = function() {
     "div",
     {
       staticClass: "modal fade",
-      attrs: { id: "shippingOrderInfoModal" },
-      on: { click: _vm.onClose }
+      attrs: { id: "shippingOrderInfoModal", "data-backdrop": "static" }
     },
     [
       _c(
@@ -52769,7 +53040,17 @@ var render = function() {
                   )
                 ]
               )
-            ])
+            ]),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-secondary",
+                attrs: { type: "button", "data-dismiss": "modal" },
+                on: { click: _vm.onClose }
+              },
+              [_vm._v("Close")]
+            )
           ])
         ]
       )
@@ -54146,6 +54427,7 @@ var render = function() {
                 "button",
                 {
                   staticClass: "btn btn-dark",
+                  attrs: { disabled: _vm.selectedStorage.id == null },
                   on: {
                     click: function($event) {
                       _vm.openOrderPalletesModal(_vm.getCheckedProducts())
@@ -54160,6 +54442,7 @@ var render = function() {
                 "button",
                 {
                   staticClass: "btn btn-success",
+                  attrs: { disabled: _vm.selectedStorage.id == null },
                   on: {
                     click: function($event) {
                       _vm.openAddPalletesModal(_vm.getCheckedProducts())
@@ -54174,6 +54457,7 @@ var render = function() {
                 "button",
                 {
                   staticClass: "btn btn-danger",
+                  attrs: { disabled: _vm.selectedStorage.id == null },
                   on: {
                     click: function($event) {
                       _vm.openSubtractPalletesModal(_vm.getCheckedProducts())
@@ -54188,6 +54472,7 @@ var render = function() {
                 "button",
                 {
                   staticClass: "btn btn-dark",
+                  attrs: { disabled: _vm.selectedStorage.id == null },
                   on: { click: _vm.openMultipleRemoveProductConfirmModal }
                 },
                 [_c("font-awesome-icon", { attrs: { icon: "trash" } })],

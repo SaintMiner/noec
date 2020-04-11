@@ -16,6 +16,7 @@ class EnterpriseStorages extends JsonResource
     {
         return [
             "storage_id" => $this->pivot->storage_id,
+            "title" => $this->title
         ];
     }
 }
