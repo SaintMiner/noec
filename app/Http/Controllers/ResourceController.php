@@ -17,13 +17,13 @@ class ResourceController extends Controller
         if ($request->departmentFilter) {
             array_push($condition, ["department_id", '=', $request->departmentFilter]);
         }
-        return ResourceResource::collection(Resource::with("department", "enterprise", "status", "position")
-                                            ->where($condition)
-                                            ->orWhere('name', 'like', '%' . $request->searchFilter . '%')
-                                            ->orWhere('surname', 'like', '%' . $request->searchFilter . '%')
-                                            ->get()
-                );
-        return $request;
-
+        if ($request->statusFilter) {
+            array_push($condition, ["status_id", '=', $request->statusFilter]);
+        }
+        if ($request->searchFilter) {
+            array_push($condition, [\DB::raw('CONCAT(resources.name, " ", resources.surname)'), "like", "%".$request->searchFilter."%"]);
+        }
+        $resources = ResourceResource::collection(Resource::with("department", "enterprise", "status", "position")->where($condition)->get());
+        return $resources;
     }
 }

@@ -44,6 +44,8 @@ Route::resource('product', 'ProductController');
 
 Route::resource('department', 'DepartmentController');
 
+Route::resource('status', 'StatusController');
+
 Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'

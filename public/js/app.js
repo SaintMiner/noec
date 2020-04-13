@@ -13082,6 +13082,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "personal",
   components: {},
@@ -13092,6 +13100,7 @@ __webpack_require__.r(__webpack_exports__);
       departments: [],
       enterpriseFilter: 0,
       departmentFilter: 0,
+      statusFilter: 0,
       searchFilter: ""
     };
   },
@@ -13122,6 +13131,15 @@ __webpack_require__.r(__webpack_exports__);
       get: function get() {
         return this.searchFilter;
       }
+    },
+    statusFilterModel: {
+      set: function set(value) {
+        this.statusFilter = value;
+        this.getPersonal();
+      },
+      get: function get() {
+        return this.statusFilter;
+      }
     }
   },
   methods: {
@@ -13132,7 +13150,8 @@ __webpack_require__.r(__webpack_exports__);
         params: {
           enterpriseFilter: this.enterpriseFilter,
           departmentFilter: this.departmentFilter,
-          searchFilter: this.searchFilter
+          searchFilter: this.searchFilter,
+          statusFilter: this.statusFilter
         }
       }).then(function (response) {
         console.log(response.data);
@@ -13150,11 +13169,20 @@ __webpack_require__.r(__webpack_exports__);
         console.error(e);
       });
     },
-    getDepartment: function getDepartment() {
+    getDepartments: function getDepartments() {
       var _this3 = this;
 
       this.$webService.get("department").then(function (response) {
         _this3.departments = response.data;
+      })["catch"](function (e) {
+        console.error(e);
+      });
+    },
+    getStatuses: function getStatuses() {
+      var _this4 = this;
+
+      this.$webService.get("status").then(function (response) {
+        _this4.statuses = response.data;
       })["catch"](function (e) {
         console.error(e);
       });
@@ -13164,7 +13192,8 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {
     this.getPersonal();
     this.getEnterprises();
-    this.getDepartment();
+    this.getDepartments();
+    this.getStatuses();
   }
 });
 
@@ -53214,6 +53243,58 @@ var render = function() {
                     _vm._v(
                       "\n                        " +
                         _vm._s(enterprise.title) +
+                        "\n                    "
+                    )
+                  ]
+                )
+              })
+            ],
+            2
+          )
+        ]),
+        _vm._v(" "),
+        _c("div", {}, [
+          _c(
+            "select",
+            {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.statusFilterModel,
+                  expression: "statusFilterModel"
+                }
+              ],
+              staticClass: "custom-select",
+              on: {
+                change: function($event) {
+                  var $$selectedVal = Array.prototype.filter
+                    .call($event.target.options, function(o) {
+                      return o.selected
+                    })
+                    .map(function(o) {
+                      var val = "_value" in o ? o._value : o.value
+                      return val
+                    })
+                  _vm.statusFilterModel = $event.target.multiple
+                    ? $$selectedVal
+                    : $$selectedVal[0]
+                }
+              }
+            },
+            [
+              _c("option", { attrs: { value: "0", selected: "" } }, [
+                _vm._v("Choose Status")
+              ]),
+              _vm._v(" "),
+              _vm._l(_vm.statuses, function(status) {
+                return _c(
+                  "option",
+                  { key: status.id, domProps: { value: status.id } },
+                  [
+                    _vm._v(
+                      "\n                        " +
+                        _vm._s(status.name) +
                         "\n                    "
                     )
                   ]

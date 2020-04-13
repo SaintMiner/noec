@@ -23,6 +23,14 @@
                         </option>
                     </select>
                 </div>
+                <div class="">
+                    <select class="custom-select" v-model="statusFilterModel">
+                        <option value=0 selected>Choose Status</option>
+                        <option :value="status.id" v-for="status in statuses" :key="status.id">
+                            {{status.name}}
+                        </option>
+                    </select>
+                </div>
             </div>
         </div>
 
@@ -80,7 +88,9 @@ export default {
 
             enterpriseFilter: 0,
             departmentFilter: 0,
+            statusFilter: 0,
             searchFilter: "",
+            
         }
     },
 
@@ -116,6 +126,17 @@ export default {
             get: function() {
                 return this.searchFilter;
             }
+        },
+
+        statusFilterModel: {
+            set: function(value) {
+                this.statusFilter= value;
+                this.getPersonal();
+            },
+
+            get: function() {
+                return this.statusFilter;
+            }
         }
     },
     
@@ -126,6 +147,7 @@ export default {
                     enterpriseFilter: this.enterpriseFilter, 
                     departmentFilter: this.departmentFilter,
                     searchFilter: this.searchFilter,
+                    statusFilter: this.statusFilter,
                 }
              }).then(response => {
                 console.log(response.data);
@@ -143,13 +165,21 @@ export default {
             });
         },
 
-        getDepartment: function() {
+        getDepartments: function() {
             this.$webService.get("department").then(response => {
                 this.departments = response.data;
             }).catch(e => {
                 console.error(e);
             });
-        }
+        },
+
+        getStatuses: function() {
+            this.$webService.get("status").then(response => {
+                this.statuses = response.data;
+            }).catch(e => {
+                console.error(e);
+            });
+        },
     },
 
     watch: {
@@ -159,7 +189,8 @@ export default {
     mounted() {
         this.getPersonal();
         this.getEnterprises();
-        this.getDepartment();
+        this.getDepartments();
+        this.getStatuses();
     },
 }
 </script>
