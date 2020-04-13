@@ -11,8 +11,39 @@ use App\Http\Resources\Shippings as Shippings;
 
 class ShippingController extends Controller
 {
-    public function index() {
-        return Shippings::collection(Shipping::all()->sortByDesc("created_at"));
+    public function index(Request $request) {
+        // return $request;
+        $condition = [];
+        switch ($request->statusFilter) {
+            case 1: {
+                array_push($condition, ["status", "=", "In progress"]);
+                break;
+            }
+
+            case 2: {
+                array_push($condition, ["status", "=", "Completed"]);
+                break;
+            }
+
+            case 3: {
+                array_push($condition, ["status", "=", "Canceled"]);
+                break;
+            }
+        }
+        
+        switch ($request->typeFilter) {
+            case 1: {
+                array_push($condition, ["type", "=", "Replenish Storage"]);
+                break;
+            }
+
+            case 2: {
+                array_push($condition, ["type", "=", "Replenish Enterprise"]);
+                break;
+            }
+        }
+        // return Shippings::collection(Shipping::all()->sortByDesc("created_at"));
+        return Shippings::collection(Shipping::where($condition)->get()->sortByDesc("created_at"));
     }
 
     public function store(Request $request) {

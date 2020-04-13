@@ -4,21 +4,26 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Resource;
-use App\Http\Responses\Feed;
 use App\Http\Resources\Resources as ResourceResource;
 class ResourceController extends Controller
 {
-    public function index() {
+    public function index(Request $request) {
         // dd(Resource::find(1)->department());
-        return new Feed;
-        $resources = Resource::with('department')->get();
-        // dd($resources);
-        // foreach ($resources as $resource) {
-        //     $resource->department = $resource->department()->get();
-        //     $resource->enterprise = $resource->enterprise()->get();
-        //     $resource->status = $resourece->status()->get();
-        //     $resource->position = $resource->position()->get();
-        // }
-        return ResourceResource::collection($resources);
+        $condition = [];
+        
+        if ($request->enterpriseFilter) {
+            array_push($condition, ["enterprise_id", '=', $request->enterpriseFilter]);
+        }
+        if ($request->departmentFilter) {
+            array_push($condition, ["department_id", '=', $request->departmentFilter]);
+        }
+        return ResourceResource::collection(Resource::with("department", "enterprise", "status", "position")
+                                            ->where($condition)
+                                            ->orWhere('name', 'like', '%' . $request->searchFilter . '%')
+                                            ->orWhere('surname', 'like', '%' . $request->searchFilter . '%')
+                                            ->get()
+                );
+        return $request;
+
     }
 }

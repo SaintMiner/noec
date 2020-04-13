@@ -4,115 +4,163 @@
             <div class="d-flex">
                 <div class="">
                     <div class="input-group">
-                        <input type="text" class="form-control personal-search" placeholder="Search by name, surname" v-model="filters.search">
-                        <!-- <div class="input-group-append">
-                            <button class="input-group-text btn"> <font-awesome-icon icon="search" class="mx-2"/> </button>
-                        </div> -->
+                        <input type="text" class="form-control personal-search" placeholder="Search by name, surname" v-model="searchFilterModel">
                     </div>
                 </div>
                 <div class="">
-                    <personalSelect 
-                        placeHolderValue="Choose Department" 
-                        :values="[{name: 'First Department', value: '1'}, {name: 'Second Department', value: '2'}]"
-                        :model="filters.department"
-                        @input="filters.department = $event"
-                    />
+                    <select class="custom-select" v-model="departmentFilterModel">
+                        <option value=0 selected>Choose Department</option>
+                        <option :value="department.id" v-for="department in departments" :key="department.id">
+                            {{department.name}}
+                        </option>
+                    </select>
                 </div>
                 <div class="">
-                    <personalSelect 
-                        placeHolderValue="Choose Enterprise" 
-                        :values="[{name: 'First Enterprise', value: '1'}, {name: 'Second Enterprise', value: '2'}]"
-                        :model="filters.enterprise"
-                        @input="filters.enterprise = $event"
-                    />
+                    <select class="custom-select" v-model="enterpriseFilterModel">
+                        <option value=0 selected>Choose Enterprise</option>
+                        <option :value="enterprise.id" v-for="enterprise in enterprises" :key="enterprise.id">
+                            {{enterprise.title}}
+                        </option>
+                    </select>
                 </div>
             </div>
         </div>
 
         <div class="card mt-3 personal-table">
-            <personalTable :personal="personal"/>
+            <table class="table table-hover table-responsive mb-0">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col" class="vw-100">Name Surname</th>
+                        <th scope="col" class="vw-100">Position</th>
+                        <th scope="col" class="vw-100">Department</th>
+                        <th scope="col" class="vw-100">Enterprise</th>
+                        <th scope="col" class="vw-100">Status</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+
+                <tbody class="">
+                    <tr v-for="(person, index) in personal" :key="index" >
+                        <th> {{person.id}} </th>
+                        <td> {{person.name}} {{person.surname}} </td>
+                        <td> {{person.position}} </td>
+                        <td> {{person.department}} </td>
+                        <td> {{person.enterprise}} </td>
+                        <td> {{person.status}} </td>
+                        <td>
+                            <div class="d-flex ptr-button-cube text-center">
+                                <button class="btn btn-primary mx-1"><font-awesome-icon icon="pen" class=""/></button>
+                                <button class="btn btn-primary mx-1"><font-awesome-icon icon="info" class=""/></button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+                
+            </table>
         </div>
     </div>
 </template>
 
 <script>
-import personalSelect from "./elements/personal-select";
-import personalTable from "./personalTable/personalTable";
+
 
 export default {
     name: "personal",
+    
+    components: {
+        
+    },
 
     data() {
         return {
-            personal: [
-                // {id: 1, nameSurname: "Mark Surok", position: "Otto", status: "working very hard"},
-                // {id: 2, nameSurname: "Jacob Scronung", position: "Thornton", status: "Komandirovka"},
-                // {id: 3, nameSurname: "Larry NeGarry", position: "the Bird", status: "Otpusk"},
-                // {id: 4, nameSurname: "Andy Larkin", position: "Pilot", status: "Boleet"},
-                // {id: 5, nameSurname: "Jacob Scronung", position: "Thornton", status: "Candidat"},
-                // {id: 6, nameSurname: "Larry NeGarry", position: "the Bird", status: "Otpusk"},
-                // {id: 7, nameSurname: "Andy Larkin", position: "Pilot", status: "Candidat"},
-                // {id: 4, nameSurname: "Andy Larkin", position: "Pilot", status: "Boleet"},
-                // {id: 5, nameSurname: "Jacob Scronung", position: "Thornton", status: "Candidat"},
-                // {id: 6, nameSurname: "Larry NeGarry", position: "the Bird", status: "Otpusk"},
-                // {id: 7, nameSurname: "Andy Larkin", position: "Pilot", status: "Candidat"},
-                // {id: 4, nameSurname: "Andy Larkin", position: "Pilot", status: "Boleet"},
-                // {id: 5, nameSurname: "Jacob Scronung", position: "Thornton", status: "Candidat"},
-                // {id: 6, nameSurname: "Larry NeGarry", position: "the Bird", status: "Otpusk"},
-                // {id: 7, nameSurname: "Andy Larkin", position: "Pilot", status: "Candidat"},
-                // {id: 4, nameSurname: "Andy Larkin", position: "Pilot", status: "Boleet"},
-                // {id: 5, nameSurname: "Jacob Scronung", position: "Thornton", status: "Candidat"},
-                // {id: 6, nameSurname: "Larry NeGarry", position: "the Bird", status: "Otpusk"},
-                // {id: 7, nameSurname: "Andy Larkin", position: "Pilot", status: "Candidat"},
-            ],
+            personal: [],
+            enterprises: [],
+            departments: [],
 
-            filters: {
-                search: "",
-                department: "0",
-                enterprise: "0",
-            },
-            
+            enterpriseFilter: 0,
+            departmentFilter: 0,
+            searchFilter: "",
         }
     },
 
-    components: {
-        personalSelect,
-        personalTable,
+    computed: {
+        enterpriseFilterModel: {
+            set: function(value) {
+                this.enterpriseFilter = value;
+                this.getPersonal();
+            },
+
+            get: function() {
+                return this.enterpriseFilter;
+            }
+        },
+
+        departmentFilterModel: {
+            set: function(value) {
+                this.departmentFilter = value;
+                this.getPersonal();
+            },
+
+            get: function() {
+                return this.departmentFilter;
+            }
+        },
+
+        searchFilterModel: {
+            set: function(value) {
+                this.searchFilter = value;
+                this.getPersonal();
+            },
+
+            get: function() {
+                return this.searchFilter;
+            }
+        }
     },
     
-    mounted() {
-        this.feed();
-    },
-
     methods: {
-        feed: function() {
+        getPersonal: function() {
              this.$webService.get("resource", {
-                params: { filters: this.filters }
+                params: {
+                    enterpriseFilter: this.enterpriseFilter, 
+                    departmentFilter: this.departmentFilter,
+                    searchFilter: this.searchFilter,
+                }
              }).then(response => {
-                 
                 console.log(response.data);
-                this.personal = response.data[0];
+                this.personal = response.data;
             }).catch(e => {
                 console.log(e);
             })
         },
 
-        setSelectModel: function(model) {
-            
+        getEnterprises: function() {
+            this.$webService.get("enterprise").then(response => {
+                this.enterprises = response.data;
+            }).catch(e => {
+                console.error(e);
+            });
+        },
+
+        getDepartment: function() {
+            this.$webService.get("department").then(response => {
+                this.departments = response.data;
+            }).catch(e => {
+                console.error(e);
+            });
         }
     },
 
     watch: {
-        'filters.search': function() {
-            this.feed();
-        },
-        'filters.enterprise': function() {
-            this.feed();
-        },
-        'filters.department': function() {
-            this.feed();
-        }
-    }
+        
+    },
+
+    mounted() {
+        this.getPersonal();
+        this.getEnterprises();
+        this.getDepartment();
+    },
 }
 </script>
 

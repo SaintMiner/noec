@@ -6,8 +6,29 @@
             Shipping Orders
         </h1>
         <hr>
-
+            
+        <div class="card mb-3">
+            <div class="d-flex">
+                
+                <div class="">
+                    <select class="custom-select" v-model="statusFilterModel">
+                        <option value="0" selected>Choose order status</option>
+                        <option value="1">In progress</option>
+                        <option value="2">Completed</option>
+                        <option value="3">Canceled</option>
+                    </select>
+                </div>
+                <div class="">
+                    <select class="custom-select" v-model="typeFilterModel">
+                        <option value="0" selected>Choose order type</option>
+                        <option value="1">Replenish Storage</option>
+                        <option value="2">Replenish Enterprise</option>
+                    </select>
+                </div>
+            </div>
+        </div>
          <div class="card shippingOrder-control-table">
+                 
                 <table class="table table-hover">
                     <thead>
                         <tr>
@@ -75,12 +96,45 @@ export default {
 
             completingShipping: null,
             cancelingShipping: null,
+
+            statusFilter: 0,
+            typeFilter: 0,
         }
+    },
+
+    computed: {
+
+        statusFilterModel: {
+            set: function(value) {
+                this.statusFilter = value;
+                this.loadShippings();
+            },
+
+            get: function() {
+                return this.statusFilter;
+            }
+        },
+
+        typeFilterModel: {
+            set: function(value) {
+                this.typeFilter = value;
+                this.loadShippings();
+            },
+
+            get: function() {
+                return this.typeFilter;
+            }
+        },
+
     },
 
     methods: {
         loadShippings: function() {
-            this.$webService.get("shipping").then(response => {
+            let filters = 
+            this.$webService.get("shipping", {params: {
+                typeFilter: this.typeFilter, 
+                statusFilter: this.statusFilter
+            }}).then(response => {
                 console.log(response);
                 this.shippings = response.data;
             }).catch(e => {
@@ -160,4 +214,5 @@ export default {
         vertical-align: middle;
     }
 
+    
 </style>

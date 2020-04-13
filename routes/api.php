@@ -42,6 +42,8 @@ Route::resource('storage', 'StorageController');
 
 Route::resource('product', 'ProductController');
 
+Route::resource('department', 'DepartmentController');
+
 Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'
