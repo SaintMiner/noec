@@ -52,7 +52,7 @@
 
         <div class="local-storage">
             <div class="d-flex justify-content-between">
-                <h2>Local Storage [<span :class="[selectedEnterprise.id == null ? 'text-danger' : 'text-primary']">{{selectedEnterprise.title}}</span>]</h2>
+                <h2>Local Storage [<span :class="[selectedEnterprise.id == null ? 'text-danger' : 'text-primary']">{{selectedEnterprise.title.length > 30 ? selectedEnterprise.title.slice(0, 30)+"..." : selectedEnterprise.title}}</span>]</h2>
                 <div>
                     <button class="btn btn-primary" @click="openAttachProductModal" :disabled="selectedEnterprise.id == null   "> 
                         <font-awesome-icon icon="plus"/>

@@ -33,10 +33,6 @@ class CreateResourcesTable extends Migration
             $table->foreign("status_id")->references("id")->on("statuses")->onDelete("cascade");
             $table->foreign("enterprise_id")->references("id")->on("enterprises")->onDelete("cascade");
         });
-
-        Schema::table("departments", function($table) {
-            $table->foreign("manager_id")->references("id")->on("resources");
-        });
     }
 
     /**

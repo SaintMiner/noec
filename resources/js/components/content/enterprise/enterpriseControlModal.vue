@@ -159,7 +159,6 @@ export default {
         },
 
         editEnterprise: function() {
-            console.log("edit");
             let checkedStorages = this.storages.filter(storage => storage.checked);
             checkedStorages = checkedStorages.map(storage => storage.id);
             let data = {
@@ -205,7 +204,7 @@ export default {
                 this.$webService.get(`enterprise/getStorages/${this.editingEnterprise.id}`).then(response => {
                     let enterpriseConnectedStorages = response.data;
                     enterpriseConnectedStorages.forEach(enterpriseStorage => {
-                        let vstorage = this.storages.find(storage => {
+                        this.storages.find(storage => {
                             if (storage.id == enterpriseStorage.storage_id) {
                                 storage.checked = true;
                             }

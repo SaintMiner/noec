@@ -10,8 +10,13 @@ class Department extends Model
 
     protected $hidden = ['created_at', 'updated_at'];
 
+    protected $fillable = ["name"];
 
     public function resources() {
         return $this->hasMany(Resource::class);
+    }
+
+    public function enterprises() {
+        return $this->belongsToMany(enterprise::class)->withPivot("manager");
     }
 }

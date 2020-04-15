@@ -45,7 +45,7 @@
                     <tbody>
                         <tr v-for="shipping in shippings" :key="shipping.id">
                             <td @click="openInfoModal(shipping)"> {{shipping.id}} </td>
-                            <td @click="openInfoModal(shipping)"> {{shipping.enterprise == null ? "" : shipping.enterprise.title}} </td>
+                            <td @click="openInfoModal(shipping)" class="shipping-table-enterprise-title"> {{shipping.enterprise == null ? "" : shipping.enterprise.title}} </td>
                             <td @click="openInfoModal(shipping)"> {{shipping.storage.title}} </td>
                             <td @click="openInfoModal(shipping)"> {{shipping.type}} </td>
                             <td @click="openInfoModal(shipping)"> 
@@ -214,5 +214,7 @@ export default {
         vertical-align: middle;
     }
 
-    
+    .shipping-table-enterprise-title {
+        width: 65vh;
+    }
 </style>

@@ -7,7 +7,7 @@ use App\Enterprise;
 use App\Product;
 use App\Http\Resources\EnterpriseProducts as EnterpriseProducts;
 use App\Http\Resources\EnterpriseStorages as EnterpriseStorages;
-
+use App\Http\Resources\EnterpriseResources as EnterpriseResources;
 use App\Http\Resources\StorageFullInfo as StorageInfo;
 
 class EnterpriseController extends Controller
@@ -112,5 +112,9 @@ class EnterpriseController extends Controller
         $enterprise = Enterprise::find($request->enterprise);
         $enterprise->products()->detach($request->products);
         return $request;
+    }
+
+    public function getEnterprisesWithResources() {
+        return EnterpriseResources::collection(Enterprise::all());
     }
 }
