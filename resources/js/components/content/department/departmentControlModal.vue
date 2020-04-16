@@ -3,7 +3,8 @@
     <div class="modal-dialog" >
         <div class="modal-content">
         <div class="modal-header">
-            
+            <h5 class="modal-title" v-if="mode == 'add'"> Add new department </h5>
+            <h5 class="modal-title" v-else-if="mode == 'edit'"> Edit department </h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="close">
                 <span aria-hidden="true">&times;</span>
             </button>

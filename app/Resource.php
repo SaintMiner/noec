@@ -8,6 +8,8 @@ class Resource extends Model
 {
     protected $table = "resources";
 
+    protected $fillable = ["name", "surname", "enterprise_id", "position_id", "status_id", "department_id"];
+
     public function department() {
         return $this->belongsTo(Department::class);
         // public function user()

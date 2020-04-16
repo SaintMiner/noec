@@ -15,23 +15,23 @@ class CreateResourcesTable extends Migration
     {
         Schema::create('resources', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string("name");
-            $table->string("surname");
+            $table->string("name", 50);
+            $table->string("surname", 50);
 
-            $table->unsignedBigInteger("department_id");
-            $table->unsignedBigInteger("position_id");
-            $table->unsignedBigInteger("status_id");
-            $table->unsignedBigInteger("enterprise_id");
+            $table->unsignedBigInteger("department_id")->nullable();
+            $table->unsignedBigInteger("position_id")->nullable();
+            $table->unsignedBigInteger("status_id")->nullable();
+            $table->unsignedBigInteger("enterprise_id")->nullable();
 
             $table->timestamps();
             
         });
 
         Schema::table("resources", function($table) {
-            $table->foreign("department_id")->references("id")->on("departments")->onDelete("cascade");
-            $table->foreign("position_id")->references("id")->on("positions")->onDelete("cascade");
-            $table->foreign("status_id")->references("id")->on("statuses")->onDelete("cascade");
-            $table->foreign("enterprise_id")->references("id")->on("enterprises")->onDelete("cascade");
+            $table->foreign("department_id")->references("id")->on("departments")->onDelete("set null");
+            $table->foreign("position_id")->references("id")->on("positions")->onDelete("set null");
+            $table->foreign("status_id")->references("id")->on("statuses")->onDelete("set null");
+            $table->foreign("enterprise_id")->references("id")->on("enterprises")->onDelete("set null");
         });
     }
 

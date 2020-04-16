@@ -1,7 +1,18 @@
 <template>
-    <div>
+    <div ref="personalControl">
+        <h1> Personal control </h1>
+        <hr>
+        <div class="d-flex justify-content-between mb-2">
+            <h2> Personal </h2>
+            <div>
+                <button class="btn btn-primary" @click="openAddNewResourceModal">
+                    <font-awesome-icon icon="plus"/>
+                    <span class="ml-2">New</span>
+                </button>
+            </div>
+        </div>
         <div class="card">
-            <div class="d-flex">
+                <div class="d-flex">
                 <div class="">
                     <div class="input-group">
                         <input type="text" class="form-control personal-search" placeholder="Search by name, surname" v-model="searchFilterModel">
@@ -19,7 +30,7 @@
                     <select class="custom-select" v-model="enterpriseFilterModel">
                         <option value=0 selected>Choose Enterprise</option>
                         <option :value="enterprise.id" v-for="enterprise in enterprises" :key="enterprise.id">
-                            {{enterprise.title}}
+                            {{enterprise.title.length > 30 ? enterprise.title.slice(0, 30)+"..." : enterprise.title}}
                         </option>
                     </select>
                 </div>
@@ -58,7 +69,7 @@
                         <td> {{person.status}} </td>
                         <td>
                             <div class="d-flex ptr-button-cube text-center">
-                                <button class="btn btn-primary mx-1"><font-awesome-icon icon="pen" class=""/></button>
+                                <button class="btn btn-primary mx-1"  @click="openEditResourceModal(person)"><font-awesome-icon icon="pen" class=""/></button>
                                 <button class="btn btn-primary mx-1"><font-awesome-icon icon="info" class=""/></button>
                             </div>
                         </td>
@@ -71,13 +82,14 @@
 </template>
 
 <script>
-
+import Vue from "vue";
+import personControlModal from "./personalControlModal";
 
 export default {
     name: "personal",
     
     components: {
-        
+        personControlModal,
     },
 
     data() {
@@ -85,7 +97,7 @@ export default {
             personal: [],
             enterprises: [],
             departments: [],
-
+            statuses: [],
             enterpriseFilter: 0,
             departmentFilter: 0,
             statusFilter: 0,
@@ -180,6 +192,33 @@ export default {
                 console.error(e);
             });
         },
+
+        openAddNewResourceModal: function() {
+            let componentClass = Vue.extend(personControlModal);
+            let instance = new componentClass({
+                propsData: {
+                    loadResources: this.getPersonal,
+                    mode: "add",
+                },
+            });
+            instance.$mount(); 
+            this.$refs.personalControl.appendChild(instance.$el);
+            $('#personalControlModal').modal('show');
+        },
+
+        openEditResourceModal: function(resource) {
+            let componentClass = Vue.extend(personControlModal);
+            let instance = new componentClass({
+                propsData: {
+                    loadResources: this.getPersonal,
+                    mode: "edit",
+                    editingResource: resource
+                },
+            });
+            instance.$mount(); 
+            this.$refs.personalControl.appendChild(instance.$el);
+            $('#personalControlModal').modal('show');
+        }
     },
 
     watch: {

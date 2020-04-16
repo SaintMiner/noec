@@ -4,15 +4,17 @@
             confirmText="Are you sure you want to remove these department?"
             @confirmAction="removeDepartment(removingDepartment)"
         />
+        <h1> Department control </h1>
+        <hr>
         <div class="d-flex justify-content-between">
-                <h2>Departments</h2>
-                <div>
-                    <button class="btn btn-primary" @click="openAddNewDepartmentModal">
-                        <font-awesome-icon icon="plus"/>
-                        <span class="ml-2">New</span>
-                    </button>
-                </div>
+            <h2>Departments</h2>
+            <div>
+                <button class="btn btn-primary" @click="openAddNewDepartmentModal">
+                    <font-awesome-icon icon="plus"/>
+                    <span class="ml-2">New</span>
+                </button>
             </div>
+        </div>
         <div class="card department-control-table">
             <table class="table table-hover">
                 <thead>

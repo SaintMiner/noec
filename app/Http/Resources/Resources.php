@@ -18,10 +18,10 @@ class Resources extends JsonResource
             "id" => $this->id,
             "name" => $this->name,
             "surname" => $this->surname,
-            "department" => $this->department->name,
-            "enterprise" => $this->enterprise->title,
-            "status" => $this->status->name,
-            "position" => $this->position->name,
+            "department" => $this->department ? $this->department->name : "",
+            "enterprise" => $this->enterprise ? $this->enterprise->title : "",
+            "status" => $this->status ? $this->status->name : "",
+            "position" => $this->position ? $this->position->name : "",
         ];
     }
 }
