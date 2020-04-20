@@ -12,7 +12,7 @@ import {
         faWrench, faBoxes, faTrash,
         faEllipsisV, faExclamation, faMinus,
         faDolly, faScroll, faCheck,
-        faTimes
+        faTimes, faUserCircle
         } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 require('./bootstrap');
@@ -24,7 +24,7 @@ library.add([
             faWrench, faBoxes, faTrash,
             faEllipsisV, faExclamation, faMinus,
             faDolly, faScroll, faCheck,
-            faTimes
+            faTimes, faUserCircle
         ]);
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)    

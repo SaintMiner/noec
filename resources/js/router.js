@@ -15,6 +15,7 @@ import enterprise from "./components/content/enterprise/enterprise";
 import product from "./components/content/product/product";
 import storage from "./components/content/storage/storage";
 import shippingOrder from "./components/content/order/shippingOrder";
+import status from "./components/content/status/status";
 
 /**************************************************/
 /****                 Routes                   ****/
@@ -82,6 +83,13 @@ export default new VueRouter({
                     name: "shippingOrder",
                     components: {
                         content: shippingOrder,
+                    }
+                },
+                {
+                    path: "statuses",
+                    name: "statuses",
+                    components: {
+                        content: status,
                     }
                 },
                 {

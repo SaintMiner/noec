@@ -12,9 +12,9 @@ class StatusesTableSeeder extends Seeder
     public function run()
     {
         $statuses = [
-            ["id" => 1, "name" => "Good"],
-            ["id" => 2, "name" => "Normal"],
-            ["id" => 3, "name" => "Bad"]
+            ["id" => 1, "name" => "Good", "color" => "Red"],
+            ["id" => 2, "name" => "Normal", "color" => "Yellow"],
+            ["id" => 3, "name" => "Bad", "color" => "Green"],
         ];
         App\Status::insert($statuses);
     }

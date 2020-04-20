@@ -66,7 +66,11 @@
                         <td> {{person.position}} </td>
                         <td> {{person.department}} </td>
                         <td> {{person.enterprise}} </td>
-                        <td> {{person.status}} </td>
+                        <td :class="{
+                            'text-danger': person.status.color == 'Red', 
+                            'text-warning': person.status.color == 'Yellow', 
+                            'text-success': person.status.color == 'Green'
+                        }"> {{person.status.name}} </td>
                         <td>
                             <div class="d-flex ptr-button-cube text-center">
                                 <button class="btn btn-primary mx-1"  @click="openEditResourceModal(person)"><font-awesome-icon icon="pen" class=""/></button>
@@ -240,7 +244,7 @@ export default {
     }
 
     .personal-table {
-        height: 96%;
+        height: 82%;
     }
 
     .ptr-button-cube button {

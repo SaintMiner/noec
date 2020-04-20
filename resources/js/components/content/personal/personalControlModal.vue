@@ -71,7 +71,15 @@
                         @focus="focused.status = true"
                      >
                         <option :value="null" selected>Select status</option>
-                        <option v-for="status in statuses" :key="status.id" :value="status.id"> {{status.name}} </option>
+                        <option v-for="status in statuses" 
+                            :key="status.id" 
+                            :value="status.id"
+                            :class="{
+                                'text-danger': status.color == 'Red', 
+                                'text-warning': status.color == 'Yellow', 
+                                'text-success': status.color == 'Green'
+                            }"
+                        > {{status.name}} </option>
                     </select>
                 </div>
                 <small id="emailHelp" class="form-text text-muted"> * - Required fields </small>
@@ -136,7 +144,7 @@ export default {
             this.errors.name = ""
             let name = this.newResource.name
             if (!(name.length >= 1 && name.length <= 50)) {
-                this.errors.name = "The name must contain at least 1 and maximum 50 symbols";
+                this.errors.name = "The name must contain at least 1 and not more then 50 symbols";
                 return true;
             }
             if (!name.match(/^[a-zA-Z]*$/)) {
@@ -151,7 +159,7 @@ export default {
             this.errors.surname = ""
             let surname = this.newResource.surname
             if (!(surname.length >= 1 && surname.length <= 50)) {
-                this.errors.surname = "The surname must contain at least 1 and maximum 50 symbols";
+                this.errors.surname = "The surname must contain at least 1 and 50 symbols";
                 return true;
             }
             if (!surname.match(/^[a-zA-Z]*$/)) {

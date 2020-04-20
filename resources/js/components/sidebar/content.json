@@ -55,6 +55,12 @@
              
             },
             {
+                "name": "Statuses",
+                "icon": "user-circle",
+                "routeName": "statuses"
+             
+            },
+            {
                 "name": "Roles",
                 "icon": "user-tag",
                 "routeName": "resources"
