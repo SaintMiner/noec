@@ -61,7 +61,7 @@
 
                 <tbody class="">
                     <tr v-for="(person, index) in personal" :key="index" >
-                        <th> {{person.id}} </th>
+                        <th class="align-middle"> {{person.id}} </th>
                         <td> {{person.name}} {{person.surname}} </td>
                         <td> {{person.position}} </td>
                         <td> {{person.department}} </td>

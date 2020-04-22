@@ -1,6 +1,6 @@
 <template>
     <div ref="shippingControl">
-        <confirmModal id="shippingCompleteConfirmModal" confirmText="Are you sure you want to complete this shiiping?" @confirmAction="completeShippingConfirm(completingShipping)"/>
+        <confirmModal id="shippingCompleteConfirmModal" :confirmText="shippingCompleteConfirmModalText" @confirmAction="completeShippingConfirm(completingShipping)"/>
         <confirmModal id="shippingCancelConfirmModal" confirmText="Are you sure you want to cancel this shiiping?" @confirmAction="cancelShippingConfirm(cancelingShipping)"/>
         <h1>
             Shipping Orders
@@ -65,7 +65,7 @@
                                 <button class="btn btn-success mx-1" @click="completeShipping(shipping)" :disabled="shipping.status != 'In progress'">
                                     <font-awesome-icon icon="check" class=""/>
                                 </button>
-                                <button class="btn btn-danger mx-1" @click="cancelShipping(shipping)" :disabled="shipping.status == 'Canceled'">
+                                <button class="btn btn-danger mx-1" @click="cancelShipping(shipping)" :disabled="shipping.status != 'In progress'">
                                     <font-awesome-icon icon="times" class=""/>
                                 </button>
                             </td>
@@ -99,6 +99,8 @@ export default {
 
             statusFilter: 0,
             typeFilter: 0,
+
+            shippingCompleteConfirmModalText: "Are you sure you want to complete this shipping?",
         }
     },
 
@@ -166,9 +168,23 @@ export default {
         },
 
         completeShipping: function(shipping) {
-            this.completingShipping = shipping.id;
-            console.log(this.completingShipping);
-            $('#shippingCompleteConfirmModal').modal('show');
+            this.$webService.get(`shipping/getShippingUnperfomableProducts/${shipping.id}`).then(response => {
+                let shippingUnperfomableProducts = response.data.filter(product => !product.perfomable);
+                console.log(shippingUnperfomableProducts);
+                if (shippingUnperfomableProducts.length == response.data.length) {
+                    this.shippingCompleteConfirmModalText = `All shipping product are unperfomable. Are you sure you want to complete this shipping?`;
+                } else if (shippingUnperfomableProducts.length) {
+                    this.shippingCompleteConfirmModalText = `Shipping have ${shippingUnperfomableProducts.length} unperfomable product. Are you sure you want to complete this shipping?`;
+                } else {
+                    this.shippingCompleteConfirmModalText = "Are you sure you want to complete this shipping?";
+                }
+                this.completingShipping = shipping.id;
+                // console.log(this.completingShipping);
+                $('#shippingCompleteConfirmModal').modal('show');
+            }).catch(e => {
+                console.error(e);
+            });
+            
         },
 
         completeShippingConfirm: function(shipping) {

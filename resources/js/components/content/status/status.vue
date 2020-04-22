@@ -37,7 +37,7 @@
                         }">
                             {{status.color}}
                         </td>
-                        <td> 1 </td>
+                        <td> {{status.people_count}} </td>
                         <td class="d-flex ptr-button-cube text-center">
                             <button class="btn btn-primary mx-1" @click="openEditStatusModal(status)">
                                 <font-awesome-icon icon="pen" class=""/>

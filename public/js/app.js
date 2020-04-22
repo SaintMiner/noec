@@ -13172,7 +13172,8 @@ __webpack_require__.r(__webpack_exports__);
       completingShipping: null,
       cancelingShipping: null,
       statusFilter: 0,
-      typeFilter: 0
+      typeFilter: 0,
+      shippingCompleteConfirmModalText: "Are you sure you want to complete this shipping?"
     };
   },
   computed: {
@@ -13233,17 +13234,36 @@ __webpack_require__.r(__webpack_exports__);
       $('#shippingOrderInfoModal').modal('show');
     },
     completeShipping: function completeShipping(shipping) {
-      this.completingShipping = shipping.id;
-      console.log(this.completingShipping);
-      $('#shippingCompleteConfirmModal').modal('show');
+      var _this2 = this;
+
+      this.$webService.get("shipping/getShippingUnperfomableProducts/".concat(shipping.id)).then(function (response) {
+        var shippingUnperfomableProducts = response.data.filter(function (product) {
+          return !product.perfomable;
+        });
+        console.log(shippingUnperfomableProducts);
+
+        if (shippingUnperfomableProducts.length == response.data.length) {
+          _this2.shippingCompleteConfirmModalText = "All shipping product are unperfomable. Are you sure you want to complete this shipping?";
+        } else if (shippingUnperfomableProducts.length) {
+          _this2.shippingCompleteConfirmModalText = "Shipping have ".concat(shippingUnperfomableProducts.length, " unperfomable product. Are you sure you want to complete this shipping?");
+        } else {
+          _this2.shippingCompleteConfirmModalText = "Are you sure you want to complete this shipping?";
+        }
+
+        _this2.completingShipping = shipping.id; // console.log(this.completingShipping);
+
+        $('#shippingCompleteConfirmModal').modal('show');
+      })["catch"](function (e) {
+        console.error(e);
+      });
     },
     completeShippingConfirm: function completeShippingConfirm(shipping) {
-      var _this2 = this;
+      var _this3 = this;
 
       this.$webService.get("shipping/completeShipping/".concat(shipping)).then(function (response) {
         $('#shippingCompleteConfirmModal').modal('hide');
 
-        _this2.loadShippings();
+        _this3.loadShippings();
       })["catch"](function (e) {
         console.error(e);
       });
@@ -13254,12 +13274,12 @@ __webpack_require__.r(__webpack_exports__);
       $('#shippingCancelConfirmModal').modal('show');
     },
     cancelShippingConfirm: function cancelShippingConfirm(shipping) {
-      var _this3 = this;
+      var _this4 = this;
 
       this.$webService.get("shipping/cancelShipping/".concat(shipping)).then(function (response) {
         $('#shippingCancelConfirmModal').modal('hide');
 
-        _this3.loadShippings();
+        _this4.loadShippings();
       })["catch"](function (e) {
         console.error(e);
       });
@@ -13317,8 +13337,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "shippingOrderInfoModal",
+  data: function data() {
+    return {
+      shippingProducts: []
+    };
+  },
   props: {
     shipping: Object
   },
@@ -13326,10 +13355,19 @@ __webpack_require__.r(__webpack_exports__);
     onClose: function onClose() {
       $('#shippingOrderInfoModal').modal('hide');
       this.$el.remove();
+    },
+    getProductPerfoming: function getProductPerfoming() {
+      var _this = this;
+
+      this.$webService.get("shipping/getShippingUnperfomableProducts/".concat(this.shipping.id)).then(function (response) {
+        _this.shippingProducts = response.data;
+      })["catch"](function (e) {
+        console.error(e);
+      });
     }
   },
   mounted: function mounted() {
-    console.log(this.shipping);
+    this.getProductPerfoming();
   }
 });
 
@@ -54060,7 +54098,7 @@ var render = function() {
       _c("confirmModal", {
         attrs: {
           id: "shippingCompleteConfirmModal",
-          confirmText: "Are you sure you want to complete this shiiping?"
+          confirmText: _vm.shippingCompleteConfirmModalText
         },
         on: {
           confirmAction: function($event) {
@@ -54335,7 +54373,7 @@ var render = function() {
                       "button",
                       {
                         staticClass: "btn btn-danger mx-1",
-                        attrs: { disabled: shipping.status == "Canceled" },
+                        attrs: { disabled: shipping.status != "In progress" },
                         on: {
                           click: function($event) {
                             return _vm.cancelShipping(shipping)
@@ -54456,7 +54494,7 @@ var render = function() {
                   _vm._v(" "),
                   _c(
                     "tbody",
-                    _vm._l(_vm.shipping.products, function(product) {
+                    _vm._l(_vm.shippingProducts, function(product) {
                       return _c("tr", { key: product.id }, [
                         _c("td", [_vm._v(" " + _vm._s(product.name) + " ")]),
                         _vm._v(" "),
@@ -54470,7 +54508,34 @@ var render = function() {
                           _vm._v(
                             " " + _vm._s(product.pivot.pallete_count) + " "
                           )
-                        ])
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(
+                            " " +
+                              _vm._s(
+                                product.amount_per_palete *
+                                  product.pivot.pallete_count
+                              ) +
+                              " "
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "td",
+                          {
+                            class: product.perfomable
+                              ? "text-success"
+                              : "text-danger"
+                          },
+                          [
+                            _vm._v(
+                              " " +
+                                _vm._s(product.perfomable ? "Yes" : "No") +
+                                " "
+                            )
+                          ]
+                        )
                       ])
                     }),
                     0
@@ -54507,7 +54572,11 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v(" Amount per palete ")]),
         _vm._v(" "),
-        _c("th", [_vm._v(" Ordered pallete count ")])
+        _c("th", [_vm._v(" Ordered pallete count ")]),
+        _vm._v(" "),
+        _c("th", [_vm._v(" Product amount sum ")]),
+        _vm._v(" "),
+        _c("th", [_vm._v(" Perfomable now ")])
       ])
     ])
   }
@@ -54757,7 +54826,9 @@ var render = function() {
           {},
           _vm._l(_vm.personal, function(person, index) {
             return _c("tr", { key: index }, [
-              _c("th", [_vm._v(" " + _vm._s(person.id) + " ")]),
+              _c("th", { staticClass: "align-middle" }, [
+                _vm._v(" " + _vm._s(person.id) + " ")
+              ]),
               _vm._v(" "),
               _c("td", [
                 _vm._v(
@@ -55841,7 +55912,7 @@ var render = function() {
                     ]
                   ),
                   _vm._v(" "),
-                  _c("td", [_vm._v(" 1 ")]),
+                  _c("td", [_vm._v(" " + _vm._s(status.people_count) + " ")]),
                   _vm._v(" "),
                   _c(
                     "td",

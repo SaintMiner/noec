@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Resources\Statuses as StatusResource;
+
 use App\Status;
 class StatusController extends Controller
 {
     public function index() {
-        return Status::all();
+        return StatusResource::collection(Status::all());
     }
 
     public function store(Request $request) {

@@ -16,14 +16,18 @@
                                 <th> Standart price </th>
                                 <th> Amount per palete </th>
                                 <th> Ordered pallete count </th>
+                                <th> Product amount sum </th>
+                                <th> Perfomable now </th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="product in shipping.products" :key="product.id">
+                            <tr v-for="product in shippingProducts" :key="product.id">
                                 <td> {{product.name}} </td>
                                 <td> {{product.price}} </td>
                                 <td> {{product.amount_per_palete}} </td>
                                 <td> {{product.pivot.pallete_count}} </td>
+                                <td> {{product.amount_per_palete * product.pivot.pallete_count}} </td>
+                                <td :class="product.perfomable ? 'text-success': 'text-danger'"> {{product.perfomable ? "Yes" : "No"}} </td>
                             </tr>
                         </tbody>
                     </table>
@@ -38,6 +42,12 @@
 export default {
     name: "shippingOrderInfoModal",
 
+    data() {
+        return {
+            shippingProducts: [],
+        }
+    },
+
     props: {
         shipping: Object,
     },
@@ -46,11 +56,19 @@ export default {
         onClose: function() {
             $('#shippingOrderInfoModal').modal('hide');
             this.$el.remove();
+        },
+
+        getProductPerfoming: function() {
+            this.$webService.get(`shipping/getShippingUnperfomableProducts/${this.shipping.id}`).then(response => {
+                this.shippingProducts = response.data;
+            }).catch(e => {
+                console.error(e);
+            });
         }
     },
 
     mounted() {
-        console.log(this.shipping);
+        this.getProductPerfoming();
     }
 
 }

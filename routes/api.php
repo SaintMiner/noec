@@ -33,7 +33,7 @@ Route::put("storage/addPalletes/{storageID}", "StorageController@addPalletes");
 Route::resource('shipping', 'ShippingController');
 Route::get('shipping/completeShipping/{shipping_id}', "ShippingController@completeShipping");
 Route::get('shipping/cancelShipping/{shipping_id}', "ShippingController@cancelShipping");
-
+Route::get('shipping/getShippingUnperfomableProducts/{shipping_id}', "ShippingController@getShippingUnperfomableProducts");
 
 Route::get("department/getEnterprises/{departmentID}", "DepartmentController@getEnterprises");
 
