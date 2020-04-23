@@ -24,7 +24,6 @@ class DepartmentController extends Controller
         $department = Department::create($request->all());
         $department->enterprises()->sync($request->enterprises);
         return response("created", 201);
-        return $request;
     }
 
     public function destroy($departmentID) {

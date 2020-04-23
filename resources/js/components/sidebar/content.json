@@ -61,9 +61,9 @@
              
             },
             {
-                "name": "Roles",
-                "icon": "user-tag",
-                "routeName": "resources"
+                "name": "Positions",
+                "icon": "user-tie",
+                "routeName": "position"
             }
         ]
     }

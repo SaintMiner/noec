@@ -22,6 +22,8 @@ class CreateResourcesTable extends Migration
             $table->unsignedBigInteger("position_id")->nullable();
             $table->unsignedBigInteger("status_id")->nullable();
             $table->unsignedBigInteger("enterprise_id")->nullable();
+            
+            $table->boolean("job_candidated")->default(0);
 
             $table->timestamps();
             

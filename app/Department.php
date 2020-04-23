@@ -17,6 +17,6 @@ class Department extends Model
     }
 
     public function enterprises() {
-        return $this->belongsToMany(enterprise::class)->withPivot("manager");
+        return $this->belongsToMany(Enterprise::class)->withPivot("manager");
     }
 }

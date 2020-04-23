@@ -3,8 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Http\Resources\Json\JsonResource as Resource;
-
+use Illuminate\Http\Resources\Json\JsonResource as Resources;
+use App\Resource;
+use App\Observers\ResourceObserver;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -24,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Resource::withoutWrapping();
+        Resources::withoutWrapping();
+        Resource::observe(ResourceObserver::class);
     }
 }

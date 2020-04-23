@@ -17,6 +17,7 @@ Route::get("enterprise/getProducts/{enterpriseID}", "EnterpriseController@getPro
 Route::get("enterprise/getStorages/{enterpriseID}", "EnterpriseController@getStorages");
 Route::get("enterprise/isRegNumberFree/{registration_number}", "EnterpriseController@isRegNumberFree");
 Route::get("enterprise/getNotIncludedProducts/{enterpriseID}", "EnterpriseController@getNotIncludedProducts");
+Route::get("enterprise/getDepartmentsAndPositions/{enterpriseID}", "EnterpriseController@getDepartmentsAndPositions");
 Route::get("enterprise/getEnterprisesWithResources", "EnterpriseController@getEnterprisesWithResources");
 Route::post("enterprise/attachProducts", "EnterpriseController@attachProducts");
 Route::post("enterprise/removeProductFromEnterprise", "EnterpriseController@removeProductFromEnterprise");
@@ -35,7 +36,11 @@ Route::get('shipping/completeShipping/{shipping_id}', "ShippingController@comple
 Route::get('shipping/cancelShipping/{shipping_id}', "ShippingController@cancelShipping");
 Route::get('shipping/getShippingUnperfomableProducts/{shipping_id}', "ShippingController@getShippingUnperfomableProducts");
 
+
 Route::get("department/getEnterprises/{departmentID}", "DepartmentController@getEnterprises");
+
+
+Route::get("position/getEnterprises/{positionID}", "PositionController@getEnterprises");
 
 Route::resource('resource', 'ResourceController');
 

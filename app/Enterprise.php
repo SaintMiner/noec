@@ -19,4 +19,8 @@ class Enterprise extends Model
     public function products() {
         return $this->belongsToMany(Product::class)->withPivot("sale_price", "amount");
     }
+
+    public function departments() {
+        return $this->belongsToMany(Department::class)->withPivot("manager");
+    }
 }

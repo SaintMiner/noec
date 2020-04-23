@@ -27,36 +27,45 @@
                     @focus="focused.surname = true">
                     <div class="invalid-feedback"> {{errors.name}} </div>
                 </div>
-                <hr>
-                <div class="form-group">
-                    <label class="col-form-label"> Department </label> 
-                    <select 
-                        v-model="newResource.department_id"
-                        class="custom-select custom-select mb-3" 
-                    >
-                        <option :value="null" selected>Select department</option>
-                        <option v-for="department in departments" :key="department.id" :value="department.id"> {{department.name}} </option>
-                    </select>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" v-model="newResource.job_candidated">
+                    <label class="form-check-label">
+                        Set as job candidate
+                    </label>
                 </div>
+                <hr>
                 <div class="form-group">
                     <label class="col-form-label"> * Enterprise </label> 
                     <select 
-                        v-model="newResource.enterprise_id"
+                        v-model="selectEnterpriseModel"
                         class="custom-select custom-select mb-3"
-                        :class="{'is-invalid': focused.enterprise}"
+                        :class="{'is-invalid': focused.enterprise && !newResource.enterprise_id, 'is-valid': newResource.enterprise_id}"
                         @focus="focused.enterprise = true"
+                        :disabled="newResource.job_candidated" 
                     >
                         <option :value="null" selected>Select Enterprise</option>
                         <option v-for="enterprise in enterprises" :key="enterprise.id" :value="enterprise.id"> {{enterprise.title}} </option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="col-form-label" > * Position </label> 
+                    <label class="col-form-label"> Department <small v-if="!newResource.enterprise_id">(select enterprise)</small> </label> 
+                    <select 
+                        v-model="newResource.department_id"
+                        class="custom-select custom-select mb-3"
+                        :disabled="newResource.job_candidated || !newResource.enterprise_id" 
+                    >
+                        <option :value="null" selected>Select department</option>
+                        <option v-for="department in departments" :key="department.id" :value="department.id"> {{department.name}} </option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="col-form-label" > * Position <small v-if="!newResource.enterprise_id">(select enterprise)</small> </label> 
                     <select 
                         v-model="newResource.position_id"
                         class="custom-select custom-select mb-3"
-                        :class="{'is-invalid': focused.position}"
+                        :class="{'is-invalid': focused.position && !newResource.position_id, 'is-valid': newResource.position_id}"
                         @focus="focused.position = true"
+                        :disabled="newResource.job_candidated || !newResource.enterprise_id" 
                     >
                         <option :value="null" selected>Select position</option>
                         <option v-for="position in positions" :key="position.id" :value="position.id"> {{position.name}} </option>
@@ -67,8 +76,9 @@
                     <select 
                         v-model="newResource.status_id"
                         class="custom-select custom-select mb-3"
-                        :class="{'is-invalid': focused.status}"
+                        :class="{'is-invalid': focused.status && !newResource.status_id, 'is-valid': newResource.status_id}"
                         @focus="focused.status = true"
+                        :disabled="newResource.job_candidated"
                      >
                         <option :value="null" selected>Select status</option>
                         <option v-for="status in statuses" 
@@ -121,6 +131,7 @@ export default {
                 enterprise_id: null,
                 status_id: null,
                 position_id: null,
+                job_candidated: false,
             },
 
             focused: {
@@ -135,10 +146,31 @@ export default {
                 name: "",
                 surname: "",
             },
+
         }
     },
 
     computed: {
+        
+        selectEnterpriseModel: {
+            set: function(value) {
+                if (value != null) {
+                    this.$webService.get(`enterprise/getDepartmentsAndPositions/${value}`).then(response => {
+                        console.log(response.data);
+                        this.departments = response.data;
+                        this.newResource.enterprise_id = value;
+                    }).catch(e => {
+                        console.error(e);
+                    });
+                } else {
+                    this.departments = [];
+                }
+            },
+
+            get: function() {
+                return this.newResource.enterprise_id;
+            }
+        },
 
         invalidName: function() {
             this.errors.name = ""
@@ -170,7 +202,8 @@ export default {
         },
 
         validated: function() {
-            return (!this.invalidName && !this.invalidSurname);
+            let resource = this.newResource;
+            return (!this.invalidName && !this.invalidSurname && (this.newResource.job_candidated || (resource.enterprise_id && resource.status_id && resource.position_id && resource.position_id)));
         }
     },
     
@@ -200,7 +233,7 @@ export default {
             });
         },
 
-        getDepartments: function() {
+        getDepartments: function(enterprise) {
             this.$webService.get("department").then(response => {
                 this.departments = response.data;
             }).catch(e => {
@@ -251,7 +284,6 @@ export default {
     mounted() {
         this.getEnterprises();
         this.getStatuses();
-        this.getDepartments();
         this.getPositions();
         if (this.mode == "edit") {
             this.getEditingResource();

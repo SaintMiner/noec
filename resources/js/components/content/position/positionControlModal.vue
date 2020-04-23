@@ -1,10 +1,10 @@
 <template>
-    <div class="modal fade" id="departmentControlModal" tabindex="-1" data-backdrop="static">
+    <div class="modal fade" id="positionControlModal" tabindex="-1" data-backdrop="static">
     <div class="modal-dialog" >
         <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title" v-if="mode == 'add'"> Add new department </h5>
-            <h5 class="modal-title" v-else-if="mode == 'edit'"> Edit department </h5>
+            <h5 class="modal-title" v-if="mode == 'add'"> Add new position </h5>
+            <h5 class="modal-title" v-else-if="mode == 'edit'"> Edit position </h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -12,27 +12,21 @@
         <div class="modal-body">
             <form>
                 <div class="form-group">
-                    <label class="col-form-label">Department name</label>
+                    <label class="col-form-label">Position name</label>
                     <input type="text"  class="form-control"
                     :class="{'is-invalid': invalidName && focused.name, 'is-valid': !invalidName && focused.name}"  
-                    v-model="newDepartment.name" 
+                    v-model="position.name" 
                     @focus="focused.name = true">
                     <div class="invalid-feedback"> {{errors.name}} </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-form-label mb-2 font-weight-bold"> Add departament to enterprises </label>
+                    <label class="col-form-label mb-2 font-weight-bold"> Add position to enterprises </label>
                     <ul>
                         <li v-for="enterprise in enterprises" :key="enterprise.id" class="d-flex justify-content-between">
                             <div>
                                 <input class="form-check-input" type="checkbox" v-model="enterprise.checked" @change="onCheckedChange"> 
                                 <label class="form-check-label text-break"> {{enterprise.title.length > 30 ? enterprise.title.slice(0, 30)+"..." : enterprise.title}} </label> 
                             </div> 
-                            <div>
-                                <select class="custom-select custom-select mb-3" :disabled="!enterprise.checked" v-model="enterprise.manager">
-                                    <option :value="null" selected>Select manager</option>
-                                    <option v-for="resource in enterprise.resources" :key="resource.id" :value="resource.id"> {{resource.name}} {{resource.surname}}</option>
-                                </select>
-                            </div>
                         </li>
                     </ul>
                 </div>
@@ -50,26 +44,26 @@
 
 <script>
 export default {
-    name: "departmentControlModal",
+    name: "positionControlModal",
 
     props: {
-        loadDepartments: {type: Function},
+        loadPositions: {type: Function},
         mode: {type: String, default: "add"},
-        editingDepartment: {type: Object, default: null},
+        editingPosition: {type: Object, default: null},
     },
-
+    
     data() {
         return {
-            newDepartment: {
-                name: "",
+            position: {
+                name: ""
             },
 
             focused: {
-                name: false
+                name: false,
             },
 
             errors: {
-                name: "",
+                name: ""
             },
 
             enterprises: [],
@@ -79,14 +73,14 @@ export default {
 
     computed: {
         invalidName: function() {
-            let depName = this.newDepartment.name;
-            this.errors.name = "";
-            if (!(depName.length >= 3 && depName.length <= 255)) {
-                this.errors.name = "Department name must contain at least 3 and maximum 255 symbols";
+            this.errors.name = ""
+            let name = this.position.name
+            if (!(name.length >= 3 && name.length <= 255)) {
+                this.errors.name = "The name must contain at least 1 and not more then 255 symbols";
                 return true;
             }
+            return false;
         },
-
         validated: function() {
             return (!this.invalidName && !this.invalidConnectedEnterprises);
         }
@@ -94,8 +88,7 @@ export default {
 
     methods: {
         getEnterprises: function() {
-            this.$webService.get("enterprise/getEnterprisesWithResources").then(response => {
-                response.data.forEach(enterprise => {enterprise.manager = null; enterprise.checked = false;});
+            this.$webService.get("enterprise").then(response => {
                 this.enterprises = response.data;
             }).catch(e => {
                 console.error(e);
@@ -103,14 +96,12 @@ export default {
         },
 
         getConnectedEnterprises: function() {
-            this.$webService.get(`department/getEnterprises/${this.editingDepartment.id}`).then(response => {
+            this.$webService.get(`position/getEnterprises/${this.editingPosition.id}`).then(response => {
                 this.enterprises = response.data;
                 this.onCheckedChange();
             }).catch(e => {
                 console.error(e);
             });
-
-            
         },
 
         onCheckedChange: function() {
@@ -119,56 +110,42 @@ export default {
         },
 
         onAdd: function() {
-            if (this.validated) {
-                let checked = this.enterprises.filter(enterprise => enterprise.checked);
-                let data = {
-                    name: this.newDepartment.name,
-                    enterprises: checked.map(enterprise => {return {enterprise_id: enterprise.id, manager: enterprise.manager}}),
-                }
-                console.log(data.conEnterprise);
-                this.$webService.post("department", data).then(response => {
-                    console.log(response);
-                    this.loadDepartments();
-                    this.close();
-                }).catch(e => {
-                    console.error(e);
-                });
-            }
+            let checked = this.enterprises.filter(enterprise => enterprise.checked);
+            let data = {name: this.position.name, enterprises: checked.map(enterprise => enterprise.id)};
+            this.$webService.post("position", data).then(response => {
+                this.loadPositions();
+                this.close();
+            }).catch(e => {
+                console.error(e);
+            });
         },
 
         onEdit: function() {
-            if (this.validated) {
-                let checked = this.enterprises.filter(enterprise => enterprise.checked);
-                let data = {
-                    name: this.newDepartment.name,
-                    enterprises: checked.map(enterprise => {return {enterprise_id: enterprise.id, manager: enterprise.manager}}),
-                }
-                console.log(data.conEnterprise);
-                this.$webService.put(`department/${this.editingDepartment.id}`, data).then(response => {
-                    console.log(response);
-                    this.loadDepartments();
-                    this.close();
-                }).catch(e => {
-                    console.error(e);
-                });
-            }
+            let checked = this.enterprises.filter(enterprise => enterprise.checked);
+            let data = {name: this.position.name, enterprises: checked.map(enterprise => enterprise.id)};
+            this.$webService.put(`position/${this.editingPosition.id}`, data).then(response => {
+                this.loadPositions();
+                this.close();
+            }).catch(e => {
+                console.error(e);
+            });
         },
 
         close: function() {
-            $('#departmentControlModal').modal('hide');
+            $('#positionControlModal').modal('hide');
             this.$el.remove();
-        }
+        },
     },
 
     mounted() {
         if (this.mode == "edit") {
+            console.log(this.editingPosition);
             this.getConnectedEnterprises();
-            this.newDepartment.name = this.editingDepartment.name;
-            
+            this.position.name = this.editingPosition.name;
         } else if(this.mode == "add"){
             this.getEnterprises();
         }
-    },
+    }
 }
 </script>
 

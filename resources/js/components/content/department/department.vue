@@ -22,7 +22,7 @@
                         <th scope="col" class="small-column">#</th>
                         <th scope="col">Name</th>
                         <th scope="col" >Employee count</th>
-                        <th scope="col" class="small-column"></th>
+                        <th scope="col" class="small-column">Actions</th>
                     </tr>
                 </thead>
 

@@ -80,6 +80,10 @@ class EnterpriseController extends Controller
         return EnterpriseStorages::collection($enterpriseStorages);
     }
 
+    public function getDepartmentsAndPositions($enterpriseID) {
+        return Enterprise::find($enterpriseID)->departments()->get();
+    }
+
     public function isRegNumberFree($registration_number) {
         return ["isFree" => count(Enterprise::where("registration_number","=", $registration_number)->get())];
     }
