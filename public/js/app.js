@@ -13728,6 +13728,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "personalControlModal",
   props: {
@@ -13768,25 +13777,25 @@ __webpack_require__.r(__webpack_exports__);
       errors: {
         name: "",
         surname: ""
+      },
+      loading: {
+        department: false,
+        position: false
       }
     };
   },
   computed: {
     selectEnterpriseModel: {
       set: function set(value) {
-        var _this = this;
-
         if (value != null) {
-          this.$webService.get("enterprise/getDepartmentsAndPositions/".concat(value)).then(function (response) {
-            console.log(response.data);
-            _this.departments = response.data;
-            _this.newResource.enterprise_id = value;
-          })["catch"](function (e) {
-            console.error(e);
-          });
+          this.getDepartments(value);
+          this.getPositions(value);
         } else {
           this.departments = [];
+          this.positions = [];
         }
+
+        this.newResource.enterprise_id = value;
       },
       get: function get() {
         return this.newResource.enterprise_id;
@@ -13831,37 +13840,41 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     getEnterprises: function getEnterprises() {
-      var _this2 = this;
+      var _this = this;
 
       this.$webService.get("enterprise").then(function (response) {
-        _this2.enterprises = response.data;
+        _this.enterprises = response.data;
       })["catch"](function (e) {
         console.error(e);
       });
     },
     getStatuses: function getStatuses() {
-      var _this3 = this;
+      var _this2 = this;
 
       this.$webService.get("status").then(function (response) {
-        _this3.statuses = response.data;
+        _this2.statuses = response.data;
       })["catch"](function (e) {
         console.error(e);
       });
     },
-    getPositions: function getPositions() {
-      var _this4 = this;
+    getPositions: function getPositions(enterprise) {
+      var _this3 = this;
 
-      this.$webService.get("position").then(function (response) {
-        _this4.positions = response.data;
+      this.loading.position = true;
+      this.$webService.get("enterprise/getPositions/".concat(enterprise)).then(function (response) {
+        _this3.positions = response.data;
+        _this3.loading.position = false;
       })["catch"](function (e) {
         console.error(e);
       });
     },
     getDepartments: function getDepartments(enterprise) {
-      var _this5 = this;
+      var _this4 = this;
 
-      this.$webService.get("department").then(function (response) {
-        _this5.departments = response.data;
+      this.loading.department = true;
+      this.$webService.get("enterprise/getDepartments/".concat(enterprise)).then(function (response) {
+        _this4.departments = response.data;
+        _this4.loading.department = false;
       })["catch"](function (e) {
         console.error(e);
       });
@@ -13871,9 +13884,20 @@ __webpack_require__.r(__webpack_exports__);
       this.$el.remove();
     },
     onAdd: function onAdd() {
-      var _this6 = this;
+      var _this5 = this;
 
       this.$webService.post("resource", this.newResource).then(function (response) {
+        _this5.loadResources();
+
+        _this5.close();
+      })["catch"](function (e) {
+        console.error(e);
+      });
+    },
+    onEdit: function onEdit() {
+      var _this6 = this;
+
+      this.$webService.put("resource/".concat(this.editingResource.id), this.newResource).then(function (response) {
         _this6.loadResources();
 
         _this6.close();
@@ -13881,23 +13905,12 @@ __webpack_require__.r(__webpack_exports__);
         console.error(e);
       });
     },
-    onEdit: function onEdit() {
-      var _this7 = this;
-
-      this.$webService.put("resource/".concat(this.editingResource.id), this.newResource).then(function (response) {
-        _this7.loadResources();
-
-        _this7.close();
-      })["catch"](function (e) {
-        console.error(e);
-      });
-    },
     getEditingResource: function getEditingResource() {
-      var _this8 = this;
+      var _this7 = this;
 
       this.$webService.get("resource/".concat(this.editingResource.id)).then(function (response) {
         var resource = response.data;
-        _this8.newResource = {
+        _this7.newResource = {
           name: resource.name,
           surname: resource.surname,
           enterprise_id: resource.enterprise_id,
@@ -13913,7 +13926,6 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {
     this.getEnterprises();
     this.getStatuses();
-    this.getPositions();
 
     if (this.mode == "edit") {
       this.getEditingResource();
@@ -55549,6 +55561,21 @@ var render = function() {
                     : _vm._e()
                 ]),
                 _vm._v(" "),
+                _vm.loading.department
+                  ? _c(
+                      "div",
+                      {
+                        staticClass: "spinner-border spinner-border-sm",
+                        attrs: { role: "status" }
+                      },
+                      [
+                        _c("span", { staticClass: "sr-only" }, [
+                          _vm._v("Loading...")
+                        ])
+                      ]
+                    )
+                  : _vm._e(),
+                _vm._v(" "),
                 _c(
                   "select",
                   {
@@ -55564,7 +55591,8 @@ var render = function() {
                     attrs: {
                       disabled:
                         _vm.newResource.job_candidated ||
-                        !_vm.newResource.enterprise_id
+                        !_vm.newResource.enterprise_id ||
+                        _vm.loading.department
                     },
                     on: {
                       change: function($event) {
@@ -55616,6 +55644,21 @@ var render = function() {
                     : _vm._e()
                 ]),
                 _vm._v(" "),
+                _vm.loading.position
+                  ? _c(
+                      "div",
+                      {
+                        staticClass: "spinner-border spinner-border-sm",
+                        attrs: { role: "status" }
+                      },
+                      [
+                        _c("span", { staticClass: "sr-only" }, [
+                          _vm._v("Loading...")
+                        ])
+                      ]
+                    )
+                  : _vm._e(),
+                _vm._v(" "),
                 _c(
                   "select",
                   {
@@ -55636,7 +55679,8 @@ var render = function() {
                     attrs: {
                       disabled:
                         _vm.newResource.job_candidated ||
-                        !_vm.newResource.enterprise_id
+                        !_vm.newResource.enterprise_id ||
+                        _vm.loading.position
                     },
                     on: {
                       focus: function($event) {

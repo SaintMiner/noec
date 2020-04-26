@@ -23,4 +23,8 @@ class Enterprise extends Model
     public function departments() {
         return $this->belongsToMany(Department::class)->withPivot("manager");
     }
+
+    public function positions() {
+        return $this->belongsToMany(Position::class);
+    }
 }

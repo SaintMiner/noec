@@ -47,30 +47,39 @@
                         <option v-for="enterprise in enterprises" :key="enterprise.id" :value="enterprise.id"> {{enterprise.title}} </option>
                     </select>
                 </div>
+
                 <div class="form-group">
                     <label class="col-form-label"> Department <small v-if="!newResource.enterprise_id">(select enterprise)</small> </label> 
+                    <div class="spinner-border spinner-border-sm" role="status" v-if="loading.department">
+                        <span class="sr-only">Loading...</span>
+                    </div>
                     <select 
                         v-model="newResource.department_id"
                         class="custom-select custom-select mb-3"
-                        :disabled="newResource.job_candidated || !newResource.enterprise_id" 
+                        :disabled="newResource.job_candidated || !newResource.enterprise_id || loading.department" 
                     >
                         <option :value="null" selected>Select department</option>
                         <option v-for="department in departments" :key="department.id" :value="department.id"> {{department.name}} </option>
                     </select>
                 </div>
+
                 <div class="form-group">
                     <label class="col-form-label" > * Position <small v-if="!newResource.enterprise_id">(select enterprise)</small> </label> 
+                     <div class="spinner-border spinner-border-sm" role="status" v-if="loading.position">
+                        <span class="sr-only">Loading...</span>
+                    </div>
                     <select 
                         v-model="newResource.position_id"
                         class="custom-select custom-select mb-3"
                         :class="{'is-invalid': focused.position && !newResource.position_id, 'is-valid': newResource.position_id}"
                         @focus="focused.position = true"
-                        :disabled="newResource.job_candidated || !newResource.enterprise_id" 
+                        :disabled="newResource.job_candidated || !newResource.enterprise_id || loading.position" 
                     >
                         <option :value="null" selected>Select position</option>
                         <option v-for="position in positions" :key="position.id" :value="position.id"> {{position.name}} </option>
                     </select>
                 </div>
+
                 <div class="form-group">
                     <label class="col-form-label" > * Status </label> 
                     <select 
@@ -147,6 +156,11 @@ export default {
                 surname: "",
             },
 
+            loading: {
+                department: false,
+                position: false,
+            },
+
         }
     },
 
@@ -155,16 +169,13 @@ export default {
         selectEnterpriseModel: {
             set: function(value) {
                 if (value != null) {
-                    this.$webService.get(`enterprise/getDepartmentsAndPositions/${value}`).then(response => {
-                        console.log(response.data);
-                        this.departments = response.data;
-                        this.newResource.enterprise_id = value;
-                    }).catch(e => {
-                        console.error(e);
-                    });
+                    this.getDepartments(value);
+                    this.getPositions(value);
                 } else {
                     this.departments = [];
+                    this.positions = [];
                 }
+                this.newResource.enterprise_id = value;
             },
 
             get: function() {
@@ -210,6 +221,7 @@ export default {
     methods: {
 
         getEnterprises: function() {
+            
             this.$webService.get("enterprise").then(response => {
                 this.enterprises = response.data;
             }).catch(e => {
@@ -225,17 +237,21 @@ export default {
             });
         },
 
-        getPositions: function() {
-            this.$webService.get("position").then(response => {
+        getPositions: function(enterprise) {
+            this.loading.position = true;
+            this.$webService.get(`enterprise/getPositions/${enterprise}`).then(response => {
                 this.positions = response.data;
+                this.loading.position = false;
             }).catch(e => {
                 console.error(e);
             });
         },
 
         getDepartments: function(enterprise) {
-            this.$webService.get("department").then(response => {
+            this.loading.department = true;
+            this.$webService.get(`enterprise/getDepartments/${enterprise}`).then(response => {
                 this.departments = response.data;
+                this.loading.department = false;
             }).catch(e => {
                 console.error(e);
             });
@@ -284,7 +300,6 @@ export default {
     mounted() {
         this.getEnterprises();
         this.getStatuses();
-        this.getPositions();
         if (this.mode == "edit") {
             this.getEditingResource();
         }
