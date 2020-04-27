@@ -2,10 +2,20 @@
     <div class="login-bg">
         <div class="login-block row">
             <div class="left col mb-4 py-5">
-                <login-input type="text" icon="user" placeholder="Username" @setValue="getUsername" @login="login"/>
-                <login-input type="password" icon="key" placeholder="Password" @setValue="getPassword" @login="login"/>
-                <hr class="my-5">
-
+                <login-input type="text" icon="user" placeholder="Username" @setValue="getUsername" @login="login" :success="success" :unsuccess="unsuccess"/>
+                <login-input type="password" icon="key" placeholder="Password" @setValue="getPassword" @login="login" :success="success" :unsuccess="unsuccess"/>
+                <div>
+                    <div class="ml-auto loading">
+                        <div class="spinner-border spinner-border-sm " 
+                            :class="{'text-light': !loading}" 
+                            role="status"
+                        >
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+                <hr class="mb-5 mt-3">
+                
                 <!-- <div class="d-flex justify-content-between">
                     <div>
                         <a href=""><em> Forgot Password? </em> </a>
@@ -35,6 +45,9 @@ export default {
             access_token: "",
             password: "",
             username: "",
+            loading: false,
+            success: false,
+            unsuccess: false,
         }
     },
 
@@ -53,14 +66,21 @@ export default {
         },
 
         login: function() {
+            this.loading = true;
+            this.success = false;
+            this.unsuccess = false;
             this.$webService.post("auth/login", {name: this.username, password: this.password}).then(response => {
                 this.access_token = response.data.access_token;
                 this.$webService.defaults.headers.common["Authorization"] = `Bearer ${this.access_token}`;
                 localStorage.setItem("token", this.access_token);
                 localStorage.setItem("token_expires_in", new Date().getTime()+1*1*10*60*1000);
                 this.$router.push("system");
+                this.loading = false;
+                this.success = true;
             }).catch(e => {
                 console.error(e);
+                this.loading = false;
+                this.unsuccess = true;
             });
         },
     },
@@ -114,5 +134,9 @@ export default {
 
     .login-forgot-password a {
         color: white;
+    }
+
+    .loading {
+        width: fit-content;
     }
 </style>

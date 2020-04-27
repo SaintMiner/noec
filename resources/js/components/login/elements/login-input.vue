@@ -8,6 +8,7 @@
         <input 
             :type="type"
             class="form-control"
+            :class="{'is-valid': success, 'is-invalid': unsuccess}"
             :placeholder="placeholder"
             v-model="inputValue"
             @keyup.enter="$emit(`login`)"
@@ -29,6 +30,8 @@ export default {
         type: String,
         icon: String,
         placeholder: String,
+        success: Boolean,
+        unsuccess: Boolean,
     },
 
     computed: {

@@ -15813,6 +15813,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "login-input",
   data: function data() {
@@ -15823,7 +15824,9 @@ __webpack_require__.r(__webpack_exports__);
   props: {
     type: String,
     icon: String,
-    placeholder: String
+    placeholder: String,
+    success: Boolean,
+    unsuccess: Boolean
   },
   computed: {
     inputValue: {
@@ -15877,6 +15880,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "login2",
@@ -15884,7 +15897,10 @@ __webpack_require__.r(__webpack_exports__);
     return {
       access_token: "",
       password: "",
-      username: ""
+      username: "",
+      loading: false,
+      success: false,
+      unsuccess: false
     };
   },
   components: {
@@ -15900,6 +15916,9 @@ __webpack_require__.r(__webpack_exports__);
     login: function login() {
       var _this = this;
 
+      this.loading = true;
+      this.success = false;
+      this.unsuccess = false;
       this.$webService.post("auth/login", {
         name: this.username,
         password: this.password
@@ -15910,8 +15929,13 @@ __webpack_require__.r(__webpack_exports__);
         localStorage.setItem("token_expires_in", new Date().getTime() + 1 * 1 * 10 * 60 * 1000);
 
         _this.$router.push("system");
+
+        _this.loading = false;
+        _this.success = true;
       })["catch"](function (e) {
         console.error(e);
+        _this.loading = false;
+        _this.unsuccess = true;
       });
     }
   },
@@ -20766,7 +20790,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.login-block[data-v-ecc2ca70] {\n    /* position: fixed;\n    top: 50%;\n    left: 50%; */\n    /* transform: translate(-50%, -50%); */\n    margin-top: 10%;        \n    margin-left: auto;\n    margin-right: auto;\n    width: 640px;\n    background-color: white;\n    border-radius: 5.5px;\n    box-shadow: 32px 27px 43px -14px rgba(0,0,0,0.75);\n    overflow: hidden;\n}\n.login-block .right[data-v-ecc2ca70] {\n    font-family: 'Lato', sans-serif;\n    background: -webkit-gradient(linear, left top, left bottom, from(#2c3437),color-stop(50%, #000),color-stop(50%, #000),to(#232b2e));\n    background: linear-gradient(to bottom, #2c3437 0%,#000 50%,#000 50%,#232b2e 100%);\n    letter-spacing: 5.5px\n}\n.login-bg[data-v-ecc2ca70] {\n    font-family: 'PT Sans Caption', sans-serif;\n    position: absolute;\n    width: 100%;\n    height: 100%;\n    background-color: aliceblue;\n}\n.login-color[data-v-ecc2ca70] {\n    background-color: #3a3a3a;\n    border-color: #3a3a3a;\n}\n.login-forgot-password[data-v-ecc2ca70] {\n    background-color: #3a3a3a;\n}\n.login-forgot-password a[data-v-ecc2ca70] {\n    color: white;\n}\n", ""]);
+exports.push([module.i, "\n.login-block[data-v-ecc2ca70] {\n    /* position: fixed;\n    top: 50%;\n    left: 50%; */\n    /* transform: translate(-50%, -50%); */\n    margin-top: 10%;        \n    margin-left: auto;\n    margin-right: auto;\n    width: 640px;\n    background-color: white;\n    border-radius: 5.5px;\n    box-shadow: 32px 27px 43px -14px rgba(0,0,0,0.75);\n    overflow: hidden;\n}\n.login-block .right[data-v-ecc2ca70] {\n    font-family: 'Lato', sans-serif;\n    background: -webkit-gradient(linear, left top, left bottom, from(#2c3437),color-stop(50%, #000),color-stop(50%, #000),to(#232b2e));\n    background: linear-gradient(to bottom, #2c3437 0%,#000 50%,#000 50%,#232b2e 100%);\n    letter-spacing: 5.5px\n}\n.login-bg[data-v-ecc2ca70] {\n    font-family: 'PT Sans Caption', sans-serif;\n    position: absolute;\n    width: 100%;\n    height: 100%;\n    background-color: aliceblue;\n}\n.login-color[data-v-ecc2ca70] {\n    background-color: #3a3a3a;\n    border-color: #3a3a3a;\n}\n.login-forgot-password[data-v-ecc2ca70] {\n    background-color: #3a3a3a;\n}\n.login-forgot-password a[data-v-ecc2ca70] {\n    color: white;\n}\n.loading[data-v-ecc2ca70] {\n    width: -webkit-fit-content;\n    width: -moz-fit-content;\n    width: fit-content;\n}\n", ""]);
 
 // exports
 
@@ -58302,6 +58326,7 @@ var render = function() {
             }
           ],
           staticClass: "form-control",
+          class: { "is-valid": _vm.success, "is-invalid": _vm.unsuccess },
           attrs: { placeholder: _vm.placeholder, type: "checkbox" },
           domProps: {
             checked: Array.isArray(_vm.inputValue)
@@ -58350,6 +58375,7 @@ var render = function() {
             }
           ],
           staticClass: "form-control",
+          class: { "is-valid": _vm.success, "is-invalid": _vm.unsuccess },
           attrs: { placeholder: _vm.placeholder, type: "radio" },
           domProps: { checked: _vm._q(_vm.inputValue, null) },
           on: {
@@ -58377,6 +58403,7 @@ var render = function() {
             }
           ],
           staticClass: "form-control",
+          class: { "is-valid": _vm.success, "is-invalid": _vm.unsuccess },
           attrs: { placeholder: _vm.placeholder, type: _vm.type },
           domProps: { value: _vm.inputValue },
           on: {
@@ -58428,16 +58455,42 @@ var render = function() {
         { staticClass: "left col mb-4 py-5" },
         [
           _c("login-input", {
-            attrs: { type: "text", icon: "user", placeholder: "Username" },
+            attrs: {
+              type: "text",
+              icon: "user",
+              placeholder: "Username",
+              success: _vm.success,
+              unsuccess: _vm.unsuccess
+            },
             on: { setValue: _vm.getUsername, login: _vm.login }
           }),
           _vm._v(" "),
           _c("login-input", {
-            attrs: { type: "password", icon: "key", placeholder: "Password" },
+            attrs: {
+              type: "password",
+              icon: "key",
+              placeholder: "Password",
+              success: _vm.success,
+              unsuccess: _vm.unsuccess
+            },
             on: { setValue: _vm.getPassword, login: _vm.login }
           }),
           _vm._v(" "),
-          _c("hr", { staticClass: "my-5" })
+          _c("div", [
+            _c("div", { staticClass: "ml-auto loading" }, [
+              _c(
+                "div",
+                {
+                  staticClass: "spinner-border spinner-border-sm ",
+                  class: { "text-light": !_vm.loading },
+                  attrs: { role: "status" }
+                },
+                [_c("span", { staticClass: "sr-only" }, [_vm._v("Loading...")])]
+              )
+            ])
+          ]),
+          _vm._v(" "),
+          _c("hr", { staticClass: "mb-5 mt-3" })
         ],
         1
       ),
