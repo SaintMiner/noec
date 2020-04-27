@@ -1,10 +1,5 @@
 [
     {
-        "name": "Dashboard",
-        "routeName": "dashboard",
-        "icon": "tachometer-alt"
-    },
-    {
         "name": "Orders",
         "icon": "scroll",
         "collapseID": "Orders",

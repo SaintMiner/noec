@@ -13472,6 +13472,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -13916,8 +13923,10 @@ __webpack_require__.r(__webpack_exports__);
           enterprise_id: resource.enterprise_id,
           position_id: resource.position_id,
           status_id: resource.status_id,
-          department_id: resource.department_id
+          department_id: resource.department_id,
+          job_candidated: resource.job_candidated ? true : false
         };
+        console.log(_this7.newResource);
       })["catch"](function (e) {
         console.error(e);
       });
@@ -20681,7 +20690,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.personal-search[data-v-10e8a0de] {\n    width: 400px;\n}\n.personal-table[data-v-10e8a0de] {\n    height: 82%;\n}\n.ptr-button-cube button[data-v-10e8a0de] {\n    width: 40px;\n    height: 40px;\n}\n", ""]);
+exports.push([module.i, "\n.personal-search[data-v-10e8a0de] {\n    width: 400px;\n}\n.personal-table[data-v-10e8a0de] {\n    height: 70vh;\n}\n.ptr-button-cube button[data-v-10e8a0de] {\n    width: 40px;\n    height: 40px;\n}\n", ""]);
 
 // exports
 
@@ -20700,7 +20709,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.small-column {\n    width: 1px;\n}\n.small-column input {\n    margin-top: -31%;\n}\n.product-control-table {\n    min-height: 500px;\n    max-height: 700px;\n    overflow: auto;\n}\n.product-control-table td {\n    vertical-align: middle;\n}\n.with-checked-text {\n    font-weight: bold;\n    vertical-align: sub;\n}\n", ""]);
+exports.push([module.i, "\n.small-column {\n    width: 1px;\n}\n.small-column input {\n    margin-top: -31%;\n}\n.product-control-table {\n    height: 70vh;\n    overflow: auto;\n}\n.product-control-table td {\n    vertical-align: middle;\n}\n.with-checked-text {\n    font-weight: bold;\n    vertical-align: sub;\n}\n", ""]);
 
 // exports
 
@@ -55210,17 +55219,29 @@ var render = function() {
               _vm._v(" "),
               _c("td", [_vm._v(" " + _vm._s(person.enterprise) + " ")]),
               _vm._v(" "),
-              _c(
-                "td",
-                {
-                  class: {
-                    "text-danger": person.status.color == "Red",
-                    "text-warning": person.status.color == "Yellow",
-                    "text-success": person.status.color == "Green"
-                  }
-                },
-                [_vm._v(" " + _vm._s(person.status.name) + " ")]
-              ),
+              person.job_candidated
+                ? _c("td", [
+                    _vm._v(
+                      "\n                        Job candidate\n                    "
+                    )
+                  ])
+                : _c(
+                    "td",
+                    {
+                      class: {
+                        "text-danger": person.status.color == "Red",
+                        "text-warning": person.status.color == "Yellow",
+                        "text-success": person.status.color == "Green"
+                      }
+                    },
+                    [
+                      _vm._v(
+                        "\n                        " +
+                          _vm._s(person.status.name) +
+                          "\n                    "
+                      )
+                    ]
+                  ),
               _vm._v(" "),
               _c("td", [
                 _c(
@@ -76948,10 +76969,10 @@ __webpack_require__.r(__webpack_exports__);
 /*!******************************************************!*\
   !*** ./resources/js/components/sidebar/content.json ***!
   \******************************************************/
-/*! exports provided: 0, 1, 2, 3, default */
+/*! exports provided: 0, 1, 2, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("[{\"name\":\"Dashboard\",\"routeName\":\"dashboard\",\"icon\":\"tachometer-alt\"},{\"name\":\"Orders\",\"icon\":\"scroll\",\"collapseID\":\"Orders\",\"subitems\":[{\"name\":\"Shipping orders\",\"icon\":\"scroll\",\"routeName\":\"shippingOrder\"}]},{\"name\":\"Enterprises And Storages\",\"icon\":\"solar-panel\",\"collapseID\":\"EnterpriseAndStorages\",\"subitems\":[{\"name\":\"Enterprise control\",\"icon\":\"wrench\",\"routeName\":\"enterprises\"},{\"name\":\"Storage control\",\"icon\":\"wrench\",\"routeName\":\"storages\"},{\"name\":\"Product control\",\"icon\":\"wrench\",\"routeName\":\"products\"}]},{\"name\":\"Human Resources\",\"icon\":\"users\",\"collapseID\":\"HumanResources\",\"subitems\":[{\"name\":\"Resources\",\"icon\":\"users-cog\",\"routeName\":\"resources\"},{\"name\":\"Departments\",\"icon\":\"project-diagram\",\"routeName\":\"department\"},{\"name\":\"Statuses\",\"icon\":\"user-circle\",\"routeName\":\"statuses\"},{\"name\":\"Positions\",\"icon\":\"user-tie\",\"routeName\":\"position\"}]}]");
+module.exports = JSON.parse("[{\"name\":\"Orders\",\"icon\":\"scroll\",\"collapseID\":\"Orders\",\"subitems\":[{\"name\":\"Shipping orders\",\"icon\":\"scroll\",\"routeName\":\"shippingOrder\"}]},{\"name\":\"Enterprises And Storages\",\"icon\":\"solar-panel\",\"collapseID\":\"EnterpriseAndStorages\",\"subitems\":[{\"name\":\"Enterprise control\",\"icon\":\"wrench\",\"routeName\":\"enterprises\"},{\"name\":\"Storage control\",\"icon\":\"wrench\",\"routeName\":\"storages\"},{\"name\":\"Product control\",\"icon\":\"wrench\",\"routeName\":\"products\"}]},{\"name\":\"Human Resources\",\"icon\":\"users\",\"collapseID\":\"HumanResources\",\"subitems\":[{\"name\":\"Resources\",\"icon\":\"users-cog\",\"routeName\":\"resources\"},{\"name\":\"Departments\",\"icon\":\"project-diagram\",\"routeName\":\"department\"},{\"name\":\"Statuses\",\"icon\":\"user-circle\",\"routeName\":\"statuses\"},{\"name\":\"Positions\",\"icon\":\"user-tie\",\"routeName\":\"position\"}]}]");
 
 /***/ }),
 

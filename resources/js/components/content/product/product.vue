@@ -159,8 +159,7 @@ export default {
     }
 
     .product-control-table {
-        min-height: 500px;
-        max-height: 700px;
+        height: 70vh;
         overflow: auto;
     }
 

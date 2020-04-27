@@ -290,7 +290,9 @@ export default {
                     position_id: resource.position_id,
                     status_id: resource.status_id,
                     department_id: resource.department_id,
+                    job_candidated: resource.job_candidated ? true : false,
                 }
+                console.log(this.newResource);
             }).catch(e => {
                 console.error(e);
             })
