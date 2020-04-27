@@ -55220,7 +55220,7 @@ var render = function() {
               _c("td", [_vm._v(" " + _vm._s(person.enterprise) + " ")]),
               _vm._v(" "),
               person.job_candidated
-                ? _c("td", [
+                ? _c("td", { staticClass: "font-weight-bold" }, [
                     _vm._v(
                       "\n                        Job candidate\n                    "
                     )

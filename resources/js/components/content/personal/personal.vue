@@ -66,7 +66,7 @@
                         <td> {{person.position}} </td>
                         <td> {{person.department}} </td>
                         <td> {{person.enterprise}} </td>
-                        <td v-if="person.job_candidated">
+                        <td v-if="person.job_candidated" class="font-weight-bold">
                             Job candidate
                         </td>
                         <td v-else
