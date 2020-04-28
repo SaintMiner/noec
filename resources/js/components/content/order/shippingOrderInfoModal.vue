@@ -27,7 +27,9 @@
                                 <td> {{product.amount_per_palete}} </td>
                                 <td> {{product.pivot.pallete_count}} </td>
                                 <td> {{product.amount_per_palete * product.pivot.pallete_count}} </td>
-                                <td :class="product.perfomable ? 'text-success': 'text-danger'"> {{product.perfomable ? "Yes" : "No"}} </td>
+                                <td v-if="shipping.status == 'Completed'" class="text-success">Comleted</td>
+                                <td v-else-if="shipping.status == 'Canceled'" class="text-danger">Canceled</td>
+                                <td v-else :class="product.perfomable ? 'text-success': 'text-danger'"> {{product.perfomable ? "Yes" : "No"}} </td>
                             </tr>
                         </tbody>
                     </table>

@@ -79,6 +79,10 @@ class ShippingController extends Controller
                     $product->perfomable = true;
                 }
             }
+        } elseif ($shipping->type == "Replenish Storage" && $shipping->status == "In progress") {
+            foreach($shipping_products as $product) {
+                $product->perfomable = true;
+            }
         }
         return $shipping_products;
     }

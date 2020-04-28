@@ -231,6 +231,6 @@ export default {
     }
 
     .shipping-table-enterprise-title {
-        width: 65vh;
+        width: 30vh;
     }
 </style>

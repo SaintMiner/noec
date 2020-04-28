@@ -13341,6 +13341,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "shippingOrderInfoModal",
   data: function data() {
@@ -20695,7 +20697,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.shippingOrder-control-table {\n    overflow: auto;\n    max-height: 78vh;\n}\n.shippingOrder-control-table td {\n    vertical-align: middle;\n}\n.shipping-table-enterprise-title {\n    width: 65vh;\n}\n", ""]);
+exports.push([module.i, "\n.shippingOrder-control-table {\n    overflow: auto;\n    max-height: 78vh;\n}\n.shippingOrder-control-table td {\n    vertical-align: middle;\n}\n.shipping-table-enterprise-title {\n    width: 30vh;\n}\n", ""]);
 
 // exports
 
@@ -54922,21 +54924,29 @@ var render = function() {
                           )
                         ]),
                         _vm._v(" "),
-                        _c(
-                          "td",
-                          {
-                            class: product.perfomable
-                              ? "text-success"
-                              : "text-danger"
-                          },
-                          [
-                            _vm._v(
-                              " " +
-                                _vm._s(product.perfomable ? "Yes" : "No") +
-                                " "
+                        _vm.shipping.status == "Completed"
+                          ? _c("td", { staticClass: "text-success" }, [
+                              _vm._v("Comleted")
+                            ])
+                          : _vm.shipping.status == "Canceled"
+                          ? _c("td", { staticClass: "text-danger" }, [
+                              _vm._v("Canceled")
+                            ])
+                          : _c(
+                              "td",
+                              {
+                                class: product.perfomable
+                                  ? "text-success"
+                                  : "text-danger"
+                              },
+                              [
+                                _vm._v(
+                                  " " +
+                                    _vm._s(product.perfomable ? "Yes" : "No") +
+                                    " "
+                                )
+                              ]
                             )
-                          ]
-                        )
                       ])
                     }),
                     0
