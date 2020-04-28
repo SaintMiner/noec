@@ -153,7 +153,7 @@ export default {
 
         confirm: function() {
             $('#enterpriseActionModal').modal('hide');
-            if (this.actionType = "order") {
+            if (this.actionType == "order") {
                 this.actionFunction(this.actionEnterprise, this.selectedStorage, this.actionProducts, this.value);
             } else {
                 this.actionFunction(this.actionEnterprise, this.actionProducts, this.value);

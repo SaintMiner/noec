@@ -11691,8 +11691,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "App",
   beforeMount: function beforeMount() {
-    console.log(this.$router.currentRoute);
-
+    // console.log(this.$router.currentRoute)
     if (localStorage.getItem("token")) {
       this.$webService.defaults.headers.common["Authorization"] = "Bearer ".concat(localStorage.getItem("token"));
 
@@ -13036,7 +13035,7 @@ __webpack_require__.r(__webpack_exports__);
     confirm: function confirm() {
       $('#enterpriseActionModal').modal('hide');
 
-      if (this.actionType = "order") {
+      if (this.actionType == "order") {
         this.actionFunction(this.actionEnterprise, this.selectedStorage, this.actionProducts, this.value);
       } else {
         this.actionFunction(this.actionEnterprise, this.actionProducts, this.value);
