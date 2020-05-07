@@ -90,6 +90,7 @@
                                     <a class="dropdown-item" href="#" @click="openOrderPalletesModal([product])">Orders</a>
                                     <a class="dropdown-item" href="#" @click="openAddProductAmountModal([product])">Add</a>
                                     <a class="dropdown-item" href="#" @click="openSubtractProductAmountModal([product])">Subtract</a>
+                                    <a class="dropdown-item" href="#" @click="openChangeProductSalePrice(product)">Change sale price</a>
                                     <div role="separator" class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="#" @click="openSingleRemoveProductConfirmModal(product)">Remove</a>
                                 </div>
@@ -119,10 +120,12 @@
 </template>
 
 <script>
+import enterpriseProductSalePriceModal from "./enterpriseProductSalePriceModal";
 import enterpriseProductActionModal from "./enterpriseProductActionModal";
 import addEnterpriseModal from "./enterpriseControlModal";
 import attachProductModal from "./attachProductModal";
 import confirmModal from "../../elements/confirmModal";
+
 import Vue from "vue";
 export default {
     name: "enterprise-control",
@@ -177,6 +180,20 @@ export default {
             } else {
                 alert("Firstly check some products!");
             }
+        },
+
+        openChangeProductSalePrice: function(product) {
+            let componentClass = Vue.extend(enterpriseProductSalePriceModal);
+            let instance = new componentClass({
+                propsData: {
+                    product: product,
+                    enterprise: this.selectedEnterprise,
+                    showEnterpriseLocalStorageProducts: this.showEnterpriseLocalStorageProducts,
+                },
+            });
+            instance.$mount(); 
+            this.$refs.enterpriseControl.appendChild(instance.$el);
+            $('#productSalePrice').modal('show');
         },
 
         openOrderPalletesModal: function(products) {

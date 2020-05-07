@@ -22,6 +22,7 @@ Route::get("enterprise/getPositions/{enterpriseID}", "EnterpriseController@getPo
 Route::get("enterprise/getEnterprisesWithResources", "EnterpriseController@getEnterprisesWithResources");
 Route::post("enterprise/attachProducts", "EnterpriseController@attachProducts");
 Route::post("enterprise/removeProductFromEnterprise", "EnterpriseController@removeProductFromEnterprise");
+Route::post("enterprise/updateProductSalePrice", "EnterpriseController@updateProductSalePrice");
 Route::put("enterprise/addProductAmount/{enterpriseID}", "EnterpriseController@addProductAmount");
 
 

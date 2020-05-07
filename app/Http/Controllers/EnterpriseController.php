@@ -119,10 +119,14 @@ class EnterpriseController extends Controller
     public function removeProductFromEnterprise(Request $request) {
         $enterprise = Enterprise::find($request->enterprise);
         $enterprise->products()->detach($request->products);
-        return $request;
     }
 
     public function getEnterprisesWithResources() {
         return EnterpriseResources::collection(Enterprise::all());
+    }
+
+    public function updateProductSalePrice(Request $request) {
+        $enterprise = Enterprise::find($request->enterprise);
+        $enterprise->products()->updateExistingPivot($request->productID, ["sale_price" => $request->salePrice]);
     }
 }
