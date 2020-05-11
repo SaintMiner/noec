@@ -103,7 +103,7 @@ export default {
 
 <style scoped>
     .small-column input {
-        margin-top: 25%;
+        margin-top: -45%;
     }
 
     .modal-product-table {

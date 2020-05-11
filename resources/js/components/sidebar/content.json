@@ -8,6 +8,11 @@
                 "name": "Shipping orders",
                 "icon": "scroll",
                 "routeName": "shippingOrder"
+            },
+            {
+                "name": "Sales orders",
+                "icon": "scroll",
+                "routeName": "sale"
             }
         ]
     },

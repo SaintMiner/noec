@@ -2,6 +2,7 @@
     <div ref="enterpriseControl">
         <h1> Enterprise control </h1>
         <hr>
+        <createProductSale :actionProducts="actionProducts"/>
         <addEnterpriseModal 
             @loadEnterPrises="loadEnterPrises" 
             :editMode="editMode" 
@@ -52,7 +53,11 @@
 
         <div class="local-storage">
             <div class="d-flex justify-content-between">
-                <h2>Local Storage [<span :class="[selectedEnterprise.id == null ? 'text-danger' : 'text-primary']">{{selectedEnterprise.title.length > 30 ? selectedEnterprise.title.slice(0, 30)+"..." : selectedEnterprise.title}}</span>]</h2>
+                <h2>Local Storage 
+                    [<span :class="[selectedEnterprise.id == null ? 'text-danger' : 'text-primary']">
+                        {{selectedEnterprise.title.length > 30 ? selectedEnterprise.title.slice(0, 30)+"..." : selectedEnterprise.title}}
+                    </span>]
+                </h2>
                 <div>
                     <button class="btn btn-primary" @click="openAttachProductModal" :disabled="selectedEnterprise.id == null   "> 
                         <font-awesome-icon icon="plus"/>
@@ -87,6 +92,7 @@
                                     <font-awesome-icon icon="ellipsis-v" class=""/>
                                 </button>
                                 <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="#" @click="openCreateProductSale([product])">Create sale</a>
                                     <a class="dropdown-item" href="#" @click="openOrderPalletesModal([product])">Orders</a>
                                     <a class="dropdown-item" href="#" @click="openAddProductAmountModal([product])">Add</a>
                                     <a class="dropdown-item" href="#" @click="openSubtractProductAmountModal([product])">Subtract</a>
@@ -107,6 +113,7 @@
                         </span>
                     </div>
                     <div>
+                        <button class="btn btn-dark" @click="openCreateProductSale(getCheckedProducts())" :disabled="selectedEnterprise.id == null"><font-awesome-icon icon="file-invoice-dollar" class=""/></button>
                         <button class="btn btn-dark" @click="openOrderPalletesModal(getCheckedProducts())" :disabled="selectedEnterprise.id == null"><font-awesome-icon icon="dolly" class=""/></button>
                         <button class="btn btn-success" @click="openAddProductAmountModal(getCheckedProducts())" :disabled="selectedEnterprise.id == null"><font-awesome-icon icon="plus" class=""/></button>
                         <button class="btn btn-danger" @click="openSubtractProductAmountModal(getCheckedProducts())" :disabled="selectedEnterprise.id == null"><font-awesome-icon icon="minus" class=""/></button>
@@ -120,6 +127,7 @@
 </template>
 
 <script>
+import createProductSale from "./enterpriseCreateProductSale";
 import enterpriseProductSalePriceModal from "./enterpriseProductSalePriceModal";
 import enterpriseProductActionModal from "./enterpriseProductActionModal";
 import addEnterpriseModal from "./enterpriseControlModal";
@@ -138,6 +146,7 @@ export default {
             editMode: false,
             selectedEnterprise: {id: null, title: "Enterprise Not Selected"},
             checkedProducts: [],
+            actionProducts: [],
         }
     },
 
@@ -145,6 +154,7 @@ export default {
         addEnterpriseModal,
         attachProductModal,
         enterpriseProductActionModal,
+        createProductSale,
         confirmModal,
     },
 
@@ -177,6 +187,15 @@ export default {
                 }).catch(e => {
                     console.error(e);
                 });
+            } else {
+                alert("Firstly check some products!");
+            }
+        },
+
+        openCreateProductSale: function(products) {
+            if (products.length) {
+                this.actionProducts = products;
+                $('#createProductSale').modal('show');
             } else {
                 alert("Firstly check some products!");
             }

@@ -17,6 +17,7 @@ import storage from "./components/content/storage/storage";
 import shippingOrder from "./components/content/order/shippingOrder";
 import status from "./components/content/status/status";
 import position from "./components/content/position/position";
+import sale from "./components/content/sale/saleOrder";
 
 /**************************************************/
 /****                 Routes                   ****/
@@ -98,6 +99,13 @@ export default new VueRouter({
                     name: "position",
                     components: {
                         content: position,
+                    }
+                },
+                {
+                    path: "sale",
+                    name: "sale",
+                    components: {
+                        content: sale,
                     }
                 },
                 {
