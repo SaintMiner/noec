@@ -12987,29 +12987,91 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "createProductSale-modal",
+  data: function data() {
+    return {
+      discount: 0,
+      loading: false
+    };
+  },
   props: {
-    actionProducts: Array
+    actionProducts: Array,
+    enterprise: Object
   },
   computed: {
     totalCost: function totalCost() {
+      var _this = this;
+
       var sum = 0;
       this.actionProducts.forEach(function (product) {
-        sum += product.sellingPrice * product.count;
+        var valid = true;
+
+        if (isNaN(product.sellingPrice)) {
+          _this.$set(product, "isInvalidPrice", true);
+
+          return;
+        } else if (product.sellingPrice <= 0) {
+          _this.$set(product, "isInvalidPrice", true);
+
+          return;
+        } else {
+          _this.$set(product, "isInvalidPrice", false);
+        }
+
+        if (isNaN(product.sellingPrice)) {
+          _this.$set(product, "isInvalidCount", true);
+
+          return;
+        } else if (product.count <= 0) {
+          _this.$set(product, "isInvalidCount", true);
+
+          return;
+        } else {
+          _this.$set(product, "isInvalidCount", false);
+
+          product.count = Math.trunc(product.count);
+        }
+
+        if (valid) {
+          sum += Number(product.sellingPrice) * Number(product.count);
+        }
       });
-      return sum;
+      return sum.toFixed(2);
     }
   },
   watch: {
     actionProducts: function actionProducts() {
-      var _this = this;
+      var _this2 = this;
 
-      this.actionProducts.forEach(function (product) {
-        _this.$set(product, "sellingPrice", product.salePrice);
+      if (!this.loading) {
+        this.actionProducts.forEach(function (product) {
+          _this2.$set(product, "sellingPrice", product.salePrice);
 
-        _this.$set(product, "count", 0);
+          _this2.$set(product, "count", 1);
+
+          _this2.discount = 0;
+        });
+      }
+    }
+  },
+  methods: {
+    createSale: function createSale() {
+      this.loading = true;
+      var data = {
+        enterprise_id: this.enterprise.id,
+        discount: this.discount,
+        products: this.actionProducts
+      };
+      this.$webService.post("sale", data).then(function (response) {
+        console.log(response.data);
+      })["catch"](function (e) {
+        console.error(e);
       });
+      console.log(data);
     }
   }
 });
@@ -21025,7 +21087,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.discount-input {\n    width: 50%;\n}\n.total {\n    margin: 0 10px 0 10px;\n}\n", ""]);
+exports.push([module.i, "\n.discount-input {\n    width: 50%;\n}\n.total {\n    margin: 0 10px 0 10px;\n}\n.create-sale {\n    vertical-align: sub;\n}\n", ""]);
 
 // exports
 
@@ -53825,7 +53887,10 @@ var render = function() {
       _c("hr"),
       _vm._v(" "),
       _c("createProductSale", {
-        attrs: { actionProducts: _vm.actionProducts }
+        attrs: {
+          actionProducts: _vm.actionProducts,
+          enterprise: _vm.selectedEnterprise
+        }
       }),
       _vm._v(" "),
       _c("addEnterpriseModal", {
@@ -54673,16 +54738,52 @@ var render = function() {
       attrs: { id: "createProductSale", tabindex: "-1" }
     },
     [
-      _c("div", { staticClass: "modal-dialog modal-lg" }, [
+      _c("div", { staticClass: "modal-dialog modal-xl" }, [
         _c("div", { staticClass: "modal-content" }, [
-          _vm._m(0),
+          _c("div", { staticClass: "modal-header" }, [
+            _c("h5", { staticClass: "modal-title" }, [
+              _vm._v("Create new Sale for ["),
+              _c("span", { staticClass: "text-info" }, [
+                _vm._v(" " + _vm._s(_vm.enterprise.title) + " ")
+              ]),
+              _vm._v("]")
+            ]),
+            _vm._v(" "),
+            _vm._m(0)
+          ]),
           _vm._v(" "),
           _c("div", { staticClass: "modal-body" }, [
-            _vm._m(1),
+            _c("div", { staticClass: "form-group discount-input" }, [
+              _c("label", { staticClass: "font-weight-bold" }, [
+                _vm._v("Discount (%)")
+              ]),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.discount,
+                    expression: "discount"
+                  }
+                ],
+                staticClass: "form-control",
+                attrs: { type: "text" },
+                domProps: { value: _vm.discount },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.discount = $event.target.value
+                  }
+                }
+              })
+            ]),
             _vm._v(" "),
             _c("div", { staticClass: "modal-product-table" }, [
               _c("table", { staticClass: "table table-striped" }, [
-                _vm._m(2),
+                _vm._m(1),
                 _vm._v(" "),
                 _c(
                   "tbody",
@@ -54716,10 +54817,10 @@ var render = function() {
                               ],
                               staticClass: "form-control",
                               class: {
-                                "is-invalid": product.isInvalid,
+                                "is-invalid": product.isInvalidPrice,
                                 "is-valid":
-                                  !product.isInvalid &&
-                                  product.isInvalid != undefined
+                                  !product.isInvalidPrice &&
+                                  product.isInvalidPrice != undefined
                               },
                               attrs: { type: "text" },
                               domProps: { value: product.sellingPrice },
@@ -54756,12 +54857,12 @@ var render = function() {
                               ],
                               staticClass: "form-control",
                               class: {
-                                "is-invalid": product.isInvalid,
+                                "is-invalid": product.isInvalidCount,
                                 "is-valid":
-                                  !product.isInvalid &&
-                                  product.isInvalid != undefined
+                                  !product.isInvalidCount &&
+                                  product.isInvalidCount != undefined
                               },
-                              attrs: { type: "text" },
+                              attrs: { type: "number", min: "1" },
                               domProps: { value: product.count },
                               on: {
                                 input: function($event) {
@@ -54783,7 +54884,12 @@ var render = function() {
                       _c("td", [
                         _vm._v(
                           "\n                                    " +
-                            _vm._s(product.sellingPrice * product.count) +
+                            _vm._s(
+                              (
+                                Number(product.sellingPrice) *
+                                Number(product.count)
+                              ).toFixed(2)
+                            ) +
                             "\n                                "
                         )
                       ])
@@ -54806,18 +54912,69 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("div", [
-                    _vm._v(
-                      "\n                        " +
-                        _vm._s(_vm.totalCost) +
-                        "\n                    "
-                    )
+                    _c("span", [
+                      _vm._v(
+                        " " +
+                          _vm._s(
+                            (
+                              _vm.totalCost -
+                              (_vm.totalCost * _vm.discount) / 100
+                            ).toFixed(2)
+                          ) +
+                          " "
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _vm.discount
+                      ? _c("span", [
+                          _vm._v(" (" + _vm._s(_vm.totalCost) + ") ")
+                        ])
+                      : _vm._e()
                   ])
                 ]
               )
             ])
           ]),
           _vm._v(" "),
-          _vm._m(3)
+          _c("div", { staticClass: "modal-footer" }, [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-secondary",
+                attrs: { type: "button", "data-dismiss": "modal" }
+              },
+              [_vm._v("Close")]
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-primary",
+                attrs: { type: "button" },
+                on: { click: _vm.createSale }
+              },
+              [
+                _c("span", { staticClass: "create-sale" }, [
+                  _vm._v(" Create Sale ")
+                ]),
+                _vm._v(" "),
+                _vm.loading
+                  ? _c(
+                      "span",
+                      {
+                        staticClass: "spinner-border spinner-border-sm",
+                        attrs: { role: "status" }
+                      },
+                      [
+                        _c("span", { staticClass: "sr-only" }, [
+                          _vm._v("Loading...")
+                        ])
+                      ]
+                    )
+                  : _vm._e()
+              ]
+            )
+          ])
         ])
       ])
     ]
@@ -54828,34 +54985,18 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-header" }, [
-      _c("h5", { staticClass: "modal-title" }, [_vm._v("Add new enterprise")]),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass: "close",
-          attrs: {
-            type: "button",
-            "data-dismiss": "modal",
-            "aria-label": "Close"
-          }
-        },
-        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
-      )
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-group discount-input" }, [
-      _c("label", { staticClass: "font-weight-bold" }, [
-        _vm._v("Discount (%)")
-      ]),
-      _vm._v(" "),
-      _c("input", { staticClass: "form-control", attrs: { type: "text" } })
-    ])
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "modal",
+          "aria-label": "Close"
+        }
+      },
+      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+    )
   },
   function() {
     var _vm = this
@@ -54875,27 +55016,6 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Total")])
       ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-footer" }, [
-      _c(
-        "button",
-        {
-          staticClass: "btn btn-secondary",
-          attrs: { type: "button", "data-dismiss": "modal" }
-        },
-        [_vm._v("Close")]
-      ),
-      _vm._v(" "),
-      _c(
-        "button",
-        { staticClass: "btn btn-primary", attrs: { type: "button" } },
-        [_vm._v("Create Sale")]
-      )
     ])
   }
 ]

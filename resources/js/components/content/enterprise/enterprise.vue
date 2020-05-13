@@ -2,7 +2,7 @@
     <div ref="enterpriseControl">
         <h1> Enterprise control </h1>
         <hr>
-        <createProductSale :actionProducts="actionProducts"/>
+        <createProductSale :actionProducts="actionProducts" :enterprise="selectedEnterprise"/>
         <addEnterpriseModal 
             @loadEnterPrises="loadEnterPrises" 
             :editMode="editMode" 
