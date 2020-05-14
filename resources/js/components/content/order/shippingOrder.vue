@@ -32,7 +32,7 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th class="small-column"> ID </th>
+                            <th> ID </th>
                             <th> Enterprise </th>
                             <th> Storage </th>
                             <th> Type </th>

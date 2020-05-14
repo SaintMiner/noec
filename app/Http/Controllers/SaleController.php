@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Sale;
 use Illuminate\Http\Request;
+use App\Http\Resources\Sale as SaleResource;
 
 class SaleController extends Controller
 {
@@ -14,7 +15,7 @@ class SaleController extends Controller
      */
     public function index()
     {
-        //
+        return SaleResource::collection(Sale::all()->sortByDesc("created_at"));
     }
 
     public function store(Request $request) {

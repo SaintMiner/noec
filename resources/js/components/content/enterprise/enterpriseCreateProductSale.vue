@@ -99,6 +99,7 @@ export default {
     props: {
         actionProducts: Array,
         enterprise: Object,
+        showEnterpriseLocalStorageProducts: {Type: Function},
     },
 
     computed: {
@@ -156,11 +157,12 @@ export default {
                 products: this.actionProducts,
             }
             this.$webService.post("sale", data).then(response => {
-                console.log(response.data);
+                this.loading = false;
+                this.showEnterpriseLocalStorageProducts(this.enterprise);
+                $('#createProductSale').modal('hide');
             }).catch(e => {
                 console.error(e);
-            })
-            console.log(data);
+            });
         }
     }
     

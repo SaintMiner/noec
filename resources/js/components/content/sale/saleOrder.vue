@@ -30,23 +30,25 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th class="small-column"> ID </th>
+                            <th> ID </th>
                             <th> Enterprise </th>
                             <th> Discount </th>
-                            <th> Product count </th>
+                            <th> Product type count </th>
                             <th> Order cost </th>
+                            <th> Order cost with discount </th>
                             <th> Created at </th>
                             <th class="small-column"> Actions  </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr >
-                            <td>1</td>
-                            <td>Ent</td>
-                            <td>10%</td>
-                            <td>33</td>
-                            <td>99.98 RUB</td>
-                            <td>segodna</td>
+                        <tr v-for="sale in sales" :key="sale.id">
+                            <td> {{sale.id}} </td>
+                            <td> {{sale.enterprise}} </td>
+                            <td> {{sale.discount}}% </td>
+                            <td> {{sale.products.length}} </td>
+                            <td> {{sale.total_cost}} </td>
+                            <td> {{(sale.total_cost*(1-sale.discount/100)).toFixed(2)}} </td>
+                            <td> {{formatDate(sale.created_at)}} </td>
                             <td class="d-flex ptr-button-cube text-center">
                                 <button class="btn btn-success mx-1" @click="">
                                     <font-awesome-icon icon="check" class=""/>
@@ -65,7 +67,39 @@
 
 <script>
 export default {
+    name: "sale-control",
 
+    data() {
+        return {
+            sales: [],
+        }
+    },
+
+    methods: {
+        loadSales: function() {
+            this.$webService.get("sale").then(response => {
+                this.sales = response.data;
+                console.log(response.data);
+            }).catch(e => {
+                console.error(e);
+            });
+        },
+
+        formatDate: function(date) {
+            let convertedDate = new Date(date);
+            let year = convertedDate.getFullYear();
+            let month = ("0"+convertedDate.getMonth()).slice(-2);
+            let day = ("0"+convertedDate.getDate()).slice(-2);
+            let hours = ("0"+convertedDate.getHours()).slice(-2);
+            let minutes = ("0"+convertedDate.getMinutes()).slice(-2);
+            let formatedDate = `${year}-${month}-${day} ${hours}:${minutes}`;
+            return formatedDate;
+        },
+    },
+
+    mounted() {
+        this.loadSales();
+    }
 }
 </script>
 

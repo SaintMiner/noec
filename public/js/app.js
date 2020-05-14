@@ -13000,7 +13000,10 @@ __webpack_require__.r(__webpack_exports__);
   },
   props: {
     actionProducts: Array,
-    enterprise: Object
+    enterprise: Object,
+    showEnterpriseLocalStorageProducts: {
+      Type: Function
+    }
   },
   computed: {
     totalCost: function totalCost() {
@@ -13060,6 +13063,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     createSale: function createSale() {
+      var _this3 = this;
+
       this.loading = true;
       var data = {
         enterprise_id: this.enterprise.id,
@@ -13067,11 +13072,14 @@ __webpack_require__.r(__webpack_exports__);
         products: this.actionProducts
       };
       this.$webService.post("sale", data).then(function (response) {
-        console.log(response.data);
+        _this3.loading = false;
+
+        _this3.showEnterpriseLocalStorageProducts(_this3.enterprise);
+
+        $('#createProductSale').modal('hide');
       })["catch"](function (e) {
         console.error(e);
       });
-      console.log(data);
     }
   }
 });
@@ -15016,7 +15024,41 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-/* harmony default export */ __webpack_exports__["default"] = ({});
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "sale-control",
+  data: function data() {
+    return {
+      sales: []
+    };
+  },
+  methods: {
+    loadSales: function loadSales() {
+      var _this = this;
+
+      this.$webService.get("sale").then(function (response) {
+        _this.sales = response.data;
+        console.log(response.data);
+      })["catch"](function (e) {
+        console.error(e);
+      });
+    },
+    formatDate: function formatDate(date) {
+      var convertedDate = new Date(date);
+      var year = convertedDate.getFullYear();
+      var month = ("0" + convertedDate.getMonth()).slice(-2);
+      var day = ("0" + convertedDate.getDate()).slice(-2);
+      var hours = ("0" + convertedDate.getHours()).slice(-2);
+      var minutes = ("0" + convertedDate.getMinutes()).slice(-2);
+      var formatedDate = "".concat(year, "-").concat(month, "-").concat(day, " ").concat(hours, ":").concat(minutes);
+      return formatedDate;
+    }
+  },
+  mounted: function mounted() {
+    this.loadSales();
+  }
+});
 
 /***/ }),
 
@@ -53889,7 +53931,9 @@ var render = function() {
       _c("createProductSale", {
         attrs: {
           actionProducts: _vm.actionProducts,
-          enterprise: _vm.selectedEnterprise
+          enterprise: _vm.selectedEnterprise,
+          showEnterpriseLocalStorageProducts:
+            _vm.showEnterpriseLocalStorageProducts
         }
       }),
       _vm._v(" "),
@@ -55718,7 +55762,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
-        _c("th", { staticClass: "small-column" }, [_vm._v(" ID ")]),
+        _c("th", [_vm._v(" ID ")]),
         _vm._v(" "),
         _c("th", [_vm._v(" Enterprise ")]),
         _vm._v(" "),
@@ -57678,43 +57722,59 @@ var render = function() {
       _c("table", { staticClass: "table table-hover" }, [
         _vm._m(1),
         _vm._v(" "),
-        _c("tbody", [
-          _c("tr", [
-            _c("td", [_vm._v("1")]),
-            _vm._v(" "),
-            _c("td", [_vm._v("Ent")]),
-            _vm._v(" "),
-            _c("td", [_vm._v("10%")]),
-            _vm._v(" "),
-            _c("td", [_vm._v("33")]),
-            _vm._v(" "),
-            _c("td", [_vm._v("99.98 RUB")]),
-            _vm._v(" "),
-            _c("td", [_vm._v("segodna")]),
-            _vm._v(" "),
-            _c("td", { staticClass: "d-flex ptr-button-cube text-center" }, [
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-success mx-1",
-                  on: { click: function($event) {} }
-                },
-                [_c("font-awesome-icon", { attrs: { icon: "check" } })],
-                1
-              ),
+        _c(
+          "tbody",
+          _vm._l(_vm.sales, function(sale) {
+            return _c("tr", { key: sale.id }, [
+              _c("td", [_vm._v(" " + _vm._s(sale.id) + " ")]),
               _vm._v(" "),
-              _c(
-                "button",
-                {
-                  staticClass: "btn btn-danger mx-1",
-                  on: { click: function($event) {} }
-                },
-                [_c("font-awesome-icon", { attrs: { icon: "times" } })],
-                1
-              )
+              _c("td", [_vm._v(" " + _vm._s(sale.enterprise) + " ")]),
+              _vm._v(" "),
+              _c("td", [_vm._v(" " + _vm._s(sale.discount) + "% ")]),
+              _vm._v(" "),
+              _c("td", [_vm._v(" " + _vm._s(sale.products.length) + " ")]),
+              _vm._v(" "),
+              _c("td", [_vm._v(" " + _vm._s(sale.total_cost) + " ")]),
+              _vm._v(" "),
+              _c("td", [
+                _vm._v(
+                  " " +
+                    _vm._s(
+                      (sale.total_cost * (1 - sale.discount / 100)).toFixed(2)
+                    ) +
+                    " "
+                )
+              ]),
+              _vm._v(" "),
+              _c("td", [
+                _vm._v(" " + _vm._s(_vm.formatDate(sale.created_at)) + " ")
+              ]),
+              _vm._v(" "),
+              _c("td", { staticClass: "d-flex ptr-button-cube text-center" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-success mx-1",
+                    on: { click: function($event) {} }
+                  },
+                  [_c("font-awesome-icon", { attrs: { icon: "check" } })],
+                  1
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-danger mx-1",
+                    on: { click: function($event) {} }
+                  },
+                  [_c("font-awesome-icon", { attrs: { icon: "times" } })],
+                  1
+                )
+              ])
             ])
-          ])
-        ])
+          }),
+          0
+        )
       ])
     ])
   ])
@@ -57734,15 +57794,17 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
-        _c("th", { staticClass: "small-column" }, [_vm._v(" ID ")]),
+        _c("th", [_vm._v(" ID ")]),
         _vm._v(" "),
         _c("th", [_vm._v(" Enterprise ")]),
         _vm._v(" "),
         _c("th", [_vm._v(" Discount ")]),
         _vm._v(" "),
-        _c("th", [_vm._v(" Product count ")]),
+        _c("th", [_vm._v(" Product type count ")]),
         _vm._v(" "),
         _c("th", [_vm._v(" Order cost ")]),
+        _vm._v(" "),
+        _c("th", [_vm._v(" Order cost with discount ")]),
         _vm._v(" "),
         _c("th", [_vm._v(" Created at ")]),
         _vm._v(" "),
