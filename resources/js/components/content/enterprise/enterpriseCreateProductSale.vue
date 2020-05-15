@@ -179,7 +179,7 @@ export default {
 
     methods: {
         createSale: function() {
-            if (this.discountError) {
+            if (!this.discountError) {
                 this.loading = true;
                 let data = {
                     enterprise_id: this.enterprise.id,

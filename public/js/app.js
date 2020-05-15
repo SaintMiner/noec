@@ -13096,7 +13096,7 @@ __webpack_require__.r(__webpack_exports__);
     createSale: function createSale() {
       var _this3 = this;
 
-      if (this.discountError) {
+      if (!this.discountError) {
         this.loading = true;
         var data = {
           enterprise_id: this.enterprise.id,
