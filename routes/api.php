@@ -39,6 +39,11 @@ Route::get('shipping/cancelShipping/{shipping_id}', "ShippingController@cancelSh
 Route::get('shipping/getShippingUnperfomableProducts/{shipping_id}', "ShippingController@getShippingUnperfomableProducts");
 
 
+Route::get("sale/getUnperfomableProducts/{sale_id}", "SaleController@getUnperfomableProducts");
+Route::get("sale/completeSale/{sale_id}", "SaleController@completeSale");
+Route::get("sale/cancelSale/{sale_id}", "SaleController@cancelSale");
+
+
 Route::get("department/getEnterprises/{departmentID}", "DepartmentController@getEnterprises");
 
 

@@ -11691,7 +11691,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "App",
   beforeMount: function beforeMount() {
-    // console.log(this.$router.currentRoute)
+    Popper.Defaults.modifiers.computeStyle.gpuAcceleration = false; // console.log(this.$router.currentRoute)
+
     if (localStorage.getItem("token")) {
       this.$webService.defaults.headers.common["Authorization"] = "Bearer ".concat(localStorage.getItem("token"));
 
@@ -12990,11 +12991,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "createProductSale-modal",
   data: function data() {
     return {
       discount: 0,
+      discountError: "",
       loading: false
     };
   },
@@ -13044,6 +13052,29 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
       return sum.toFixed(2);
+    },
+    discountModel: {
+      set: function set(value) {
+        if (!isNaN(value)) {
+          this.discountError = "";
+
+          if (value < 0) {
+            value = Math.abs(value);
+          }
+
+          if (value > 100) {
+            this.discountError = "discount must be less then 100 and more or equals to 0";
+          }
+
+          this.discount = value;
+        } else {
+          this.discount = value;
+          this.discountError = "discount must be less then 100 and more or equals to 0";
+        }
+      },
+      get: function get() {
+        return this.discount;
+      }
     }
   },
   watch: {
@@ -13065,21 +13096,23 @@ __webpack_require__.r(__webpack_exports__);
     createSale: function createSale() {
       var _this3 = this;
 
-      this.loading = true;
-      var data = {
-        enterprise_id: this.enterprise.id,
-        discount: this.discount,
-        products: this.actionProducts
-      };
-      this.$webService.post("sale", data).then(function (response) {
-        _this3.loading = false;
+      if (this.discountError) {
+        this.loading = true;
+        var data = {
+          enterprise_id: this.enterprise.id,
+          discount: this.discount,
+          products: this.actionProducts
+        };
+        this.$webService.post("sale", data).then(function (response) {
+          _this3.loading = false;
 
-        _this3.showEnterpriseLocalStorageProducts(_this3.enterprise);
+          _this3.showEnterpriseLocalStorageProducts(_this3.enterprise);
 
-        $('#createProductSale').modal('hide');
-      })["catch"](function (e) {
-        console.error(e);
-      });
+          $('#createProductSale').modal('hide');
+        })["catch"](function (e) {
+          console.error(e);
+        });
+      }
     }
   }
 });
@@ -13590,7 +13623,6 @@ __webpack_require__.r(__webpack_exports__);
     },
     cancelShipping: function cancelShipping(shipping) {
       this.cancelingShipping = shipping.id;
-      console.log(this.cancelingShipping);
       $('#shippingCancelConfirmModal').modal('show');
     },
     cancelShippingConfirm: function cancelShippingConfirm(shipping) {
@@ -14959,6 +14991,8 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _elements_confirmModal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../elements/confirmModal */ "./resources/js/components/elements/confirmModal.vue");
+/* harmony import */ var _saleOrderInfoModal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./saleOrderInfoModal */ "./resources/js/components/content/sale/saleOrderInfoModal.vue");
 //
 //
 //
@@ -14985,6 +15019,169 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "sale-control",
+  components: {
+    confirmModal: _elements_confirmModal__WEBPACK_IMPORTED_MODULE_0__["default"],
+    saleOrderInfoModal: _saleOrderInfoModal__WEBPACK_IMPORTED_MODULE_1__["default"]
+  },
+  data: function data() {
+    return {
+      sales: [],
+      actionSale: null,
+      saleCompleteConfirmModalText: "",
+      completingSale: null,
+      cancelingSale: null
+    };
+  },
+  methods: {
+    loadSales: function loadSales() {
+      var _this = this;
+
+      this.$webService.get("sale").then(function (response) {
+        _this.sales = response.data;
+        console.log(response.data);
+      })["catch"](function (e) {
+        console.error(e);
+      });
+    },
+    formatDate: function formatDate(date) {
+      var convertedDate = new Date(date);
+      var year = convertedDate.getFullYear();
+      var month = ("0" + convertedDate.getMonth()).slice(-2);
+      var day = ("0" + convertedDate.getDate()).slice(-2);
+      var hours = ("0" + convertedDate.getHours()).slice(-2);
+      var minutes = ("0" + convertedDate.getMinutes()).slice(-2);
+      var formatedDate = "".concat(year, "-").concat(month, "-").concat(day, " ").concat(hours, ":").concat(minutes);
+      return formatedDate;
+    },
+    openInfoModal: function openInfoModal(sale) {
+      $('#saleOrderInfoModal').modal('show');
+      this.actionSale = sale;
+    },
+    completeSale: function completeSale(sale) {
+      var _this2 = this;
+
+      this.$webService.get("sale/getUnperfomableProducts/".concat(sale.id)).then(function (response) {
+        var unperfomableProducts = response.data.filter(function (product) {
+          return !product.perfomable;
+        });
+
+        if (unperfomableProducts.length == response.data.length) {
+          _this2.saleCompleteConfirmModalText = "All sale product are unperfomable. Are you sure you want to complete this sale?";
+        } else if (unperfomableProducts.length) {
+          _this2.saleCompleteConfirmModalText = "Sale have ".concat(unperfomableProducts.length, " unperfomable product(s). Are you sure you want to complete this sale?");
+        } else {
+          _this2.saleCompleteConfirmModalText = "Are you sure you want to complete this sale?";
+        }
+
+        _this2.completingSale = sale;
+        $('#saleCompleteConfirmModal').modal('show');
+      })["catch"](function (e) {
+        console.error(e);
+      });
+    },
+    completeSaleConfirm: function completeSaleConfirm(sale) {
+      var _this3 = this;
+
+      this.$webService.get("sale/completeSale/".concat(sale.id)).then(function (response) {
+        $('#saleCompleteConfirmModal').modal('hide');
+
+        _this3.loadSales();
+      })["catch"](function (e) {
+        console.error(e);
+      });
+    },
+    cancelSale: function cancelSale(sale) {
+      this.cancelingSale = sale;
+      $('#saleCancelConfirmModal').modal('show');
+    },
+    cancelSaleConfirm: function cancelSaleConfirm(sale) {
+      var _this4 = this;
+
+      this.$webService.get("sale/cancelSale/".concat(sale.id)).then(function (response) {
+        _this4.loadSales();
+
+        $('#saleCancelConfirmModal').modal('hide');
+      })["catch"](function (e) {
+        console.error(e);
+      });
+    }
+  },
+  mounted: function mounted() {
+    this.loadSales();
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/content/sale/saleOrderInfoModal.vue?vue&type=script&lang=js&":
+/*!******************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/content/sale/saleOrderInfoModal.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
 //
 //
 //
@@ -15027,36 +15224,32 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: "sale-control",
+  name: "saleOrderInfoModal",
   data: function data() {
     return {
-      sales: []
+      saleProducts: []
     };
   },
+  props: {
+    sale: Object
+  },
   methods: {
-    loadSales: function loadSales() {
-      var _this = this;
-
-      this.$webService.get("sale").then(function (response) {
-        _this.sales = response.data;
-        console.log(response.data);
-      })["catch"](function (e) {
-        console.error(e);
-      });
-    },
-    formatDate: function formatDate(date) {
-      var convertedDate = new Date(date);
-      var year = convertedDate.getFullYear();
-      var month = ("0" + convertedDate.getMonth()).slice(-2);
-      var day = ("0" + convertedDate.getDate()).slice(-2);
-      var hours = ("0" + convertedDate.getHours()).slice(-2);
-      var minutes = ("0" + convertedDate.getMinutes()).slice(-2);
-      var formatedDate = "".concat(year, "-").concat(month, "-").concat(day, " ").concat(hours, ":").concat(minutes);
-      return formatedDate;
+    onClose: function onClose() {
+      $('#saleOrderInfoModal').modal('hide');
     }
   },
-  mounted: function mounted() {
-    this.loadSales();
+  watch: {
+    sale: function sale() {
+      var _this = this;
+
+      if (this.sale) {
+        this.$webService("sale/getUnperfomableProducts/".concat(this.sale.id)).then(function (response) {
+          _this.saleProducts = response.data;
+        })["catch"](function (response) {
+          console.error(response);
+        });
+      }
+    }
   }
 });
 
@@ -54807,22 +55000,31 @@ var render = function() {
                   {
                     name: "model",
                     rawName: "v-model",
-                    value: _vm.discount,
-                    expression: "discount"
+                    value: _vm.discountModel,
+                    expression: "discountModel"
                   }
                 ],
                 staticClass: "form-control",
+                class: { "is-invalid": _vm.discountError },
                 attrs: { type: "text" },
-                domProps: { value: _vm.discount },
+                domProps: { value: _vm.discountModel },
                 on: {
                   input: function($event) {
                     if ($event.target.composing) {
                       return
                     }
-                    _vm.discount = $event.target.value
+                    _vm.discountModel = $event.target.value
                   }
                 }
-              })
+              }),
+              _vm._v(" "),
+              _c("div", { staticClass: "invalid-feedback" }, [
+                _vm._v(
+                  "\n                    " +
+                    _vm._s(_vm.discountError) +
+                    "\n                "
+                )
+              ])
             ]),
             _vm._v(" "),
             _c("div", { staticClass: "modal-product-table" }, [
@@ -54955,26 +55157,28 @@ var render = function() {
                     )
                   ]),
                   _vm._v(" "),
-                  _c("div", [
-                    _c("span", [
-                      _vm._v(
-                        " " +
-                          _vm._s(
-                            (
-                              _vm.totalCost -
-                              (_vm.totalCost * _vm.discount) / 100
-                            ).toFixed(2)
-                          ) +
-                          " "
-                      )
-                    ]),
-                    _vm._v(" "),
-                    _vm.discount
-                      ? _c("span", [
+                  _vm.discount && !_vm.discountError
+                    ? _c("div", [
+                        _c("span", [
+                          _vm._v(
+                            " " +
+                              _vm._s(
+                                (
+                                  _vm.totalCost -
+                                  (_vm.totalCost * _vm.discount) / 100
+                                ).toFixed(2)
+                              ) +
+                              " "
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("span", [
                           _vm._v(" (" + _vm._s(_vm.totalCost) + ") ")
                         ])
-                      : _vm._e()
-                  ])
+                      ])
+                    : _c("div", [
+                        _c("span", [_vm._v(" " + _vm._s(_vm.totalCost) + " ")])
+                      ])
                 ]
               )
             ])
@@ -54994,7 +55198,7 @@ var render = function() {
               "button",
               {
                 staticClass: "btn btn-primary",
-                attrs: { type: "button" },
+                attrs: { type: "button", disabled: !!_vm.discountError },
                 on: { click: _vm.createSale }
               },
               [
@@ -57711,73 +57915,228 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { ref: "saleControl" }, [
-    _c("h1", [_vm._v("\n        Sales Orders\n    ")]),
-    _vm._v(" "),
-    _c("hr"),
-    _vm._v(" "),
-    _vm._m(0),
-    _vm._v(" "),
-    _c("div", { staticClass: "card shippingOrder-control-table" }, [
-      _c("table", { staticClass: "table table-hover" }, [
-        _vm._m(1),
-        _vm._v(" "),
-        _c(
-          "tbody",
-          _vm._l(_vm.sales, function(sale) {
-            return _c("tr", { key: sale.id }, [
-              _c("td", [_vm._v(" " + _vm._s(sale.id) + " ")]),
-              _vm._v(" "),
-              _c("td", [_vm._v(" " + _vm._s(sale.enterprise) + " ")]),
-              _vm._v(" "),
-              _c("td", [_vm._v(" " + _vm._s(sale.discount) + "% ")]),
-              _vm._v(" "),
-              _c("td", [_vm._v(" " + _vm._s(sale.products.length) + " ")]),
-              _vm._v(" "),
-              _c("td", [_vm._v(" " + _vm._s(sale.total_cost) + " ")]),
-              _vm._v(" "),
-              _c("td", [
-                _vm._v(
-                  " " +
-                    _vm._s(
-                      (sale.total_cost * (1 - sale.discount / 100)).toFixed(2)
-                    ) +
-                    " "
-                )
-              ]),
-              _vm._v(" "),
-              _c("td", [
-                _vm._v(" " + _vm._s(_vm.formatDate(sale.created_at)) + " ")
-              ]),
-              _vm._v(" "),
-              _c("td", { staticClass: "d-flex ptr-button-cube text-center" }, [
+  return _c(
+    "div",
+    { ref: "saleControl" },
+    [
+      _c("saleOrderInfoModal", { attrs: { sale: _vm.actionSale } }),
+      _vm._v(" "),
+      _c("confirmModal", {
+        attrs: {
+          id: "saleCompleteConfirmModal",
+          confirmText: _vm.saleCompleteConfirmModalText
+        },
+        on: {
+          confirmAction: function($event) {
+            return _vm.completeSaleConfirm(_vm.completingSale)
+          }
+        }
+      }),
+      _vm._v(" "),
+      _c("confirmModal", {
+        attrs: {
+          id: "saleCancelConfirmModal",
+          confirmText: "Are you sure you want to cancel this sale?"
+        },
+        on: {
+          confirmAction: function($event) {
+            return _vm.cancelSaleConfirm(_vm.cancelingSale)
+          }
+        }
+      }),
+      _vm._v(" "),
+      _c("h1", [_vm._v("\n        Sales Orders\n    ")]),
+      _vm._v(" "),
+      _c("hr"),
+      _vm._v(" "),
+      _vm._m(0),
+      _vm._v(" "),
+      _c("div", { staticClass: "card shippingOrder-control-table" }, [
+        _c("table", { staticClass: "table table-hover" }, [
+          _vm._m(1),
+          _vm._v(" "),
+          _c(
+            "tbody",
+            _vm._l(_vm.sales, function(sale) {
+              return _c("tr", { key: sale.id }, [
                 _c(
-                  "button",
+                  "td",
                   {
-                    staticClass: "btn btn-success mx-1",
-                    on: { click: function($event) {} }
+                    on: {
+                      click: function($event) {
+                        return _vm.openInfoModal(sale)
+                      }
+                    }
                   },
-                  [_c("font-awesome-icon", { attrs: { icon: "check" } })],
-                  1
+                  [_vm._v(" " + _vm._s(sale.id) + " ")]
                 ),
                 _vm._v(" "),
                 _c(
-                  "button",
+                  "td",
                   {
-                    staticClass: "btn btn-danger mx-1",
-                    on: { click: function($event) {} }
+                    on: {
+                      click: function($event) {
+                        return _vm.openInfoModal(sale)
+                      }
+                    }
                   },
-                  [_c("font-awesome-icon", { attrs: { icon: "times" } })],
-                  1
+                  [_vm._v(" " + _vm._s(sale.enterprise) + " ")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "td",
+                  {
+                    on: {
+                      click: function($event) {
+                        return _vm.openInfoModal(sale)
+                      }
+                    }
+                  },
+                  [_vm._v(" " + _vm._s(sale.discount) + "% ")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "td",
+                  {
+                    on: {
+                      click: function($event) {
+                        return _vm.openInfoModal(sale)
+                      }
+                    }
+                  },
+                  [_vm._v(" " + _vm._s(sale.products.length) + " ")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "td",
+                  {
+                    staticClass: " text-right",
+                    on: {
+                      click: function($event) {
+                        return _vm.openInfoModal(sale)
+                      }
+                    }
+                  },
+                  [_vm._v(" " + _vm._s(sale.total_cost.toFixed(2)) + " ")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "td",
+                  {
+                    staticClass: " text-right",
+                    on: {
+                      click: function($event) {
+                        return _vm.openInfoModal(sale)
+                      }
+                    }
+                  },
+                  [
+                    _vm._v(
+                      " " +
+                        _vm._s(
+                          (sale.total_cost * (1 - sale.discount / 100)).toFixed(
+                            2
+                          )
+                        ) +
+                        " "
+                    )
+                  ]
+                ),
+                _vm._v(" "),
+                _c(
+                  "td",
+                  {
+                    on: {
+                      click: function($event) {
+                        return _vm.openInfoModal(sale)
+                      }
+                    }
+                  },
+                  [
+                    sale.status == "In progress"
+                      ? _c("span", { staticClass: "text-primary" }, [
+                          _vm._v(
+                            "\n                                " +
+                              _vm._s(sale.status) +
+                              "\n                            "
+                          )
+                        ])
+                      : sale.status == "Completed"
+                      ? _c("span", { staticClass: "text-success" }, [
+                          _vm._v(
+                            "\n                                " +
+                              _vm._s(sale.status) +
+                              "\n                            "
+                          )
+                        ])
+                      : sale.status == "Canceled"
+                      ? _c("span", { staticClass: "text-danger" }, [
+                          _vm._v(
+                            "\n                                " +
+                              _vm._s(sale.status) +
+                              "\n                            "
+                          )
+                        ])
+                      : _vm._e()
+                  ]
+                ),
+                _vm._v(" "),
+                _c(
+                  "td",
+                  {
+                    on: {
+                      click: function($event) {
+                        return _vm.openInfoModal(sale)
+                      }
+                    }
+                  },
+                  [_vm._v(" " + _vm._s(_vm.formatDate(sale.created_at)) + " ")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "td",
+                  { staticClass: "d-flex ptr-button-cube text-center" },
+                  [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-success mx-1",
+                        attrs: { disabled: sale.status != "In progress" },
+                        on: {
+                          click: function($event) {
+                            return _vm.completeSale(sale)
+                          }
+                        }
+                      },
+                      [_c("font-awesome-icon", { attrs: { icon: "check" } })],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-danger mx-1",
+                        attrs: { disabled: sale.status != "In progress" },
+                        on: {
+                          click: function($event) {
+                            return _vm.cancelSale(sale)
+                          }
+                        }
+                      },
+                      [_c("font-awesome-icon", { attrs: { icon: "times" } })],
+                      1
+                    )
+                  ]
                 )
               ])
-            ])
-          }),
-          0
-        )
+            }),
+            0
+          )
+        ])
       ])
-    ])
-  ])
+    ],
+    1
+  )
 }
 var staticRenderFns = [
   function() {
@@ -57806,9 +58165,170 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v(" Order cost with discount ")]),
         _vm._v(" "),
+        _c("th", [_vm._v(" Status ")]),
+        _vm._v(" "),
         _c("th", [_vm._v(" Created at ")]),
         _vm._v(" "),
         _c("th", { staticClass: "small-column" }, [_vm._v(" Actions  ")])
+      ])
+    ])
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/content/sale/saleOrderInfoModal.vue?vue&type=template&id=b55d3062&":
+/*!**********************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/content/sale/saleOrderInfoModal.vue?vue&type=template&id=b55d3062& ***!
+  \**********************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { staticClass: "modal fade", attrs: { id: "saleOrderInfoModal" } },
+    [
+      _c(
+        "div",
+        {
+          staticClass: "modal-dialog modal-lg",
+          on: {
+            click: function($event) {
+              $event.stopPropagation()
+            }
+          }
+        },
+        [
+          _c("div", { staticClass: "modal-content" }, [
+            _c("div", { staticClass: "modal-header" }, [
+              _c("h5", { staticClass: "modal-title" }, [
+                _vm._v(" Shipping order: №{{}} ")
+              ]),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "close",
+                  attrs: {
+                    type: "button",
+                    "data-dismiss": "modal",
+                    "aria-label": "Close"
+                  },
+                  on: { click: _vm.onClose }
+                },
+                [
+                  _c("span", { attrs: { "aria-hidden": "true" } }, [
+                    _vm._v("×")
+                  ])
+                ]
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "modal-body" }, [
+              _c(
+                "table",
+                { staticClass: "table table-responsive-xl table-hover" },
+                [
+                  _vm._m(0),
+                  _vm._v(" "),
+                  _c(
+                    "tbody",
+                    _vm._l(_vm.saleProducts, function(product) {
+                      return _c("tr", { key: product.id }, [
+                        _c("td", [_vm._v(" " + _vm._s(product.name) + " ")]),
+                        _vm._v(" "),
+                        _c("td", [_vm._v(" " + _vm._s(product.price) + " ")]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(
+                            " " + _vm._s(product.pivot.selling_price) + " "
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(
+                            " " + _vm._s(product.pivot.product_count) + " "
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(
+                            " " +
+                              _vm._s(
+                                product.pivot.product_count *
+                                  product.pivot.selling_price
+                              ) +
+                              " "
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "td",
+                          {
+                            class: product.perfomable
+                              ? "text-success"
+                              : "text-danger"
+                          },
+                          [
+                            _vm._v(
+                              " " +
+                                _vm._s(product.perfomable ? "Yes" : "No") +
+                                " "
+                            )
+                          ]
+                        )
+                      ])
+                    }),
+                    0
+                  )
+                ]
+              )
+            ]),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-secondary",
+                attrs: { type: "button", "data-dismiss": "modal" },
+                on: { click: _vm.onClose }
+              },
+              [_vm._v("Close")]
+            )
+          ])
+        ]
+      )
+    ]
+  )
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v(" Name ")]),
+        _vm._v(" "),
+        _c("th", [_vm._v(" Standart price ")]),
+        _vm._v(" "),
+        _c("th", [_vm._v(" Selling price ")]),
+        _vm._v(" "),
+        _c("th", [_vm._v(" Count ")]),
+        _vm._v(" "),
+        _c("th", [_vm._v(" Total ")]),
+        _vm._v(" "),
+        _c("th", [_vm._v(" Perfomable now ")])
       ])
     ])
   }
@@ -77566,6 +78086,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_saleOrder_vue_vue_type_template_id_2a8d4960___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_saleOrder_vue_vue_type_template_id_2a8d4960___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/content/sale/saleOrderInfoModal.vue":
+/*!*********************************************************************!*\
+  !*** ./resources/js/components/content/sale/saleOrderInfoModal.vue ***!
+  \*********************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _saleOrderInfoModal_vue_vue_type_template_id_b55d3062___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./saleOrderInfoModal.vue?vue&type=template&id=b55d3062& */ "./resources/js/components/content/sale/saleOrderInfoModal.vue?vue&type=template&id=b55d3062&");
+/* harmony import */ var _saleOrderInfoModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./saleOrderInfoModal.vue?vue&type=script&lang=js& */ "./resources/js/components/content/sale/saleOrderInfoModal.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _saleOrderInfoModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _saleOrderInfoModal_vue_vue_type_template_id_b55d3062___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _saleOrderInfoModal_vue_vue_type_template_id_b55d3062___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/content/sale/saleOrderInfoModal.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/content/sale/saleOrderInfoModal.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************************!*\
+  !*** ./resources/js/components/content/sale/saleOrderInfoModal.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_saleOrderInfoModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./saleOrderInfoModal.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/content/sale/saleOrderInfoModal.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_saleOrderInfoModal_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/content/sale/saleOrderInfoModal.vue?vue&type=template&id=b55d3062&":
+/*!****************************************************************************************************!*\
+  !*** ./resources/js/components/content/sale/saleOrderInfoModal.vue?vue&type=template&id=b55d3062& ***!
+  \****************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_saleOrderInfoModal_vue_vue_type_template_id_b55d3062___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib??vue-loader-options!./saleOrderInfoModal.vue?vue&type=template&id=b55d3062& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/content/sale/saleOrderInfoModal.vue?vue&type=template&id=b55d3062&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_saleOrderInfoModal_vue_vue_type_template_id_b55d3062___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_saleOrderInfoModal_vue_vue_type_template_id_b55d3062___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

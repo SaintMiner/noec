@@ -17,6 +17,7 @@ class CreateSalesTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger("enterprise_id");
             $table->decimal("discount", 8, 2);
+            $table->enum("status", ["In progress", "Completed", "Canceled"]);
             $table->timestamps();
         });
 

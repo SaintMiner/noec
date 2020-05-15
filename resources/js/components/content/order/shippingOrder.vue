@@ -198,7 +198,6 @@ export default {
 
         cancelShipping: function(shipping) {
             this.cancelingShipping = shipping.id;
-            console.log(this.cancelingShipping);
             $('#shippingCancelConfirmModal').modal('show');
         },
 

@@ -11,7 +11,10 @@
         <div class="modal-body">
                 <div class="form-group discount-input">
                     <label class="font-weight-bold">Discount (%)</label>
-                    <input type="text" class="form-control" v-model="discount">
+                    <input type="text" class="form-control" v-model="discountModel" :class="{'is-invalid': discountError}">
+                    <div class="invalid-feedback">
+                        {{discountError}}
+                    </div>
                 </div>
                 <div class="modal-product-table">
                     <table class="table table-striped">
@@ -65,15 +68,18 @@
                             Total:
                         </div>
                         
-                        <div>
-                            <span> {{(totalCost - totalCost*discount/100).toFixed(2)}} </span> <span v-if="discount"> ({{totalCost}}) </span>
+                        <div  v-if="discount && !discountError">
+                            <span> {{(totalCost - totalCost*discount/100).toFixed(2)}} </span> <span> ({{totalCost}}) </span>
+                        </div>
+                        <div v-else>
+                            <span> {{totalCost}} </span>
                         </div>
                     </div>
                 </div>
         </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" @click="createSale">
+                <button type="button" class="btn btn-primary" @click="createSale" :disabled="!!discountError">
                     <span class="create-sale"> Create Sale </span>
                     <span class="spinner-border spinner-border-sm" role="status" v-if="loading">
                         <span class="sr-only">Loading...</span>
@@ -92,6 +98,7 @@ export default {
     data() {
         return {
             discount: 0,
+            discountError: "",
             loading: false,
         }
     },
@@ -133,6 +140,28 @@ export default {
                 }
             });
             return sum.toFixed(2);
+        },
+
+        discountModel: {
+            set: function(value) {
+                if (!isNaN(value)) {
+                    this.discountError = "";
+                    if (value < 0) {
+                        value = Math.abs(value);
+                    }
+                    if (value > 100) {
+                        this.discountError = "discount must be less then 100 and more or equals to 0";
+                    }
+                    this.discount = value;
+                } else {
+                    this.discount = value;
+                    this.discountError = "discount must be less then 100 and more or equals to 0";
+                }
+            },
+
+            get: function() {
+                return this.discount;
+            }
         }
     },
 
@@ -150,19 +179,21 @@ export default {
 
     methods: {
         createSale: function() {
-            this.loading = true;
-            let data = {
-                enterprise_id: this.enterprise.id,
-                discount: this.discount,
-                products: this.actionProducts,
+            if (this.discountError) {
+                this.loading = true;
+                let data = {
+                    enterprise_id: this.enterprise.id,
+                    discount: this.discount,
+                    products: this.actionProducts,
+                }
+                this.$webService.post("sale", data).then(response => {
+                    this.loading = false;
+                    this.showEnterpriseLocalStorageProducts(this.enterprise);
+                    $('#createProductSale').modal('hide');
+                }).catch(e => {
+                    console.error(e);
+                });
             }
-            this.$webService.post("sale", data).then(response => {
-                this.loading = false;
-                this.showEnterpriseLocalStorageProducts(this.enterprise);
-                $('#createProductSale').modal('hide');
-            }).catch(e => {
-                console.error(e);
-            });
         }
     }
     

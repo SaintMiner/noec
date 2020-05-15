@@ -16,10 +16,11 @@ class Sale extends JsonResource
     {
         return [
             "id" => $this->id,
-            "enterprise" => $this->enterprise->name,
+            "enterprise" => $this->enterprise->title,
             "discount" => $this->discount,
             "products" => $this->products,
             "total_cost" => $this->getTotalCost(),
+            "status" => $this->status,
             "created_at" => $this->created_at,
         ];
     }
