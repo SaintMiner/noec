@@ -15,7 +15,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'role'
+        'username', 'password', 'role', "resource_id"
     ];
     /**
      * The attributes that should be hidden for arrays.
@@ -25,6 +25,11 @@ class User extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function resource() {
+        return $this->belongsTo(Resource::class);
+    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();

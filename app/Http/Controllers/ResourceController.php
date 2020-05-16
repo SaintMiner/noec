@@ -57,4 +57,9 @@ class ResourceController extends Controller
     public function show($resourceID) {
         return Resource::find($resourceID);
     }
+
+    public function destroy($resourceID) {
+        $resource = Resource::findOrFail($resourceID);
+        $resource->delete();
+    }
 }

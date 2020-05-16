@@ -35,6 +35,10 @@ class CreateResourcesTable extends Migration
             $table->foreign("status_id")->references("id")->on("statuses")->onDelete("set null");
             $table->foreign("enterprise_id")->references("id")->on("enterprises")->onDelete("set null");
         });
+
+        Schema::table("users", function($table) {
+            $table->foreign("resource_id")->references("id")->on("resources")->onDelete("cascade");
+        });
     }
 
     /**

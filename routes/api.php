@@ -65,6 +65,8 @@ Route::resource('position', 'PositionController');
 
 Route::resource('sale', 'SaleController');
 
+Route::resource('user', 'UserController');
+
 Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'

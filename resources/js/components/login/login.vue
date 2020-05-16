@@ -69,7 +69,7 @@ export default {
             this.loading = true;
             this.success = false;
             this.unsuccess = false;
-            this.$webService.post("auth/login", {name: this.username, password: this.password}).then(response => {
+            this.$webService.post("auth/login", {username: this.username, password: this.password}).then(response => {
                 this.access_token = response.data.access_token;
                 this.$webService.defaults.headers.common["Authorization"] = `Bearer ${this.access_token}`;
                 localStorage.setItem("token", this.access_token);

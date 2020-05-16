@@ -1,5 +1,10 @@
 <template>
     <div ref="personalControl">
+        <personalCreateAccount id="personCreateAccountModal" :resource="actionResource" :reloadPersonal="getPersonal"/>
+        <confirmModal id="deleteResourceDataConfirm" 
+            confirmText="Are you sure you want to delete this person ALL DATA?"
+            @confirmAction="deleteResourceData(actionResource)"
+        />
         <h1> Personal control </h1>
         <hr>
         <div class="d-flex justify-content-between mb-2">
@@ -81,7 +86,16 @@
                         <td>
                             <div class="d-flex ptr-button-cube text-center">
                                 <button class="btn btn-primary mx-1"  @click="openEditResourceModal(person)"><font-awesome-icon icon="pen" class=""/></button>
-                                <button class="btn btn-primary mx-1"><font-awesome-icon icon="info" class=""/></button>
+                                <button class="btn btn-secondary " type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <font-awesome-icon icon="ellipsis-v" class=""/>
+                                </button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="#" @click="">Fire an employee</a>
+                                    <a class="dropdown-item" href="#" @click="openCreateAccountModal(person)" v-if="!person.user">Create account</a>
+                                    <a class="dropdown-item text-danger" href="#" @click="openCreateAccountModal(person)" v-else>Remove account</a>
+                                    <div role="separator" class="dropdown-divider"></div>
+                                    <a class="dropdown-item text-danger" href="#" @click="openDeleteDataModal(person)">Delete all data</a>
+                                </div>
                             </div>
                         </td>
                     </tr>
@@ -95,12 +109,15 @@
 <script>
 import Vue from "vue";
 import personControlModal from "./personalControlModal";
-
+import personalCreateAccount from "./personalCreateAccount";
+import confirmModal from "../../elements/confirmModal"
 export default {
     name: "personal",
     
     components: {
         personControlModal,
+        personalCreateAccount,
+        confirmModal,
     },
 
     data() {
@@ -113,7 +130,7 @@ export default {
             departmentFilter: 0,
             statusFilter: 0,
             searchFilter: "",
-            
+            actionResource: null,
         }
     },
 
@@ -229,6 +246,25 @@ export default {
             instance.$mount(); 
             this.$refs.personalControl.appendChild(instance.$el);
             $('#personalControlModal').modal('show');
+        },
+
+        openCreateAccountModal: function(resource) {
+            $('#personCreateAccountModal').modal('show');
+            this.actionResource = resource;
+        },
+
+        openDeleteDataModal: function(resource) {
+            this.actionResource = resource;
+            $('#deleteResourceDataConfirm').modal('show');
+        },
+
+        deleteResourceData: function(resource) {
+            this.$webService.delete(`resource/${resource.id}`).then(repsonse => {
+                this.getPersonal();
+                $('#deleteResourceDataConfirm').modal('hide');
+            }).catch(e => {
+                console.error(e);
+            })
         }
     },
 

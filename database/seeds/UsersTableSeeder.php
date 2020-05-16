@@ -12,7 +12,7 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         $users = [
-            ["id" => 1, "name" => "Admin", "email" => "admin@admin.am", "password" => bcrypt("Password123")],
+            ["id" => 1, "username" => "Admin", "password" => bcrypt("Password123"), "resource_id" => 2],
         ];
 
         App\User::insert($users);

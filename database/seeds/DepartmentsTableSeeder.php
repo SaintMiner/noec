@@ -16,6 +16,8 @@ class DepartmentsTableSeeder extends Seeder
             ["id" => 2, "name" => "Light"]
         ];
         App\Department::insert($departments);
+        
+        
 
     }
 }

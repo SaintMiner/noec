@@ -292,6 +292,7 @@ export default {
                     department_id: resource.department_id,
                     job_candidated: resource.job_candidated ? true : false,
                 }
+                this.selectEnterpriseModel = resource.enterprise_id;
                 console.log(this.newResource);
             }).catch(e => {
                 console.error(e);
