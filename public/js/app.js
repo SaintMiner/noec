@@ -11704,6 +11704,7 @@ __webpack_require__.r(__webpack_exports__);
         }
       } else {
         localStorage.setItem("token", null);
+        localStorage.setItem("token_expires_in", null);
 
         if (this.$router.currentRoute.name != "login") {
           this.$router.push({
@@ -16852,13 +16853,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "sidebar",
   data: function data() {
     return {
       user: {
-        name: null
+        username: null
       }
     };
   },
@@ -16868,12 +16874,29 @@ __webpack_require__.r(__webpack_exports__);
   props: {
     sidebarContent: Array
   },
-  methods: {},
+  methods: {
+    logout: function logout() {
+      var _this = this;
+
+      localStorage.setItem("token", null);
+      localStorage.setItem("token_expires_in", null);
+      this.$webService.post("auth/logout").then(function (response) {
+        console.log(response.data);
+
+        _this.$router.push({
+          name: 'login'
+        });
+      })["catch"](function (e) {
+        console.error(e);
+      });
+    }
+  },
   mounted: function mounted() {
-    var _this = this;
+    var _this2 = this;
 
     this.$webService.post("auth/me").then(function (response) {
-      _this.user = response.data;
+      console.log(response.data);
+      _this2.user = response.data;
     })["catch"](function (e) {
       console.error(e);
     });
@@ -60784,7 +60807,17 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "sidebar overflow-auto" }, [
     _c("div", { staticClass: "text-light p-3" }, [
-      _vm._v("\n        " + _vm._s(_vm.user.name) + "\n    ")
+      _c("div", [
+        _vm._v("\n        " + _vm._s(_vm.user.username) + "\n        ")
+      ]),
+      _vm._v(" "),
+      _c("div", [
+        _c(
+          "button",
+          { staticClass: "btn btn-danger", on: { click: _vm.logout } },
+          [_vm._v("Logout")]
+        )
+      ])
     ]),
     _vm._v(" "),
     _c(

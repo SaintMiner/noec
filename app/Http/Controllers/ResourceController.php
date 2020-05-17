@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Resource;
 use App\Http\Resources\Resources as ResourceResource;
+
 class ResourceController extends Controller
+
 {
     public function index(Request $request) {
         // dd(Resource::find(1)->department());

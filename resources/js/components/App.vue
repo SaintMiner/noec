@@ -16,8 +16,9 @@ export default {
                 }
             } else {
                 localStorage.setItem("token", null);
+                localStorage.setItem("token_expires_in", null);
                 if (this.$router.currentRoute.name != "login") {
-                    this.$router.push({ name: 'login' })
+                    this.$router.push({ name: 'login' });
                 }
             }
         } else if (this.$router.currentRoute.name != "login") {

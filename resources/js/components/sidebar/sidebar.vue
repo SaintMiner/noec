@@ -1,7 +1,12 @@
 <template>
     <div class="sidebar overflow-auto" >
         <div class="text-light p-3">
-            {{user.name}}
+            <div>
+            {{user.username}}
+            </div>
+            <div>
+                <button class="btn btn-danger" @click="logout">Logout</button>
+            </div>
         </div>
         <div class="mx-2 text-light overflow-hidden">
             <hr>
@@ -25,7 +30,7 @@ export default {
     data() {
         return {
             user: {
-                name: null
+                username: null
             },
         }
     },
@@ -39,14 +44,24 @@ export default {
     },
 
     methods: {
+        logout: function() {
+            localStorage.setItem("token", null);
+            localStorage.setItem("token_expires_in", null);
+            this.$webService.post("auth/logout").then(response => {
+                this.$router.push({ name: 'login' })
+            }).catch(e => {
+                console.error(e);
+            });
+        }
     },
 
     mounted() {
         this.$webService.post("auth/me").then(response => {
+            console.log(response.data);
             this.user = response.data;
         }).catch(e => {
             console.error(e);
-        })
+        });
     }
 }
 </script>
