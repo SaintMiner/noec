@@ -9,15 +9,15 @@ use App\Http\Resources\EnterpriseProducts as EnterpriseProducts;
 use App\Http\Resources\EnterpriseStorages as EnterpriseStorages;
 use App\Http\Resources\EnterpriseResources as EnterpriseResources;
 use App\Http\Resources\StorageFullInfo as StorageInfo;
-
+use Illuminate\Support\Facades\Route;
 class EnterpriseController extends Controller
 {
     public function index() {
+        
         return Enterprise::all();
     }
 
     public function store(Request $request) {
-        // return $request->regNumber;
         $this->validate($request, [
             "title" => "required|min:3|max:255",
             "location" => "required|min:3|max:255",

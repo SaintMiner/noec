@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             StoragesTableSeeder::class,
             ProductsTableSeeder::class,
             UsersTableSeeder::class,
+            RolesTableSeeder::class,
         ]);
     }
 }

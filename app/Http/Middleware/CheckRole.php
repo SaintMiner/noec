@@ -13,8 +13,8 @@ class CheckRole
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle($request, Closure $next, ...$roles)
     {
-        return $next($request);
+        return $request->user()->hasRole($roles) ? $next($request) : response("No permission!", 400);
     }
 }

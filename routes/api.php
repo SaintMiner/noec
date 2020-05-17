@@ -47,14 +47,16 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get("sale/cancelSale/{sale_id}", "SaleController@cancelSale");
 
 
-    Route::get("department/getEnterprises/{departmentID}", "DepartmentController@getEnterprises");
+    Route::get("department/getEnterprises/{departmentID}", "DepartmentController@getEnterprises")->middleware("role:admin,director,hr_manager");
 
 
-    Route::get("position/getEnterprises/{positionID}", "PositionController@getEnterprises");
+    Route::get("position/getEnterprises/{positionID}", "PositionController@getEnterprises")->middleware("role:admin,director,hr_manager");
 
-    Route::resource('resource', 'ResourceController');
+    Route::resource('resource', 'ResourceController')->middleware("role:admin,director,hr_manager")->only(["store", "update", "destroy"]);
+    Route::resource('resource', 'ResourceController')->only(["index", "show"]);
 
-    Route::resource('enterprise', 'EnterpriseController')->middleware("role");
+    Route::resource('enterprise', 'EnterpriseController')->middleware("role:admin,director,hr_manager")->only(["store", "update", "destroy"]);
+    Route::resource('enterprise', 'EnterpriseController')->only(["index", "show"]);
 
     Route::resource('storage', 'StorageController');
 
