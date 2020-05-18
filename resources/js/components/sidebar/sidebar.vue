@@ -10,10 +10,8 @@
         </div>
         <div class="mx-2 text-light overflow-hidden">
             <hr>
-            <div v-for="i in sidebarContent" :key="i.id">
-            <sidebarItem  
-                :item="i"
-            />
+            <div v-for="item in sidebarContent" :key="item  .id">
+            <sidebarItem  :item="item"/>
             <hr>
             </div>
         </div>

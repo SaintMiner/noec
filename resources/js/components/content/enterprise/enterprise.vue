@@ -26,8 +26,9 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th class="w-50">Title</th>
-                            <th>Personal</th>
+                            <th>Title</th>
+                            <th>Registration number</th>
+                            <th>Personal count</th>
                             <th>Location</th>
                             <th class="action-col">Action</th>
                         </tr>
@@ -35,7 +36,8 @@
                     <tbody>
                         <tr v-for="enterprise in enterprises" :key="enterprise.id" >
                             <td @click="showEnterpriseLocalStorageProducts(enterprise)"> {{enterprise.title}} </td>
-                            <td @click="showEnterpriseLocalStorageProducts(enterprise)"> 10/10 </td>
+                            <td @click="showEnterpriseLocalStorageProducts(enterprise)"> {{enterprise.registration_number}} </td>
+                            <td @click="showEnterpriseLocalStorageProducts(enterprise)"> {{enterprise.personal_count}} </td>
                             <td @click="showEnterpriseLocalStorageProducts(enterprise)"> {{enterprise.location}} </td>
                             <td class="d-flex ptr-button-cube text-center">
                                 <button class="btn btn-primary mx-1" @click="openEditEnterpriseModal(enterprise)">

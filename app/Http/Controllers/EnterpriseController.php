@@ -8,13 +8,13 @@ use App\Product;
 use App\Http\Resources\EnterpriseProducts as EnterpriseProducts;
 use App\Http\Resources\EnterpriseStorages as EnterpriseStorages;
 use App\Http\Resources\EnterpriseResources as EnterpriseResources;
+use App\Http\Resources\Enterprises as EnterpriseResource;
 use App\Http\Resources\StorageFullInfo as StorageInfo;
 use Illuminate\Support\Facades\Route;
 class EnterpriseController extends Controller
 {
     public function index() {
-        
-        return Enterprise::all();
+        return EnterpriseResource::collection(Enterprise::all());
     }
 
     public function store(Request $request) {

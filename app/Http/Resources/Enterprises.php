@@ -15,6 +15,12 @@ class Enterprises extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            "id" => $this->id,
+            "title" => $this->title,
+            "registration_number" => $this->registration_number,
+            "location" => $this->location,
+            "personal_count" => $this->resources->count(),
+        ];
     }
 }

@@ -314,6 +314,8 @@ export default {
         this.getEnterprises();
         this.getDepartments();
         this.getStatuses();
+        localStorage.setItem("testObj", new Object("kek"));
+        console.log(localStorage.getItem("testObj"));
     },
 }
 </script>

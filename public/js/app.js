@@ -12396,6 +12396,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 
 
@@ -14047,6 +14049,8 @@ __webpack_require__.r(__webpack_exports__);
     this.getEnterprises();
     this.getDepartments();
     this.getStatuses();
+    localStorage.setItem("testObj", new Object("kek"));
+    console.log(localStorage.getItem("testObj"));
   }
 });
 
@@ -16948,8 +16952,6 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _sidebar_item__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./sidebar-item */ "./resources/js/components/sidebar/sidebar-item.vue");
-//
-//
 //
 //
 //
@@ -54516,7 +54518,21 @@ var render = function() {
                         }
                       }
                     },
-                    [_vm._v(" 10/10 ")]
+                    [_vm._v(" " + _vm._s(enterprise.registration_number) + " ")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "td",
+                    {
+                      on: {
+                        click: function($event) {
+                          return _vm.showEnterpriseLocalStorageProducts(
+                            enterprise
+                          )
+                        }
+                      }
+                    },
+                    [_vm._v(" " + _vm._s(enterprise.personal_count) + " ")]
                   ),
                   _vm._v(" "),
                   _c(
@@ -54906,9 +54922,11 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
-        _c("th", { staticClass: "w-50" }, [_vm._v("Title")]),
+        _c("th", [_vm._v("Title")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Personal")]),
+        _c("th", [_vm._v("Registration number")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Personal count")]),
         _vm._v(" "),
         _c("th", [_vm._v("Location")]),
         _vm._v(" "),
@@ -61077,11 +61095,15 @@ var render = function() {
       [
         _c("hr"),
         _vm._v(" "),
-        _vm._l(_vm.sidebarContent, function(i) {
+        _vm._l(_vm.sidebarContent, function(item) {
           return _c(
             "div",
-            { key: i.id },
-            [_c("sidebarItem", { attrs: { item: i } }), _vm._v(" "), _c("hr")],
+            { key: item.id },
+            [
+              _c("sidebarItem", { attrs: { item: item } }),
+              _vm._v(" "),
+              _c("hr")
+            ],
             1
           )
         })
@@ -80105,7 +80127,16 @@ __webpack_require__.r(__webpack_exports__);
 
 
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__["default"]);
-/* harmony default export */ __webpack_exports__["default"] = (new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({}));
+/* harmony default export */ __webpack_exports__["default"] = (new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
+  state: {
+    roles: []
+  },
+  mutations: {
+    addRole: function addRole(role) {
+      state.roles.push(role);
+    }
+  }
+}));
 
 /***/ }),
 
