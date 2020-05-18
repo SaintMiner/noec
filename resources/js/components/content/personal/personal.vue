@@ -1,9 +1,14 @@
 <template>
     <div ref="personalControl">
-        <personalCreateAccount id="personCreateAccountModal" :resource="actionResource" :reloadPersonal="getPersonal"/>
+        <personalCreateAccount id="personCreateAccountModal" :resource="actionResource" :reloadPersonal="getPersonal" :mode="'add'"/>
+        <personalCreateAccount id="personEditAccountModal" :resource="actionResource" :reloadPersonal="getPersonal" :mode="'edit'"/>
         <confirmModal id="deleteResourceDataConfirm" 
             confirmText="Are you sure you want to delete this person ALL DATA?"
             @confirmAction="deleteResourceData(actionResource)"
+        />
+        <confirmModal id="deleteResourceAccountConfirm" 
+            confirmText="Are you sure you want to delete this person account?"
+            @confirmAction="deleteResourceAccount(actionResource)"
         />
         <h1> Personal control </h1>
         <hr>
@@ -91,8 +96,9 @@
                                 </button>
                                 <div class="dropdown-menu">
                                     <a class="dropdown-item" href="#" @click="">Fire an employee</a>
+                                    <a class="dropdown-item" href="#" @click="openEditAccountModal(person)" v-if="person.user">Edit account</a>
                                     <a class="dropdown-item" href="#" @click="openCreateAccountModal(person)" v-if="!person.user">Create account</a>
-                                    <a class="dropdown-item text-danger" href="#" @click="openCreateAccountModal(person)" v-else>Remove account</a>
+                                    <a class="dropdown-item text-danger" href="#" @click="openDeleteAccountConfirmModal(person)" v-else>Remove account</a>
                                     <div role="separator" class="dropdown-divider"></div>
                                     <a class="dropdown-item text-danger" href="#" @click="openDeleteDataModal(person)">Delete all data</a>
                                 </div>
@@ -194,7 +200,7 @@ export default {
                 this.personal = response.data;
             }).catch(e => {
                 console.log(e);
-            })
+            });
         },
 
         getEnterprises: function() {
@@ -249,8 +255,21 @@ export default {
         },
 
         openCreateAccountModal: function(resource) {
-            $('#personCreateAccountModal').modal('show');
             this.actionResource = resource;
+            $('#personCreateAccountModal').modal('show');
+        },
+
+        openEditAccountModal: function(resource) {
+            this.$webService.post("auth/me").then(repsonse => {
+                if (repsonse.data.id != resource.user.id) {
+                    this.actionResource = resource;
+                    $('#personEditAccountModal').modal('show');
+                } else {
+                    alert("You can't edit your account!");
+                }
+            }).catch(e => {
+                console.error(e);
+            });
         },
 
         openDeleteDataModal: function(resource) {
@@ -258,14 +277,32 @@ export default {
             $('#deleteResourceDataConfirm').modal('show');
         },
 
+        openDeleteAccountConfirmModal: function(resource) {
+            this.actionResource = resource;
+            $('#deleteResourceAccountConfirm').modal('show');
+        },
+
         deleteResourceData: function(resource) {
             this.$webService.delete(`resource/${resource.id}`).then(repsonse => {
+                this.actionResource = null;
                 this.getPersonal();
                 $('#deleteResourceDataConfirm').modal('hide');
             }).catch(e => {
                 console.error(e);
-            })
+            });
+        },
+
+        deleteResourceAccount: function(resource) {
+            this.$webService.delete(`user/${resource.user.id}`).then(response => {
+                this.actionResource = null;
+                this.getPersonal();
+                $('#deleteResourceAccountConfirm').modal('hide');
+            }).catch(e => {
+                console.error(e);
+            });
         }
+
+        
     },
 
     watch: {

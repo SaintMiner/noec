@@ -3,7 +3,7 @@
     <div class="modal-dialog" >
         <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title"> Create Account for [<span class="text-info" v-if="resource">{{`${resource.name} ${resource.surname}`}}</span>] </h5>
+            <h5 class="modal-title"> {{mode == 'edit' ? 'Edit' : 'Create'}} Account for [<span class="text-info" v-if="resource">{{`${resource.name} ${resource.surname}`}}</span>] </h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -31,11 +31,23 @@
                     @focus="focused.confirmPassword = true">
                     <div class="invalid-feedback"> {{error.confirmPassword}} </div>
                 </div>
+                <div class="form-group">
+                    <label class="col-form-label mb-2 font-weight-bold"> Roles </label>
+                    <ul>
+                        <li v-for="role in roles" :key="role.id" class="d-flex justify-content-between">
+                            <div>
+                                <input class="form-check-input" type="checkbox" v-model="role.checked"> 
+                                <label class="form-check-label text-break"> {{role.name.length > 30 ? role.name.slice(0, 30)+"..." : role.name}} </label> 
+                            </div> 
+                        </li>
+                    </ul>
+                </div>
             </form>
         </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" >Close</button>
-                <button type="button" class="btn btn-primary" :disabled="!validated" @click="createAccount">Create</button>
+                <button v-if="mode == 'add'" type="button" class="btn btn-primary" :disabled="!validated" @click="createAccount">Create</button>
+                <button v-else-if="mode == 'edit'" type="button" class="btn btn-primary" :disabled="!validated" @click="editAccount">Edit</button>
             </div>
         </div>
     </div>
@@ -64,13 +76,16 @@ export default {
                 username: "",
                 password: "",
                 confirmPassword: "",
-            }
+            },
+
+            roles: [],
         }
     },
 
     props: {
         resource: Object,
         reloadPersonal: {type: Function},
+        mode: String,
     },
 
     computed: {
@@ -111,10 +126,30 @@ export default {
         }
     },
 
+    watch: {
+        resource: function() {
+            this.account.password = this.account.confirmPassword = "";
+            if (this.resource.user) {
+                this.account.username = this.resource.user.username;
+                this.resource.user.roles.forEach(user_role => {
+                    this.roles.find(role => role.id == user_role.id).checked = true;
+                });
+            } else {
+                this.roles.forEach(role => {
+                    role.checked = false;
+                })
+                this.account.username = ""
+            }
+            this.focused.username = this.focused.password = this.focused.confirmPassword = false;
+            this.error.username = this.error.password = this.error.confirmPassword = "";
+        }
+    },
+
     methods: {
         createAccount: function() {
             if (this.validated) {
                 this.account.resource_id = this.resource.id;
+                this.account.roles = this.getCheckedRoles();
                 this.$webService.post("user", this.account).then(response => {
                     $('#personCreateAccountModal').modal('hide');
                     this.reloadPersonal();
@@ -122,8 +157,38 @@ export default {
                     console.error(e);
                 })
             }
+        },
+
+        editAccount: function() {
+            if (this.validated) {
+                this.account.roles = this.getCheckedRoles();
+                this.$webService.put(`user/${this.resource.user.id}`, this.account).then(response => {
+                    $('#personEditAccountModal').modal('hide');
+                    this.reloadPersonal();
+                }).catch(e => {
+                    console.error(e);
+                })
+            }
+        },
+
+        loadRoles: function() {
+            this.$webService.get("role").then(response => {
+                this.roles = response.data;
+            }).catch(e => {
+                console.error(e);
+            });
+        },
+
+        getCheckedRoles: function() {
+            let checked = this.roles.filter(role => role.checked);
+            return checked.map(role => role.id);
         }
+    },
+
+    mounted() {
+        this.loadRoles();
     }
+
 }
 </script>
 

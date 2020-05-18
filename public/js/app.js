@@ -13850,6 +13850,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 
@@ -13983,20 +13989,53 @@ __webpack_require__.r(__webpack_exports__);
       $('#personalControlModal').modal('show');
     },
     openCreateAccountModal: function openCreateAccountModal(resource) {
-      $('#personCreateAccountModal').modal('show');
       this.actionResource = resource;
+      $('#personCreateAccountModal').modal('show');
+    },
+    openEditAccountModal: function openEditAccountModal(resource) {
+      var _this5 = this;
+
+      this.$webService.post("auth/me").then(function (repsonse) {
+        if (repsonse.data.id != resource.user.id) {
+          _this5.actionResource = resource;
+          $('#personEditAccountModal').modal('show');
+        } else {
+          alert("You can't edit your account!");
+        }
+      })["catch"](function (e) {
+        console.error(e);
+      });
     },
     openDeleteDataModal: function openDeleteDataModal(resource) {
       this.actionResource = resource;
       $('#deleteResourceDataConfirm').modal('show');
     },
+    openDeleteAccountConfirmModal: function openDeleteAccountConfirmModal(resource) {
+      this.actionResource = resource;
+      $('#deleteResourceAccountConfirm').modal('show');
+    },
     deleteResourceData: function deleteResourceData(resource) {
-      var _this5 = this;
+      var _this6 = this;
 
       this.$webService["delete"]("resource/".concat(resource.id)).then(function (repsonse) {
-        _this5.getPersonal();
+        _this6.actionResource = null;
+
+        _this6.getPersonal();
 
         $('#deleteResourceDataConfirm').modal('hide');
+      })["catch"](function (e) {
+        console.error(e);
+      });
+    },
+    deleteResourceAccount: function deleteResourceAccount(resource) {
+      var _this7 = this;
+
+      this.$webService["delete"]("user/".concat(resource.user.id)).then(function (response) {
+        _this7.actionResource = null;
+
+        _this7.getPersonal();
+
+        $('#deleteResourceAccountConfirm').modal('hide');
       })["catch"](function (e) {
         console.error(e);
       });
@@ -14393,6 +14432,18 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "createAccountModal",
   data: function data() {
@@ -14411,14 +14462,16 @@ __webpack_require__.r(__webpack_exports__);
         username: "",
         password: "",
         confirmPassword: ""
-      }
+      },
+      roles: []
     };
   },
   props: {
     resource: Object,
     reloadPersonal: {
       type: Function
-    }
+    },
+    mode: String
   },
   computed: {
     invalidUserName: function invalidUserName() {
@@ -14458,21 +14511,80 @@ __webpack_require__.r(__webpack_exports__);
       return !this.invalidUserName && !this.invalidPassword && !this.invalidConfirmPassword;
     }
   },
+  watch: {
+    resource: function resource() {
+      var _this = this;
+
+      this.account.password = this.account.confirmPassword = "";
+
+      if (this.resource.user) {
+        this.account.username = this.resource.user.username;
+        this.resource.user.roles.forEach(function (user_role) {
+          _this.roles.find(function (role) {
+            return role.id == user_role.id;
+          }).checked = true;
+        });
+      } else {
+        this.roles.forEach(function (role) {
+          role.checked = false;
+        });
+        this.account.username = "";
+      }
+
+      this.focused.username = this.focused.password = this.focused.confirmPassword = false;
+      this.error.username = this.error.password = this.error.confirmPassword = "";
+    }
+  },
   methods: {
     createAccount: function createAccount() {
-      var _this = this;
+      var _this2 = this;
 
       if (this.validated) {
         this.account.resource_id = this.resource.id;
+        this.account.roles = this.getCheckedRoles();
         this.$webService.post("user", this.account).then(function (response) {
           $('#personCreateAccountModal').modal('hide');
 
-          _this.reloadPersonal();
+          _this2.reloadPersonal();
         })["catch"](function (e) {
           console.error(e);
         });
       }
+    },
+    editAccount: function editAccount() {
+      var _this3 = this;
+
+      if (this.validated) {
+        this.account.roles = this.getCheckedRoles();
+        this.$webService.put("user/".concat(this.resource.user.id), this.account).then(function (response) {
+          $('#personEditAccountModal').modal('hide');
+
+          _this3.reloadPersonal();
+        })["catch"](function (e) {
+          console.error(e);
+        });
+      }
+    },
+    loadRoles: function loadRoles() {
+      var _this4 = this;
+
+      this.$webService.get("role").then(function (response) {
+        _this4.roles = response.data;
+      })["catch"](function (e) {
+        console.error(e);
+      });
+    },
+    getCheckedRoles: function getCheckedRoles() {
+      var checked = this.roles.filter(function (role) {
+        return role.checked;
+      });
+      return checked.map(function (role) {
+        return role.id;
+      });
     }
+  },
+  mounted: function mounted() {
+    this.loadRoles();
   }
 });
 
@@ -16881,8 +16993,6 @@ __webpack_require__.r(__webpack_exports__);
       localStorage.setItem("token", null);
       localStorage.setItem("token_expires_in", null);
       this.$webService.post("auth/logout").then(function (response) {
-        console.log(response.data);
-
         _this.$router.push({
           name: 'login'
         });
@@ -56384,7 +56494,17 @@ var render = function() {
         attrs: {
           id: "personCreateAccountModal",
           resource: _vm.actionResource,
-          reloadPersonal: _vm.getPersonal
+          reloadPersonal: _vm.getPersonal,
+          mode: "add"
+        }
+      }),
+      _vm._v(" "),
+      _c("personalCreateAccount", {
+        attrs: {
+          id: "personEditAccountModal",
+          resource: _vm.actionResource,
+          reloadPersonal: _vm.getPersonal,
+          mode: "edit"
         }
       }),
       _vm._v(" "),
@@ -56396,6 +56516,18 @@ var render = function() {
         on: {
           confirmAction: function($event) {
             return _vm.deleteResourceData(_vm.actionResource)
+          }
+        }
+      }),
+      _vm._v(" "),
+      _c("confirmModal", {
+        attrs: {
+          id: "deleteResourceAccountConfirm",
+          confirmText: "Are you sure you want to delete this person account?"
+        },
+        on: {
+          confirmAction: function($event) {
+            return _vm.deleteResourceAccount(_vm.actionResource)
           }
         }
       }),
@@ -56719,6 +56851,22 @@ var render = function() {
                             [_vm._v("Fire an employee")]
                           ),
                           _vm._v(" "),
+                          person.user
+                            ? _c(
+                                "a",
+                                {
+                                  staticClass: "dropdown-item",
+                                  attrs: { href: "#" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.openEditAccountModal(person)
+                                    }
+                                  }
+                                },
+                                [_vm._v("Edit account")]
+                              )
+                            : _vm._e(),
+                          _vm._v(" "),
                           !person.user
                             ? _c(
                                 "a",
@@ -56740,7 +56888,9 @@ var render = function() {
                                   attrs: { href: "#" },
                                   on: {
                                     click: function($event) {
-                                      return _vm.openCreateAccountModal(person)
+                                      return _vm.openDeleteAccountConfirmModal(
+                                        person
+                                      )
                                     }
                                   }
                                 },
@@ -57395,7 +57545,11 @@ var render = function() {
       _c("div", { staticClass: "modal-content" }, [
         _c("div", { staticClass: "modal-header" }, [
           _c("h5", { staticClass: "modal-title" }, [
-            _vm._v(" Create Account for ["),
+            _vm._v(
+              " " +
+                _vm._s(_vm.mode == "edit" ? "Edit" : "Create") +
+                " Account for ["
+            ),
             _vm.resource
               ? _c("span", { staticClass: "text-info" }, [
                   _vm._v(_vm._s(_vm.resource.name + " " + _vm.resource.surname))
@@ -57530,6 +57684,91 @@ var render = function() {
               _c("div", { staticClass: "invalid-feedback" }, [
                 _vm._v(" " + _vm._s(_vm.error.confirmPassword) + " ")
               ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "form-group" }, [
+              _c(
+                "label",
+                { staticClass: "col-form-label mb-2 font-weight-bold" },
+                [_vm._v(" Roles ")]
+              ),
+              _vm._v(" "),
+              _c(
+                "ul",
+                _vm._l(_vm.roles, function(role) {
+                  return _c(
+                    "li",
+                    {
+                      key: role.id,
+                      staticClass: "d-flex justify-content-between"
+                    },
+                    [
+                      _c("div", [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: role.checked,
+                              expression: "role.checked"
+                            }
+                          ],
+                          staticClass: "form-check-input",
+                          attrs: { type: "checkbox" },
+                          domProps: {
+                            checked: Array.isArray(role.checked)
+                              ? _vm._i(role.checked, null) > -1
+                              : role.checked
+                          },
+                          on: {
+                            change: function($event) {
+                              var $$a = role.checked,
+                                $$el = $event.target,
+                                $$c = $$el.checked ? true : false
+                              if (Array.isArray($$a)) {
+                                var $$v = null,
+                                  $$i = _vm._i($$a, $$v)
+                                if ($$el.checked) {
+                                  $$i < 0 &&
+                                    _vm.$set(role, "checked", $$a.concat([$$v]))
+                                } else {
+                                  $$i > -1 &&
+                                    _vm.$set(
+                                      role,
+                                      "checked",
+                                      $$a
+                                        .slice(0, $$i)
+                                        .concat($$a.slice($$i + 1))
+                                    )
+                                }
+                              } else {
+                                _vm.$set(role, "checked", $$c)
+                              }
+                            }
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c(
+                          "label",
+                          { staticClass: "form-check-label text-break" },
+                          [
+                            _vm._v(
+                              " " +
+                                _vm._s(
+                                  role.name.length > 30
+                                    ? role.name.slice(0, 30) + "..."
+                                    : role.name
+                                ) +
+                                " "
+                            )
+                          ]
+                        )
+                      ])
+                    ]
+                  )
+                }),
+                0
+              )
             ])
           ])
         ]),
@@ -57544,15 +57783,27 @@ var render = function() {
             [_vm._v("Close")]
           ),
           _vm._v(" "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-primary",
-              attrs: { type: "button", disabled: !_vm.validated },
-              on: { click: _vm.createAccount }
-            },
-            [_vm._v("Create")]
-          )
+          _vm.mode == "add"
+            ? _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary",
+                  attrs: { type: "button", disabled: !_vm.validated },
+                  on: { click: _vm.createAccount }
+                },
+                [_vm._v("Create")]
+              )
+            : _vm.mode == "edit"
+            ? _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary",
+                  attrs: { type: "button", disabled: !_vm.validated },
+                  on: { click: _vm.editAccount }
+                },
+                [_vm._v("Edit")]
+              )
+            : _vm._e()
         ])
       ])
     ])

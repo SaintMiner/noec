@@ -17,6 +17,7 @@ class RolesTableSeeder extends Seeder
             ["id" => 3, "name" => "Accountant", "slug" => "accountent"],
             ["id" => 4, "name" => "HR Manager", "slug" => "hr_manager"],
             ["id" => 5, "name" => "Director", "slug" => "director"],
+            ["id" => 6, "name" => "Order manager", "slug" => "or_manager"],
         ];
         App\Role::insert($roles);
 
