@@ -7,7 +7,6 @@ export default {
     name: "App",
     beforeMount() {
         Popper.Defaults.modifiers.computeStyle.gpuAcceleration = false;
-        // console.log(this.$router.currentRoute)
         if (localStorage.getItem("token")) {
             this.$webService.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem("token")}`;
             if (localStorage.getItem("token_expires_in") && localStorage.getItem("token_expires_in") > new Date().getTime()) {
@@ -17,6 +16,7 @@ export default {
             } else {
                 localStorage.setItem("token", null);
                 localStorage.setItem("token_expires_in", null);
+                
                 if (this.$router.currentRoute.name != "login") {
                     this.$router.push({ name: 'login' });
                 }

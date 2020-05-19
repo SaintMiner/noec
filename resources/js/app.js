@@ -31,7 +31,6 @@ library.add([
 Vue.component('font-awesome-icon', FontAwesomeIcon)    
 
 
-
 Vue.mixin({
 });
 

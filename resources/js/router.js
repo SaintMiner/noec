@@ -22,7 +22,6 @@ import sale from "./components/content/sale/saleOrder";
 /**************************************************/
 /****                 Routes                   ****/
 /**************************************************/
-
 Vue.use(VueRouter);
 
 export default new VueRouter({

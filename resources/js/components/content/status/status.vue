@@ -129,7 +129,16 @@ export default {
 
     mounted() {
         this.loadStatuses();
+    },
+
+    beforeMount() {
+        let reqRoles = ["admin","director","hr_manager"];
+        this.$store.commit("hasRole", reqRoles);
+        if (!this.$store.state.hasPermission) {
+            this.$router.push({ name: 'system' });
+        }
     }
+
 }
 </script>
 

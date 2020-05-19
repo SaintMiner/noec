@@ -305,18 +305,20 @@ export default {
         
     },
 
-    watch: {
-        
-    },
-
     mounted() {
         this.getPersonal();
         this.getEnterprises();
         this.getDepartments();
         this.getStatuses();
-        localStorage.setItem("testObj", new Object("kek"));
-        console.log(localStorage.getItem("testObj"));
     },
+
+    beforeMount() {
+        let reqRoles = ["admin","director","hr_manager"];
+        this.$store.commit("hasRole", reqRoles);
+        if (!this.$store.state.hasPermission) {
+            this.$router.push({ name: 'system' });
+        }
+    }
 }
 </script>
 

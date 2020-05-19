@@ -14,21 +14,21 @@ class ResourcesTableSeeder extends Seeder
         $humanResources = [
             [
                 "id" => 1,
+                "name" => "Admin",
+                "surname" => "Account",
+                "department_id" => 2,
+                "position_id" => 2,
+                "status_id" => 2,
+                "enterprise_id" => 2,
+            ],
+            [
+                "id" => 2,
                 "name" => "Mike",
                 "surname" => "Larryson",
                 "department_id" => 1,
                 "position_id" => 1,
                 "status_id" => 1,
                 "enterprise_id" => 1,
-            ],
-            [
-                "id" => 2,
-                "name" => "Jimmy",
-                "surname" => "Kazenat",
-                "department_id" => 2,
-                "position_id" => 2,
-                "status_id" => 2,
-                "enterprise_id" => 2,
             ],
             [
                 "id" => 3,

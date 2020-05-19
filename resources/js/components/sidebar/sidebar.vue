@@ -1,9 +1,8 @@
 <template>
     <div class="sidebar overflow-auto" >
         <div class="text-light p-3">
-            <div>
-            {{user.username}}
-            </div>
+            <div> {{user.nameSurname}} ({{user.username}})</div>
+            
             <div>
                 <button class="btn btn-danger" @click="logout">Logout</button>
             </div>
@@ -53,10 +52,16 @@ export default {
         }
     },
 
-    mounted() {
+    beforeMount() {
         this.$webService.post("auth/me").then(response => {
-            console.log(response.data);
             this.user = response.data;
+            this.$webService.get(`resource/${response.data.resource_id}`).then(response => {
+                this.$set(this.user, "nameSurname", `${response.data.name} ${response.data.surname}`);
+            }).catch(e => {
+                console.error(e);
+            });
+            
+
         }).catch(e => {
             console.error(e);
         });

@@ -1,16 +1,28 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import webService from "./webService.js";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        roles: [],
+        hasPermission: false,
     },
 
     mutations: {
-        addRole(role) {
-            state.roles.push(role);
+        hasRole: function(state, reqRoles) {
+            webService.post("auth/me").then(response => {
+                let hasPermission = false;
+                response.data.roles.forEach(role => {
+                    if(reqRoles.includes(role.slug)) {
+                        hasPermission = true;
+                    }
+                });
+                state.hasPermission = hasPermission;
+            }).catch(e => {
+                console.error(e);
+                state.hasPermission = false;
+            });
         }
     }
 });

@@ -11691,7 +11691,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "App",
   beforeMount: function beforeMount() {
-    Popper.Defaults.modifiers.computeStyle.gpuAcceleration = false; // console.log(this.$router.currentRoute)
+    Popper.Defaults.modifiers.computeStyle.gpuAcceleration = false;
 
     if (localStorage.getItem("token")) {
       this.$webService.defaults.headers.common["Authorization"] = "Bearer ".concat(localStorage.getItem("token"));
@@ -11875,6 +11875,16 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.loadDepartments();
+  },
+  beforeMount: function beforeMount() {
+    var reqRoles = ["admin", "director", "hr_manager"];
+    this.$store.commit("hasRole", reqRoles);
+
+    if (!this.$store.state.hasPermission) {
+      this.$router.push({
+        name: 'system'
+      });
+    }
   }
 });
 
@@ -13642,6 +13652,16 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.loadShippings();
+  },
+  beforeMount: function beforeMount() {
+    var reqRoles = ["admin", "director", "or_manager"];
+    this.$store.commit("hasRole", reqRoles);
+
+    if (!this.$store.state.hasPermission) {
+      this.$router.push({
+        name: 'system'
+      });
+    }
   }
 });
 
@@ -14043,14 +14063,21 @@ __webpack_require__.r(__webpack_exports__);
       });
     }
   },
-  watch: {},
   mounted: function mounted() {
     this.getPersonal();
     this.getEnterprises();
     this.getDepartments();
     this.getStatuses();
-    localStorage.setItem("testObj", new Object("kek"));
-    console.log(localStorage.getItem("testObj"));
+  },
+  beforeMount: function beforeMount() {
+    var reqRoles = ["admin", "director", "hr_manager"];
+    this.$store.commit("hasRole", reqRoles);
+
+    if (!this.$store.state.hasPermission) {
+      this.$router.push({
+        name: 'system'
+      });
+    }
   }
 });
 
@@ -14728,6 +14755,16 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.loadPositions();
+  },
+  beforeMount: function beforeMount() {
+    var reqRoles = ["admin", "director", "hr_manager"];
+    this.$store.commit("hasRole", reqRoles);
+
+    if (!this.$store.state.hasPermission) {
+      this.$router.push({
+        name: 'system'
+      });
+    }
   }
 });
 
@@ -15074,6 +15111,16 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.loadProducts();
+  },
+  beforeMount: function beforeMount() {
+    var reqRoles = ["admin", "director", "wh_manager"];
+    this.$store.commit("hasRole", reqRoles);
+
+    if (!this.$store.state.hasPermission) {
+      this.$router.push({
+        name: 'system'
+      });
+    }
   }
 });
 
@@ -15464,6 +15511,16 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.loadSales();
+  },
+  beforeMount: function beforeMount() {
+    var reqRoles = ["admin", "director", "or_manager"];
+    this.$store.commit("hasRole", reqRoles);
+
+    if (!this.$store.state.hasPermission) {
+      this.$router.push({
+        name: 'system'
+      });
+    }
   }
 });
 
@@ -15691,6 +15748,16 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.loadStatuses();
+  },
+  beforeMount: function beforeMount() {
+    var reqRoles = ["admin", "director", "hr_manager"];
+    this.$store.commit("hasRole", reqRoles);
+
+    if (!this.$store.state.hasPermission) {
+      this.$router.push({
+        name: 'system'
+      });
+    }
   }
 });
 
@@ -16320,6 +16387,16 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.loadStorages();
+  },
+  beforeMount: function beforeMount() {
+    var reqRoles = ["admin", "director", "wh_manager"];
+    this.$store.commit("hasRole", reqRoles);
+
+    if (!this.$store.state.hasPermission) {
+      this.$router.push({
+        name: 'system'
+      });
+    }
   }
 });
 
@@ -16971,7 +17048,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "sidebar",
@@ -17003,12 +17079,17 @@ __webpack_require__.r(__webpack_exports__);
       });
     }
   },
-  mounted: function mounted() {
+  beforeMount: function beforeMount() {
     var _this2 = this;
 
     this.$webService.post("auth/me").then(function (response) {
-      console.log(response.data);
       _this2.user = response.data;
+
+      _this2.$webService.get("resource/".concat(response.data.resource_id)).then(function (response) {
+        _this2.$set(_this2.user, "nameSurname", "".concat(response.data.name, " ").concat(response.data.surname));
+      })["catch"](function (e) {
+        console.error(e);
+      });
     })["catch"](function (e) {
       console.error(e);
     });
@@ -61077,7 +61158,13 @@ var render = function() {
   return _c("div", { staticClass: "sidebar overflow-auto" }, [
     _c("div", { staticClass: "text-light p-3" }, [
       _c("div", [
-        _vm._v("\n        " + _vm._s(_vm.user.username) + "\n        ")
+        _vm._v(
+          " " +
+            _vm._s(_vm.user.nameSurname) +
+            " (" +
+            _vm._s(_vm.user.username) +
+            ")"
+        )
       ]),
       _vm._v(" "),
       _c("div", [
@@ -80124,16 +80211,29 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var _webService_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./webService.js */ "./resources/js/webService.js");
+
 
 
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__["default"]);
 /* harmony default export */ __webpack_exports__["default"] = (new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
   state: {
-    roles: []
+    hasPermission: false
   },
   mutations: {
-    addRole: function addRole(role) {
-      state.roles.push(role);
+    hasRole: function hasRole(state, reqRoles) {
+      _webService_js__WEBPACK_IMPORTED_MODULE_2__["default"].post("auth/me").then(function (response) {
+        var hasPermission = false;
+        response.data.roles.forEach(function (role) {
+          if (reqRoles.includes(role.slug)) {
+            hasPermission = true;
+          }
+        });
+        state.hasPermission = hasPermission;
+      })["catch"](function (e) {
+        console.error(e);
+        state.hasPermission = false;
+      });
     }
   }
 }));
