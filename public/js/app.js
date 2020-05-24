@@ -12408,6 +12408,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 
 
@@ -12428,7 +12432,8 @@ __webpack_require__.r(__webpack_exports__);
         title: "Enterprise Not Selected"
       },
       checkedProducts: [],
-      actionProducts: []
+      actionProducts: [],
+      actionEnterprise: null
     };
   },
   components: {
@@ -12641,6 +12646,21 @@ __webpack_require__.r(__webpack_exports__);
         this.$refs.enterpriseControl.appendChild(instance.$el);
         $('#attachProductModal').modal('show');
       }
+    },
+    deleteEnterpriseModal: function deleteEnterpriseModal(enterprise) {
+      this.actionEnterprise = enterprise;
+      $('#confirmDeleteEnterprise').modal('show');
+    },
+    deleteEnterprise: function deleteEnterprise(enterprise) {
+      var _this5 = this;
+
+      this.$webService["delete"]("enterprise/".concat(enterprise.id)).then(function (repsonse) {
+        $('#confirmDeleteEnterprise').modal('hide');
+
+        _this5.loadEnterPrises();
+      })["catch"](function (e) {
+        console.error(e);
+      });
     }
   },
   mounted: function mounted() {
@@ -54535,6 +54555,18 @@ var render = function() {
       _vm._v(" "),
       _c("confirmModal", {
         attrs: {
+          id: "confirmDeleteEnterprise",
+          confirmText: "Are you sure you want to delete these enterprise?"
+        },
+        on: {
+          confirmAction: function($event) {
+            return _vm.deleteEnterprise(_vm.actionEnterprise)
+          }
+        }
+      }),
+      _vm._v(" "),
+      _c("confirmModal", {
+        attrs: {
           id: "confirmProductRemoveModal",
           confirmText: "Are you sure you want to remove these products?"
         },
@@ -54651,16 +54683,14 @@ var render = function() {
                       _c(
                         "button",
                         {
-                          staticClass: "btn btn-primary mx-1",
+                          staticClass: "btn btn-danger mx-1",
                           on: {
                             click: function($event) {
-                              return _vm.showEnterpriseLocalStorageProducts(
-                                enterprise
-                              )
+                              return _vm.deleteEnterpriseModal(enterprise)
                             }
                           }
                         },
-                        [_c("font-awesome-icon", { attrs: { icon: "boxes" } })],
+                        [_c("font-awesome-icon", { attrs: { icon: "trash" } })],
                         1
                       )
                     ]

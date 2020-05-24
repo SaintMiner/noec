@@ -47,6 +47,11 @@ class EnterpriseController extends Controller
         return response("updated", 201);
     }
 
+    public function destroy($enterpriseID) {
+        $enterprise = Enterprise::find($enterpriseID);
+        $enterprise->delete();
+    }
+
     public function getNotIncludedProducts($enterpriseID) {
         $enterprise = Enterprise::find($enterpriseID);
         $enterpriseStorages = $enterprise->storages()->get();

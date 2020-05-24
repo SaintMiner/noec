@@ -9,11 +9,7 @@ use App\Http\Resources\Sale as SaleResource;
 
 class SaleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
         return SaleResource::collection(Sale::all()->sortByDesc("created_at"));

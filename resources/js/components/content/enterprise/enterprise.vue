@@ -8,6 +8,10 @@
             :editMode="editMode" 
             :editingEnterprise="editingEnterprise"
         />
+        <confirmModal id="confirmDeleteEnterprise" 
+            confirmText="Are you sure you want to delete these enterprise?"
+            @confirmAction="deleteEnterprise(actionEnterprise)"
+        />
         <confirmModal id="confirmProductRemoveModal" 
             confirmText="Are you sure you want to remove these products?"
             @confirmAction="removeProducts(checkedProducts)"
@@ -43,8 +47,8 @@
                                 <button class="btn btn-primary mx-1" @click="openEditEnterpriseModal(enterprise)">
                                     <font-awesome-icon icon="pen" class=""/>
                                 </button>
-                                <button class="btn btn-primary mx-1" @click="showEnterpriseLocalStorageProducts(enterprise)">
-                                    <font-awesome-icon icon="boxes" class=""/>
+                                <button class="btn btn-danger mx-1" @click="deleteEnterpriseModal(enterprise)">
+                                    <font-awesome-icon icon="trash" class=""/>
                                 </button>
                             </td>
                         </tr>
@@ -149,6 +153,7 @@ export default {
             selectedEnterprise: {id: null, title: "Enterprise Not Selected"},
             checkedProducts: [],
             actionProducts: [],
+            actionEnterprise: null,
         }
     },
 
@@ -361,6 +366,20 @@ export default {
                 this.$refs.enterpriseControl.appendChild(instance.$el);
                 $('#attachProductModal').modal('show');
             }
+        },
+
+        deleteEnterpriseModal(enterprise) {
+            this.actionEnterprise = enterprise;
+            $('#confirmDeleteEnterprise').modal('show');
+        },
+
+        deleteEnterprise: function(enterprise) {
+            this.$webService.delete(`enterprise/${enterprise.id}`).then(repsonse => {
+                $('#confirmDeleteEnterprise').modal('hide');
+                this.loadEnterPrises();
+            }).catch(e => {
+                console.error(e);
+            })
         }
     },
 

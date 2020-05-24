@@ -21,6 +21,7 @@ class CreateProductSaleTable extends Migration
         });
 
         Schema::table("product_sale", function($table) {
+            $table->primary(["sale_id", "product_id"]);
             $table->foreign("sale_id")->references("id")->on("sales")->onDelete("cascade");
             $table->foreign("product_id")->references("id")->on("products")->onDelete("cascade");
         });
