@@ -77,6 +77,7 @@ export default {
                 this.$router.push("system");
                 this.loading = false;
                 this.success = true;
+                this.$store.commit("getRoles");
             }).catch(e => {
                 console.error(e);
                 this.loading = false;

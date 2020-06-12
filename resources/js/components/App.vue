@@ -10,6 +10,7 @@ export default {
         if (localStorage.getItem("token")) {
             this.$webService.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem("token")}`;
             if (localStorage.getItem("token_expires_in") && localStorage.getItem("token_expires_in") > new Date().getTime()) {
+                this.$store.commit("getRoles");
                 if (this.$router.currentRoute.name == "login") {
                     this.$router.push({ name: 'system' });
                 }

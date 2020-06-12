@@ -17,16 +17,16 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 require('./bootstrap');
 library.add([
-            faUsers, faUser, faKey, 
-            faTachometerAlt, faSearch, faPen,
-            faInfo, faUsersCog, faProjectDiagram,
-            faUserTag, faSolarPanel, faPlus,
-            faWrench, faBoxes, faTrash,
-            faEllipsisV, faExclamation, faMinus,
-            faDolly, faScroll, faCheck,
-            faTimes, faUserCircle, faUserTie,
-            faFileInvoiceDollar,
-        ]);
+    faUsers, faUser, faKey, 
+    faTachometerAlt, faSearch, faPen,
+    faInfo, faUsersCog, faProjectDiagram,
+    faUserTag, faSolarPanel, faPlus,
+    faWrench, faBoxes, faTrash,
+    faEllipsisV, faExclamation, faMinus,
+    faDolly, faScroll, faCheck,
+    faTimes, faUserCircle, faUserTie,
+    faFileInvoiceDollar,
+]);
 
 Vue.component('font-awesome-icon', FontAwesomeIcon)    
 

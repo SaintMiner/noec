@@ -173,7 +173,7 @@ export default {
     },
 
     beforeMount() {
-        let reqRoles = ["admin","director","or_manager"];
+        let reqRoles = ["admin","director","or_manager", "accountent"];
         this.$store.commit("hasRole", reqRoles);
         if (!this.$store.state.hasPermission) {
             this.$router.push({ name: 'system' });

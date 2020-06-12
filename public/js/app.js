@@ -11697,6 +11697,8 @@ __webpack_require__.r(__webpack_exports__);
       this.$webService.defaults.headers.common["Authorization"] = "Bearer ".concat(localStorage.getItem("token"));
 
       if (localStorage.getItem("token_expires_in") && localStorage.getItem("token_expires_in") > new Date().getTime()) {
+        this.$store.commit("getRoles");
+
         if (this.$router.currentRoute.name == "login") {
           this.$router.push({
             name: 'system'
@@ -11879,6 +11881,7 @@ __webpack_require__.r(__webpack_exports__);
   beforeMount: function beforeMount() {
     var reqRoles = ["admin", "director", "hr_manager"];
     this.$store.commit("hasRole", reqRoles);
+    console.log(this.$store.state.roles);
 
     if (!this.$store.state.hasPermission) {
       this.$router.push({
@@ -13674,7 +13677,7 @@ __webpack_require__.r(__webpack_exports__);
     this.loadShippings();
   },
   beforeMount: function beforeMount() {
-    var reqRoles = ["admin", "director", "or_manager"];
+    var reqRoles = ["admin", "director", "or_manager", "accountent"];
     this.$store.commit("hasRole", reqRoles);
 
     if (!this.$store.state.hasPermission) {
@@ -15533,7 +15536,7 @@ __webpack_require__.r(__webpack_exports__);
     this.loadSales();
   },
   beforeMount: function beforeMount() {
-    var reqRoles = ["admin", "director", "or_manager"];
+    var reqRoles = ["admin", "director", "or_manager", "accountent"];
     this.$store.commit("hasRole", reqRoles);
 
     if (!this.$store.state.hasPermission) {
@@ -16952,6 +16955,8 @@ __webpack_require__.r(__webpack_exports__);
 
         _this.loading = false;
         _this.success = true;
+
+        _this.$store.commit("getRoles");
       })["catch"](function (e) {
         console.error(e);
         _this.loading = false;
@@ -80248,21 +80253,27 @@ __webpack_require__.r(__webpack_exports__);
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuex__WEBPACK_IMPORTED_MODULE_1__["default"]);
 /* harmony default export */ __webpack_exports__["default"] = (new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
   state: {
-    hasPermission: false
+    hasPermission: false,
+    roles: []
   },
   mutations: {
     hasRole: function hasRole(state, reqRoles) {
+      var hasPermission = false;
+      var user_roles = state.roles;
+      user_roles.forEach(function (role) {
+        if (reqRoles.includes(role)) {
+          hasPermission = true;
+        }
+      });
+      state.hasPermission = hasPermission;
+    },
+    getRoles: function getRoles(state) {
       _webService_js__WEBPACK_IMPORTED_MODULE_2__["default"].post("auth/me").then(function (response) {
-        var hasPermission = false;
-        response.data.roles.forEach(function (role) {
-          if (reqRoles.includes(role.slug)) {
-            hasPermission = true;
-          }
+        state.roles = response.data.roles.map(function (role) {
+          return role.slug;
         });
-        state.hasPermission = hasPermission;
       })["catch"](function (e) {
         console.error(e);
-        state.hasPermission = false;
       });
     }
   }
